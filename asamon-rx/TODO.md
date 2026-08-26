@@ -4,7 +4,10 @@ Dieses Dokument ist die vollständige Arbeitsanweisung für die erste Fassung di
 Es ist so geschrieben, dass es **ohne Vorwissen** ausreicht: Wer hier anfängt, braucht nichts
 weiter als diese Datei, die verlinkten Specs und einen Raspberry Pi mit RTL-SDR-Stick.
 
-**Stand: 26.08.2026. Es ist noch nichts implementiert.**
+> **Stand: 26.08.2026 — M0 bis M4 sind umgesetzt.** Dieses Dokument bleibt als
+> Arbeitsanweisung und Begründungslage stehen; was davon abweicht oder darüber hinausgeht,
+> steht in Abschnitt 16 am Ende. Was gebaut wurde und wie man es benutzt: [`README.md`](README.md).
+> Was noch offen ist — der Feldtest am Gerät und Patch 2 — ebenfalls dort und in Abschnitt 16.
 
 ---
 
@@ -764,3 +767,72 @@ Ingest-Protokoll und Datenmodell zwischen Knoten und Server, Vertrauens- und Ver
 für Crowd-Daten, Server-Stack. Das gehört nach `asamon-node` beziehungsweise auf die
 Serverseite. Wenn beim Arbeiten hier eine Festlegung nötig scheint, die über den Record-Strom
 hinausgeht: **nicht hier treffen**, sondern in `T:\dev\asa-monitor\specs\` notieren.
+
+---
+
+## 16. Was die Umsetzung ergeben hat (26.08.2026)
+
+M0 bis M4 sind gebaut. Dieser Abschnitt hält fest, wo die Wirklichkeit vom Plan abwich und was
+offen bleibt — der Plan selbst bleibt oben unverändert stehen, damit die Begründungen nachlesbar
+sind.
+
+### Wo die Bitrechnung im Plan zu großzügig war
+
+- **Location Codes: höchstens 26 Byte, nicht 27+.** Ein FIB trägt 30 Byte FIG-Daten. Nach
+  FIG-Header, Type-0-Header, Id-Feld und Status-Feld bleiben davon **26** — bei Sustain/End
+  ohne Status 27, wo aber gar keine Location Codes stehen dürfen. Der Puffer in `record.h`
+  ist auf 27 ausgelegt, die normative Grenze von 25 wird gemeldet statt erzwungen.
+- **`phase_raw` und `stage_raw` sind heute unerreichbar.** Phase ist zwei Bit breit, alle vier
+  Werte sind belegt; Stage ist drei Bit breit, alle acht sind belegt. Die Vorkehrung bleibt —
+  sie greift, wenn die Norm erweitert wird — aber sie ist keine Fehlerbehandlung, sondern eine
+  Wette auf die Zukunft. `tests/test_fig0_15.cpp` hält das fest, damit es eine geprüfte Aussage
+  bleibt und keine Behauptung.
+- **NFF steht in *jedem* Location Code**, nicht nur im ersten. Das folgt aus der Padding-Regel:
+  ohne die zwei NFF-Bits stünde die Struktur nicht auf einer Bytegrenze. Bestätigt durch die
+  Byte-Längen in TS 104 090, Tabelle A.19.
+
+### Testfälle aus TS 104 090 — anders als geplant
+
+Abschnitt 12 sah vor, die „sieben Szenarien" aus TS 104 090 als Fixtures zu übernehmen. **Das
+geht nicht:** Es sind *Empfänger*-Konformitätstests mit Signalgeneratoren, ETI-Strömen, einem
+Timing-Gerät und Hörprüfung („Audio changes to a mix of tones at 440 Hz and 550 Hz"). Sie
+prüfen genau das Verhalten, das `asamon-rx` ausdrücklich **nicht** hat.
+
+Verwertbar ist stattdessen **Annex A.10, Tabelle A.19**: die Location-Code-Sätze der offiziellen
+Testströme EWS1–EWS9, mit ihren **Byte-Längen und NFF-Werten**. Daraus wurde
+`tests/test_location_codes.cpp` — eine zweite, unabhängige normative Probe auf das Bitlayout.
+Wer LC5 auf 19 Byte bringt (5+5+4+5, mit Sub-Coding und Padding gemischt), hat Annex E richtig
+gelesen. Die Sätze LC3 und LC5 liegen zusätzlich als Fixtures in `tests/fixtures/`.
+
+### Zwei Felder mehr in `asa_alert_t`
+
+`hasNff` und `parseError`, begründet in [`docs/welle-patches.md`](docs/welle-patches.md).
+Die dort ebenfalls beschriebene Versionsprüfung über `WELLE_ASA_ALERT_VERSION` schließt den
+offenen Punkt „`asa_alert_t` versionieren" aus Abschnitt 14.
+
+### Reibung beim Bau, die keinen Patch brauchte
+
+welle.io greift an zwei Stellen auf `${CMAKE_SOURCE_DIR}` zu und meint sich selbst: beim
+Suchpfad für `FindFFTW3f.cmake` und bei der git-Abfrage für `GITHASH`. Eingebunden über
+`add_subdirectory()` zeigt das auf uns. Beides stellt unsere `CMakeLists.txt` von außen richtig.
+Ebenso muss `find_package(Threads)` im eigenen Verzeichnis-Bereich wiederholt werden.
+
+### Was **nicht** geprüft werden konnte
+
+Alles, wofür ein RTL-SDR-Stick und eine Antenne nötig sind. Gebaut und geprüft wurde unter
+Debian; der Empfangspfad lief über `--device rawfile`. Offen bleiben damit:
+
+- **Das M0-Kriterium am Gerät**: Ensemble-Label und Serviceliste eines echten Multiplex.
+- **Das M2-Kriterium, der eigentliche Zweck**: Kommen auf 5C Heartbeats? Und der konkrete
+  Prüfpunkt aus Abschnitt 11 — WarnBridge behauptet, alle 5 Minuten für 30 s einen Test-Alert.
+  **Nachmessen, nicht glauben.**
+- **Das M3-Kriterium am Gerät**: `REC` auf einen echten Subchannel, Gegenprobe mit `dablin`.
+  Der FIFO-Pfad selbst ist in `tests/test_recorder.cpp` geprüft, die Auflösung SubChId →
+  Service nicht.
+- **Der 24-h-Dauerlauf** aus M4. Ein kürzerer Lauf ist in `README.md` beschrieben; er zeigt
+  kein Speicherwachstum, ersetzt die 24 h auf dem Pi aber nicht.
+- **Patch 2** (Geräteauswahl über die Seriennummer). Bis dahin: **ein Stick je Knoten**, und
+  `device_serial` bleibt im `init`-Record leer.
+- **Der öffentliche welle.io-Fork.** Der Patch liegt als lokaler Zweig und als Patchdatei vor.
+  Solange nur lokal gebaut wird, entsteht keine Weitergabe und damit keine GPL-Auflage; für die
+  Verteilung an Knoten muss der Fork öffentlich sein.

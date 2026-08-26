@@ -3,8 +3,9 @@
 Crowd-basiertes Monitoring von **ASA/EWS-Warnmeldungen in DAB+** mit verteilten SDR-Empfängern,
 zentraler Erfassung und Darstellung auf einer Web-Karte samt Meldungsliste.
 
-> **Status: Recherchephase.** Es ist noch nichts implementiert und noch keine Umsetzung geplant.
-> Aktuell wird ausschließlich Material gesammelt (siehe `specs/`).
+> **Status: Der Empfangsknoten steht — der Feldtest fehlt.** `asamon-rx` ist gebaut und
+> geprüft (siehe [`asamon-rx/`](asamon-rx/)); was noch aussteht, braucht einen RTL-SDR-Stick
+> an einer Antenne. Server, Frontend und `asamon-node` sind noch nicht begonnen.
 
 ## Aufgabenstellung (Originalauftrag)
 
@@ -41,6 +42,13 @@ RTL-SDR-Knoten ist damit der naheliegende Weg zu bundesweiter Abdeckung.
 ```
 asa-monitor/
 ├── README.md            # dieses Dokument: Auftrag, Kontext, Stand
+├── asamon-rx/           # Empfangsprozess (C++): SDR → FIC → FIG 0/15 auspacken
+│   ├── README.md        # bauen, starten, prüfen
+│   ├── TODO.md          # der Umsetzungsplan, samt Abschnitt 16: was dabei herauskam
+│   ├── docs/            # record-format.md, welle-patches.md
+│   ├── src/  tests/  contrib/  patches/
+│   └── external/welle.io/       # Submodul, festgenagelter Commit, mit Patch 1
+├── asamon-node/         # Deutung, Uplink (Go) — noch leer
 └── specs/
     ├── asa.md           # Fachliche Zusammenfassung aller Specs (Hauptdokument)
     ├── decoder-optionen.md      # Analyse der Open-Source-DAB-Decoder als Client-Basis
@@ -59,7 +67,7 @@ Sitzungen ohne PDF-Reader gezielt in den Specs suchen zu können:
 grep -n "FIG 0/15" specs/text/ts_104089v010101p.txt
 ```
 
-Geplante, noch nicht angelegte Bereiche: `backend/`, `decoder/`, `frontend/`, `node/` (Sensor-Agent).
+Geplante, noch nicht angelegte Bereiche: `backend/` (Server), `frontend/` (Karte und Liste) — und `asamon-node/`, das Gegenstück zu `asamon-rx` auf dem Knoten.
 
 ## Aktueller Stand
 
@@ -115,27 +123,40 @@ Geplante, noch nicht angelegte Bereiche: `backend/`, `decoder/`, `frontend/`, `n
       `CRTL_SDR` öffnet heute schlicht das erste Gerät, das sich öffnen lässt, und ist damit
       für mehrere Sticks nicht reproduzierbar (`specs/client-architektur.md` Abschnitte 4a
       und 6)
-- [ ] Architekturentscheidungen (Stack, Decoder-Ansatz, Datenmodell, API) — **offen, bewusst noch nicht begonnen**
-- [ ] Implementierung — noch nicht begonnen
+- [x] **`asamon-rx` umgesetzt (26.08.2026), Meilensteine M0 bis M4.** Empfangsprozess in C++
+      gegen die welle.io-Bibliothek, mit dem FIG-0/15-Patch. NDJSON-Records (`init`, `tlm`,
+      `ens`, `asa`, `aud`), Ausgabethread mit Vorrangregel beim Verwerfen, Recorder über FIFO,
+      Zeilenkommandos auf stdin, systemd-Unit mit Watchdog. Sechs Testprogramme, keines braucht
+      einen SDR-Stick. Was dabei anders kam als geplant, steht in `asamon-rx/TODO.md`
+      Abschnitt 16 — unter anderem: die sieben Testszenarien aus TS 104 090 sind
+      *Empfänger*-Konformitätstests und als Bitmuster nicht verwertbar; brauchbar ist dort
+      Tabelle A.19 mit den Byte-Längen echter Location-Code-Sätze
+- [ ] **Feldtest mit RTL-SDR-Stick** — der eigentliche Zweck: Sendet 5C schon Heartbeats? Und
+      stimmt die WarnBridge-Behauptung, dort komme alle 5 Minuten ein Test-Alert?
+- [ ] `asamon-node` (Go): Deutung, Alert-Sets, Location-Geometrie, Spool, Uplink
+- [ ] Server und Frontend — noch nicht begonnen
 
 ## Offene Entscheidungen (noch nicht zu treffen, nur notiert)
 
 - Stack für den Server. Für den Knoten ist die Sprachfrage in der Architekturskizze bereits
   entschieden: C++ für `asa-rx` (weil es gegen die welle.io-Bibliothek linkt), Go für
   `asa-node` (`specs/client-architektur.md` Abschnitt 4a)
-- Decoder-Ansatz: welle.io-Bibliothek einbinden, mit dem FIG-0/15-Patch (Skizze, dort
-  Variante V2c) vs. eti-cmdline als Subprozess vs. eigener Demodulator. Unabhängig von dieser
-  Wahl bleibt eti-cmdline als Werkzeug für Testdaten und Gegenproben gesetzt
-- ~~**Record-Format** zwischen `asa-rx` und `asa-node`~~ — **entschieden**, siehe oben
+- ~~**Record-Format** zwischen `asa-rx` und `asa-node`~~ — **entschieden und umgesetzt**:
+  `asamon-rx/docs/record-format.md`
+- ~~**Decoder-Ansatz**~~ — **entschieden und umgesetzt**: welle.io-Bibliothek mit dem
+  FIG-0/15-Patch (Variante V2c). eti-cmdline bleibt als Werkzeug für Gegenproben
 - Datenmodell und Ingest-Protokoll zwischen Knoten und Server
 - Umgang mit Vertrauen/Verifikation bei Crowd-Daten (mehrere Knoten melden dasselbe Ereignis)
-- Lizenz des Knotens: Er linkt gegen welle.io und ist bei Weitergabe **GPL-3.0-or-later**
-  (`specs/decoder-optionen.md` Abschnitt 7). Zu entscheiden ist nur, ob das von Anfang an so
-  deklariert wird — der Server bleibt als eigenständiges Programm frei lizenzierbar.
-  Seit der Patch-Entscheidung kommt eine Auflage dazu, die nicht zur Wahl steht: Wir geben ein
-  **verändertes** welle.io weiter, dessen Quelltext samt Änderungen verfügbar sein muss
+- ~~Lizenz des Knotens~~ — **entschieden**: `asamon-rx` ist von Anfang an **GPL-3.0-or-later**
+  deklariert, mit `LICENSE` und SPDX-Kopf in jeder Quelldatei. Der Server bleibt als
+  eigenständiges Programm frei lizenzierbar. Offen bleibt nur die Auflage, die nicht zur Wahl
+  steht: Wir geben ein **verändertes** welle.io weiter, dessen Quelltext samt Änderungen
+  verfügbar sein muss — dafür braucht es einen **öffentlichen Fork**, der noch fehlt
 - Ob der FIG-0/15-Patch welle.io als Pull Request angeboten wird. Upstream gibt es dazu
-  **keinen einzigen** PR; angenommen würde er die Fork-Last ganz beseitigen
+  **keinen einzigen** PR; angenommen würde er die Fork-Last ganz beseitigen. Der Patch ist
+  bereits so geschnitten, dass daraus einer werden kann: ein Commit, englische Kommentare,
+  keine Vermischung mit projektspezifischem Code
+  (`asamon-rx/patches/0001-add-fig-0-15-ews-asa-decoding.patch`)
 
 ## Zeitlicher Kontext
 

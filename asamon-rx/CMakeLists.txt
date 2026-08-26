@@ -116,7 +116,8 @@ if(BUILD_TESTING)
     # Funk, ohne Prozessgrenze. Seit rohe FIBs nicht mehr uebertragen werden,
     # ist das die einzige Stelle, an der sich der Parser gegen die Norm pruefen
     # laesst (TODO.md Abschnitt 12).
-    add_executable(test_fig0_15 tests/test_fig0_15.cpp tests/fib_builder.cpp)
+    add_executable(test_fig0_15 tests/test_fig0_15.cpp tests/fib_builder.cpp
+                            tests/location_codes.cpp)
     target_link_libraries(test_fig0_15 PRIVATE asamon-rx-core)
     target_include_directories(test_fig0_15 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
     target_compile_definitions(test_fig0_15 PRIVATE
@@ -133,6 +134,17 @@ if(BUILD_TESTING)
     target_link_libraries(test_recorder PRIVATE asamon-rx-core)
     target_compile_options(test_recorder PRIVATE -Wall -Wextra)
     add_test(NAME recorder COMMAND test_recorder)
+
+    # Prueft das Bitlayout der Location Codes gegen die Byte-Laengen in
+    # ETSI TS 104 090, Tabelle A.19 — eine zweite normative Quelle neben
+    # Annex E.
+    add_executable(test_location_codes tests/test_location_codes.cpp
+                                       tests/location_codes.cpp
+                                       tests/fib_builder.cpp)
+    target_include_directories(test_location_codes PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    target_compile_options(test_location_codes PRIVATE -Wall -Wextra)
+    add_test(NAME location_codes COMMAND test_location_codes)
 
     add_executable(test_commands tests/test_commands.cpp)
     target_link_libraries(test_commands PRIVATE asamon-rx-core)

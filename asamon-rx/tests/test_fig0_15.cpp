@@ -14,6 +14,7 @@
 #include "record.h"
 
 #include "fib_builder.h"
+#include "location_codes.h"
 
 #include "fib-processor.h"
 #include "radio-controller.h"
@@ -220,6 +221,50 @@ std::vector<Case> allCases()
             fig.locationBytes.push_back(static_cast<uint8_t>(0x40 + i));
         }
         cases.push_back({"location_codes_max", {fig}});
+    }
+    {   // Der Location-Code-Satz LC3 aus ETSI TS 104 090, Tabelle A.19, erste
+        // Instanz: fuenf Codes, 25 Byte — das normative Maximum — mit NFF = 1,
+        // also folgt genau eine weitere Instanz. Ein echter Satz aus den
+        // offiziellen Teststroemen, kein ausgedachter.
+        Fig0_15 fig;
+        fig.phase = 1;
+        fig.subChId = 7;
+        fig.hasStatus = true;
+        fig.stage = 0;
+        fig.iid = 1;
+        fig.locationBytes = encodeLocationCodes({{1, 0, "91BB82", {}},
+                                                 {1, 10, "91BB82", {}},
+                                                 {1, 2, "91BB82", {}},
+                                                 {1, 41, "91BB82", {}},
+                                                 {1, 19, "91BB82", {}}});
+        cases.push_back({"lc3_first_instance", {fig}});
+    }
+    {   // Und die zweite Instanz desselben Satzes: drei Codes, 15 Byte,
+        // NFF = 0 — die letzte des Alert-Sets.
+        Fig0_15 fig;
+        fig.phase = 1;
+        fig.subChId = 7;
+        fig.hasStatus = true;
+        fig.last = true;
+        fig.stage = 0;
+        fig.iid = 1;
+        fig.locationBytes = encodeLocationCodes({{0, 20, "91BB82", {}},
+                                                 {0, 11, "91BB82", {}},
+                                                 {0, 12, "91BB82", {}}});
+        cases.push_back({"lc3_second_instance", {fig}});
+    }
+    {   // LC5: neun L4-Codes, teils sub-codiert, 19 Byte.
+        Fig0_15 fig;
+        fig.phase = 1;
+        fig.subChId = 21;
+        fig.hasStatus = true;
+        fig.stage = 4;
+        fig.iid = 2;
+        fig.locationBytes = encodeLocationCodes({{0, 1, "928", {0xD, 0xC, 9, 8}},
+                                                 {0, 1, "92C", {1, 0}},
+                                                 {0, 1, "91F3", {}},
+                                                 {0, 1, "91B", {0xF, 0xB}}});
+        cases.push_back({"lc5_mixed_subcoding", {fig}});
     }
     {   // Zwei Instanzen in einem FIB — der FIB-Walk muss beide finden.
         Fig0_15 first;

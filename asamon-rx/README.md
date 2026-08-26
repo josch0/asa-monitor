@@ -186,11 +186,12 @@ an der Minutengrenze beginnen.
 ctest --test-dir build --output-on-failure
 ```
 
-Fünf Testprogramme, keines braucht einen SDR-Stick:
+Sechs Testprogramme, keines braucht einen SDR-Stick:
 
 | Test | Was er prüft |
 |---|---|
 | `fig0_15` | **der wichtigste.** Handgebaute FIBs direkt in `FIBProcessor::processFIB()`, gegen die Fälle aus Annex E |
+| `location_codes` | das Bitlayout der Location Codes gegen die Byte-Längen in TS 104 090, Tabelle A.19 — eine zweite normative Quelle |
 | `record` | Serialisierung: Struktur → JSON-Zeile |
 | `writer` | Reihenfolge, Nummerierung, Vorrangregel beim Verwerfen |
 | `recorder` | der FIFO-Pfad, ohne Empfänger |
@@ -202,6 +203,25 @@ Parser, wird das dort als Diff sichtbar — nicht nur als rote Zusicherung. Neu 
 ```bash
 ./build/test_fig0_15 --write-fixtures tests/fixtures/fig0_15.fixtures
 ```
+
+### Was am Gerät geprüft werden muss
+
+Die Tests kommen ohne Stick aus — der Empfang nicht. Was bisher **nur unter Replay** geprüft
+ist und am echten Multiplex nachgezogen gehört: Ensemble-Label und Serviceliste, `REC` auf
+einen echten Subchannel (Gegenprobe mit `dablin`), und die Frage, um die es geht — kommen auf
+5C Heartbeats?
+
+Geprüft ist dagegen bereits, unter Debian mit `--device rawfile`:
+
+| | |
+|---|---|
+| `SIGTERM` | beendet in **41 ms**, keine verwaiste FIFO |
+| Gegenstelle bricht weg | EPIPE erkannt, geordneter Abbau statt hartem Tod |
+| fehlende IQ-Datei | Rückgabewert 1 und klare Meldung, statt wortlos nach einer Sekunde aufzuhören |
+| **12 min Dauerlauf** | RSS **konstant 25 728 kB**, 6 Threads, 722 Records, **0** Verwürfe, **0** `seq`-Lücken, jede Zeile gültiges JSON |
+
+Der Dauerlauf zeigt kein Speicherwachstum, ersetzt aber die **24 Stunden auf dem Pi** aus M4
+nicht — das steht noch aus.
 
 Fuzzing über denselben Einstiegspunkt:
 
