@@ -1,0 +1,14 @@
+# RTL-SDR ohne root nutzbar machen.
+#
+# Nach /etc/udev/rules.d/99-asamon-rtlsdr.rules kopieren, dann:
+#   sudo udevadm control --reload && sudo udevadm trigger
+#
+# Ausserdem noetig, sonst greift sich der Kernel den Stick als DVB-T-Empfaenger:
+#   echo 'blacklist dvb_usb_rtl28xxu' | sudo tee /etc/modprobe.d/blacklist-rtl.conf
+#   sudo modprobe -r dvb_usb_rtl28xxu
+
+# Realtek RTL2832U, die gaengigen Varianten
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2832", MODE:="0660", GROUP="plugdev", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", MODE:="0660", GROUP="plugdev", TAG+="uaccess"
+# RTL-SDR Blog V3/V4
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2831", MODE:="0660", GROUP="plugdev", TAG+="uaccess"

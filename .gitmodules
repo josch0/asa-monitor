@@ -1,0 +1,3 @@
+[submodule "asamon-rx/external/welle.io"]
+	path = asamon-rx/external/welle.io
+	url = https://github.com/AlbrechtL/welle.io.git

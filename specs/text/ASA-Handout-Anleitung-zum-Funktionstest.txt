@@ -1,0 +1,38 @@
+ASA Automatic Safety Alert
+
+Anleitung zum Funktionstest
+
+DAB+ Radio kann Leben retten. Das neue Sicherheitssystem
+Automatic Safety Alert (ASA) ist in der Lage, zertifizierte DAB+
+Radios automatisch einzuschalten und Informationen zu
+übermitteln. Wer bereits ein ASA-zertifiziertes Gerät besitzt
+oder eines im Fachhandel testet, kann den Mechanismus von
+ASA mit dem jetzt verfügbaren Funktionstest überprüfen.
+
+    ASA-Test bundesweit verfügbar
+
+1.  Nehmen Sie Ihr DAB+ Radio nach Anleitung in Betrieb und aktivieren die ASA-Funktion.
+    Wählen Sie im Einstellungs-Menü ,,ASA-Alarme" und ,,Standortcode". Alternativ fragt das
+    Radio bei Inbetriebnahme gleich nach einem Standortcode
+    Geben Sie den Testcode 1253-3513-3668 ein. Nach Eingabe der letzten korrekten Ziffer
+    bestätigt das Radio Ihre Eingabe mit "ASA-Standort OK" bzw. "Standort gespeichert".
+    Rufen Sie im ASA-Menü "überwachen" auf und wählen den Kanal "DR Deutschland (5C)".
+
+2.  Schalten Sie ein Radioprogramm im Kanal 5C ein, zum Beispiel ,,Dlf Kultur",
+    "Klassik Radio" oder "Absolut Relax".
+    Schalten Sie das Radio in den Standby-Betrieb (kein Ton, aber z.B. Uhrzeit
+    weiterhin sichtbar).
+    Ihr Radio empfängt nun die im Rahmen des Funktionstest ausgestrahlten Signale.
+
+3.  Der Testalarm wird alle 5 Minuten für 30 Sekunden gesendet.
+    Das ASA-Radio schaltet sich dann automatisch aus dem Standby-Betrieb ein und
+    spielt das Programm ,,Dokumente und Debatten DokDeb" laut ab.
+    Die meisten Radios zeigen einen zusätzlichen Hinweis wie ,,ASA" im Display.
+    Nach 30 Sekunden schaltet sich das Gerät automatisch in den Standby-Betrieb.
+
+4.  Es erfolgt absichtlich keine Warndurchsage ­ zu beweisen ist allein die Umschaltung und
+    das Aufwachen aus dem Standby-Betrieb.
+    Nach fünf Minuten wird der Test automatisch wiederholt.
+    Wer den Test beenden möchte, gibt anschließend seinen tatsächlichen Standortcode ein
+    und speichert ihn ab. Diesen erhalten Sie adressgenau auf der Seite www.asa.radio.
+

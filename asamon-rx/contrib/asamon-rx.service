@@ -1,0 +1,59 @@
+# systemd-Unit fuer den Einzelbetrieb: ein Stick, ein Kanal, ein Prozess.
+#
+# Nur fuer Test und Einzelbetrieb gedacht. Im regulaeren Knotenbetrieb startet
+# asamon-node die asamon-rx-Prozesse selbst als Kindprozesse — dann braucht ein
+# Knoten eine Unit statt N, und das ist auf fremden Pis das wichtigere
+# Kriterium.
+#
+# Einrichten:
+#   sudo cp asamon-rx.service /etc/systemd/system/asamon-rx@.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now asamon-rx@5C
+#
+# Der Kanal steht in der Instanz: asamon-rx@5C, asamon-rx@11D, …
+
+[Unit]
+Description=asamon-rx auf DAB-Kanal %i
+Documentation=file:/opt/asamon-rx/docs/record-format.md
+After=network-online.target time-sync.target
+Wants=time-sync.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+
+# Records gehen nach stdout, Logs nach stderr. Hier landet der Strom in einer
+# Datei; im Knotenbetrieb liest ihn asamon-node aus der Pipe.
+ExecStart=/opt/asamon-rx/bin/asamon-rx --channel %i
+StandardOutput=append:/var/lib/asamon/rx-%i.ndjson
+StandardError=journal
+
+# Watchdog: asamon-rx tickt aus der Sekundenschleife heraus. Bleibt die
+# Schleife stehen — etwa weil ein Rueckruf haengt — greift systemd ein.
+WatchdogSec=30s
+Restart=always
+RestartSec=5s
+
+# Zugriff auf den Stick ohne root (siehe 99-asamon-rtlsdr.rules).
+User=asamon
+Group=plugdev
+SupplementaryGroups=plugdev
+
+# Der Prozess braucht nichts vom System ausser dem USB-Geraet und seinem
+# Ausgabeverzeichnis.
+NoNewPrivileges=true
+PrivateTmp=false
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/asamon /tmp
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryDenyWriteExecute=true
+
+# PrivateTmp bleibt aus, weil die MSC-FIFOs unter /tmp liegen und im
+# Knotenbetrieb von aussen sichtbar sein sollen. Wer das anders will, setzt
+# --fifo-dir auf ein Verzeichnis unter ReadWritePaths.
+
+[Install]
+WantedBy=multi-user.target

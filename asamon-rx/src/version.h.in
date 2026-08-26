@@ -1,0 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+#pragma once
+
+#define ASAMON_RX_VERSION      "@PROJECT_VERSION@"
+#define ASAMON_RX_COMMIT       "@RX_COMMIT@"
+#define ASAMON_RX_WELLE_COMMIT "@WELLE_COMMIT@"

@@ -1,0 +1,128 @@
+PRESSEMITTEILUNG
+
+                  Berlin, 15. August 2024
+
+DAB+ Weltpremiere: System für Warnmeldungen über Digitalradio /
+,,Automatic Safety Alert (ASA)" / neue ETSI-Norm /
+Zertifizierungsprogramm für Hersteller und Markenlogo
+
+Der Weltverband WorldDAB und der Digitalradio Deutschland e.V. präsentieren nach zwei
+Jahren intensiver Zusammenarbeit eine beispielgebende Innovation für Digitalradio DAB+:
+Das Warnsystem ,,Automatic Safety Alert (ASA)", das die Bevölkerung in Not- und
+Krisenfällen schützt sowie verlässlich und ohne Internetverbindung Sicherheitsmeldungen im
+Radio digital übermittelt.
+
+Hörerinnen und Hörer profitieren von einem System, das sie auch dann informiert, wenn
+Mobilfunk- oder Internetverbindungen unterbrochen sind. ASA arbeitet im Hintergrund
+automatisch, kann für den Wohnort regional angepasst werden und bietet eine hohe
+Verfügbarkeit dank des Sendenetzes von DAB+ Radio. Der neue Standard wird in wenigen
+Wochen weltweit eingeführt; erste Tests sind auf der IFA Berlin sowie am bundesweiten
+Warntag im September angekündigt. Ab Mitte 2025 werden neue Gerätegenerationen von
+DAB+ Radios den ASA-Standard unterstützen.
+
+Öffentlich-rechtliche und private Radiosender in Deutschland, die Geräteindustrie und
+Sicherheitsbehörden wie das BBK (Bundesamt für Bevölkerungsschutz und
+Katastrophenhilfe) haben sich zum Ziel gesetzt, mit Digitalradio DAB+ einen neuen wichtigen
+Baustein im Warn-Mix für Krisenfälle bereitzustellen. Mit leistungsstarken Sendemasten, die
+große Entfernungen abdecken, bietet DAB+ die Möglichkeit, regionalisierte Warnmeldungen
+zu versenden. Diese Funktion stellt sicher, dass Menschen in den betroffenen Gebieten
+präzise und rechtzeitig gewarnt werden.
+
+Die Flut im Ahrtal vor drei Jahren, die viele Todesopfer forderte, war der ausschlaggebende
+Grund für die in Deutschland begonnene Neuentwicklung. Mit Blick auf die angespannte
+Weltlage sowie den Klimawandel kommt ASA eine besondere internationale Bedeutung zu,
+denn Digitalradio DAB+ ist in rund 70 Prozent Europas verfügbar. Mit dieser Innovation
+haben Radiosender weltweit künftig die Möglichkeit, das Leben ihrer Hörerinnen und Hörer
+sicherer zu machen.
+
+Neben den üblichen Durchsagen werden Text- und Bildinformationen bereitgestellt. So wird
+die Verständlichkeit der Warnungen für die Betroffenen erheblich verbessert. Die
+internationale Standardisierung und die ressourcenschonende Programmierung sind weitere
+Pluspunkte, die das System weltweit zukunftsfähig machen.
+
+                  1
+Der Funktionsumfang von ASA im Detail
+· Alert: Gesprochene Durchsagen im Radio enthalten alle relevanten Informationen zur
+
+   Warnlage
+· Aufwachfunktion: Radios können durch DAB+ Radio geweckt werden. Diese wichtige
+
+   Funktion ist z.B. für künftige Generationen von Radioweckern wichtig (siehe Ahrtal-
+   Katastrophe oder eine nächtliche Sturmflut)
+· Location Codes: Im DAB+ Signal werden Warngebiete adressgenau übertragen,
+   wodurch sichergestellt wird, dass z. B. beim automatischen Aufwecken der Radios nur
+   Personen in betroffenen Gebieten benachrichtigt werden. Die Radios erkennen, ob eine
+   Warnung für sie relevant ist
+· Umschaltfunktion: Empfänger analysieren Verweise auf Warndurchsagen bei anderen
+   Radiosendern, was die Flexibilität und Reichweite der Warnungen erhöht
+· Synchronisation: Aufwachzyklen sind auf das Radiosignal synchronisiert. Dies
+   gewährleistet, dass alle Geräte zur gleichen Zeit aktiv sind und die Warnungen zeitgleich
+   empfangen. Damit sparen tragbare Empfänger Batteriestrom
+
+Hardware: Neue DAB+ Gerätegeneration
+Derzeit arbeiten WorldDAB, der Digitalradio Deutschland e.V. und der Chiphersteller
+FrontierSmart intensiv z. B. mit den Herstellern TechniSat und JVCKenwood an der
+Marktreife für ASA-kompatible Geräte. Mit der Veröffentlichung der Norm sind weltweit alle
+DAB+ Radiohersteller aufgerufen, ASA in ihr Portfolio zu integrieren, damit die Sicherheit der
+Bevölkerung durch eine breite Auswahl an Marken gewährleistet wird. FrontierSmart hat
+angekündigt, dass die finale Version der ASA-kompatiblen Chipsets voraussichtlich im
+November bereitstehen wird, sodass Markenhersteller im nächsten Sommer neue Geräte
+anbieten können. Weitere Chiphersteller wollen diesem Trend folgen.
+
+Zertifizierung und ASA-Markenlogo
+DAB+ soll Leben retten, deswegen ist eine Zertifizierung der neuen Geräte verpflichtend
+vorgesehen. Der Digitalradio Deutschland e.V. hat gemeinsam mit WorldDAB ein
+Zertifizierungsschema für Hardwarehersteller definiert. Es baut auf dem bekannten ,,Digital
+Radio Tick Mark" auf und testet zusätzlich typische ASA Warnszenarien, wie das Aufwachen
+aus dem Standby und die Regionalisierung. Ein international anerkanntes Prüflabor stellt
+sicher, dass die Norm eingehalten wird. Das ASA-Logo, das auf den Verpackungen und
+Radiogeräten zertifizierter Modellreihen zu finden sein wird, verdeutlicht den Kundenvorteil
+und schafft Vertrauen in die Technologie.
+
+Das ASA-Markenlogo ist ein bei der EUIPO eingetragenes Warenzeichen für die EU, UK und
+die Schweiz.
+
+IFA und Warntag
+Der Chiphersteller FrontierSmart wird auf der kommenden IFA in Berlin (6.-10. September)
+einen ersten Plattformtest von ASA für B2B-Kunden und die Geräteindustrie vorstellen. Am
+Messestand wird gezeigt, wie die neuen Funktionen in zukünftige Gerätegenerationen
+integriert werden können.
+
+                                                                                                                          2
+Anlässlich des bundesweiten Warntags am 12. September haben öffentlich-rechtliche
+Radiosender gemeinsam mit dem Fraunhofer IIS angekündigt, erste auf der ASA-Norm
+basierende Tests mit ausgewählten Geräten durchzuführen.
+Details zur neuen DAB+ ASA-Norm
+Die neue Spezifikation zu ASA ,,Automatic Safety Alert" via DAB+ ist voraussichtlich ab
+September weltweit über ETSI normiert. ETSI ist das European Telecommunications
+Standards Institute, das internationale Normen für Telekommunikation und digitale
+Technologien entwickelt. Es sorgt dafür, dass Geräte und Systeme weltweit kompatibel und
+sicher sind.
+· ASA ist normiert als ETSI TS 104 090 "Digital Audio Broadcasting (DAB); Emergency
+
+    Warning System (EWS); Minimum requirements and test specifications for receivers".
+· Die entsprechende Systemdefinition ist ETSI TS 104 089 "Digital Audio Broadcasting
+
+    (DAB); Emergency Warning System (EWS); Definition and rules of behaviour".
+
+###
+
+Über DAB+: Digitalradio DAB+ ist der überall frei empfangbare Radiostandard von heute, der die analoge
+Frequenzknappheit beendet. DAB+ folgt auf UKW und verbindet den klassischen Radioempfang ohne
+Internetkosten mit der Vielfalt digitaler Programmangebote. Alle öffentlich-rechtlichen und immer mehr
+Privatradios strahlen Programme über DAB+ aus, wobei die Zahl der Angebote, die nur über DAB+ verfügbar
+sind, ständig wächst. In Neuwagen ist DAB+ gesetzlich vorgeschrieben. Alle DAB+ Radios haben UKW inklusive.
+Über uns: Das Digitalradio Büro Deutschland mit Sitz in Berlin ist eine Gemeinschaftsinitiative des Vereins
+Digitalradio Deutschland, also von ARD, Deutschlandradio, privaten Radioveranstaltern, Geräteherstellern und
+Netzbetreibern, die sich zum Ziel gesetzt haben, Digitalradio DAB+ in Deutschland zu etablieren. Das Digitalradio
+Büro informiert die Öffentlichkeit über die Möglichkeiten und die Einführung von DAB+ in Deutschland. Der
+Zugang zum Digitalradio Deutschland e.V. steht allen Marktteilnehmern offen, die sich für DAB+ engagieren.
+Weitere Informationen zu DAB+ unter dabplus.de.
+Kontakt für Medienvertreter:
+Carsten Zorger
+Digitalradio Büro Deutschland
+presse@dabplus.de
+www.dabplus.de/news
+
+                                                                                                                          3
+

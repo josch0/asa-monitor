@@ -1,0 +1,2305 @@
+     ETSI TS 104 089 V1.1.1 (2024-09)
+
+TECHNICAL SPECIFICATION
+
+                     Digital Audio Broadcasting (DAB);
+                    Emergency Warning System (EWS);
+
+                      Definition and rules of behaviour
+2     ETSI TS 104 089 V1.1.1 (2024-09)
+
+                                                                   Reference
+                                                                    DTS/JTC-DAB-110
+
+                                                                   Keywords
+                                                     audio, broadcasting, coding, DAB, digital,
+
+                                                                     emergency, radio
+
+                                                                      ETSI
+
+                                                                 650 Route des Lucioles
+                                                    F-06921 Sophia Antipolis Cedex - FRANCE
+
+                                                 Tel.: +33 4 92 94 42 00 Fax: +33 4 93 65 47 16
+
+                                                                     Siret N° 348 623 562 00017 - APE 7112B
+                                                                   Association à but non lucratif enregistrée à la
+                                                                Sous-Préfecture de Grasse (06) N° w061004871
+
+                                                             Important notice
+
+                                              The present document can be downloaded from the
+                                                  ETSI Search & Browse Standards application.
+
+ The present document may be made available in electronic versions and/or in print. The content of any electronic and/or
+print versions of the present document shall not be modified without the prior written authorization of ETSI. In case of any
+
+    existing or perceived difference in contents between such versions and/or in print, the prevailing version of an ETSI
+                              deliverable is the one made publicly available in PDF format on ETSI deliver.
+
+                  Users should be aware that the present document may be revised or have its status changed,
+                                              this information is available in the Milestones listing.
+
+                                If you find errors in the present document, please send your comments to
+                                          the relevant service listed under Committee Support Staff.
+
+                       If you find a security vulnerability in the present document, please report it through our
+                                              Coordinated Vulnerability Disclosure (CVD) program.
+
+                                             Notice of disclaimer & limitation of liability
+
+The information provided in the present deliverable is directed solely to professionals who have the appropriate degree of
+            experience to understand and interpret its content in accordance with generally accepted engineering or
+                                            other professional standard and applicable regulations.
+                     No recommendation as to products and services or vendors is made or should be implied.
+
+   No representation or warranty is made that this deliverable is technically accurate or sufficient or conforms to any law
+and/or governmental rule and/or regulation and further, no representation or warranty is made of merchantability or fitness
+
+                            for any particular purpose or against infringement of intellectual property rights.
+           In no event shall ETSI be held liable for loss of profits or any other incidental or consequential damages.
+
+  Any software contained in this deliverable is provided "AS IS" with no warranties, express or implied, including but not
+ limited to, the warranties of merchantability, fitness for a particular purpose and non-infringement of intellectual property
+ rights and ETSI shall not be held liable in any event for any damages whatsoever (including, without limitation, damages
+for loss of profits, business interruption, loss of information, or any other pecuniary loss) arising out of or related to the use
+
+                                                           of or inability to use the software.
+
+                                                         Copyright Notification
+
+No part may be reproduced or utilized in any form or by any means, electronic or mechanical, including photocopying and
+                                        microfilm except as authorized by written permission of ETSI.
+
+                  The content of the PDF version shall not be modified without the written authorization of ETSI.
+                             The copyright and the foregoing restriction extend to reproduction in all media.
+
+                                                                        © ETSI 2024.
+                                                       © European Broadcasting Union 2024.
+
+                                                                     All rights reserved.
+
+ETSI
+          3     ETSI TS 104 089 V1.1.1 (2024-09)
+
+Contents
+
+Intellectual Property Rights ................................................................................................................................5
+
+Foreword ............................................................................................................................................................. 5
+
+Modal verbs terminology....................................................................................................................................6
+
+1 Scope ........................................................................................................................................................7
+
+2 References ................................................................................................................................................7
+
+2.1      Normative references .........................................................................................................................................7
+
+2.2      Informative references........................................................................................................................................7
+
+3 Definition of terms, symbols and abbreviations.......................................................................................7
+
+3.1      Terms .................................................................................................................................................................. 7
+
+3.2      Symbols ..............................................................................................................................................................8
+
+3.3      Abbreviations .....................................................................................................................................................8
+
+4 Overview ..................................................................................................................................................9
+
+4.1      Introduction ........................................................................................................................................................9
+
+4.2      System architecture ............................................................................................................................................9
+
+4.3      Receiver behaviour...........................................................................................................................................10
+
+5 EWS ensembles......................................................................................................................................10
+
+5.1      Baseline requirements ......................................................................................................................................10
+
+5.2      Information sources..........................................................................................................................................10
+
+5.3      Receiver considerations....................................................................................................................................11
+
+6 Alert signalling.......................................................................................................................................11
+
+6.1      Introduction ......................................................................................................................................................11
+
+6.2      Source data .......................................................................................................................................................12
+
+6.2.1    Introduction................................................................................................................................................. 12
+
+6.2.2    Incident identification .................................................................................................................................12
+
+6.2.3    Incident stage ..............................................................................................................................................12
+
+6.2.4    Alert area ....................................................................................................................................................14
+
+6.3      Forms of FIG 0/15............................................................................................................................................14
+
+6.3.1    Introduction................................................................................................................................................. 14
+
+6.3.2    Heartbeat form ............................................................................................................................................15
+
+6.3.3    Trigger form................................................................................................................................................15
+
+6.3.4    Pre-trigger form ..........................................................................................................................................15
+
+6.3.5    Sustain and End form..................................................................................................................................15
+
+6.4      Describing an alert message carried in the ensemble .......................................................................................15
+
+6.4.1    Introduction................................................................................................................................................. 15
+
+6.4.2    Id field.........................................................................................................................................................15
+
+6.4.3    Status field ..................................................................................................................................................16
+
+6.4.4    Location codes ............................................................................................................................................16
+
+6.5      Describing an alert message in other ensembles ..............................................................................................16
+
+6.5.1    Introduction................................................................................................................................................. 16
+
+6.5.2    Id field.........................................................................................................................................................16
+
+6.5.3    Status field ..................................................................................................................................................17
+
+6.5.4    Location codes ............................................................................................................................................17
+
+6.6      Insertion rules for FIG 0/15..............................................................................................................................17
+
+6.6.1    Introduction................................................................................................................................................. 17
+
+6.6.2    Alert group is empty ...................................................................................................................................18
+
+6.6.3    Alert group is not empty .............................................................................................................................18
+
+6.7      Signal chain tests ..............................................................................................................................................18
+
+7 Receiver behaviour and response ...........................................................................................................19
+
+7.1      Receiver types ..................................................................................................................................................19
+
+7.2      Fixed and portable receivers.............................................................................................................................19
+
+7.2.1    Single DAB tuner receivers ........................................................................................................................19
+
+7.2.2    Power modes...............................................................................................................................................19
+
+7.2.2.1  Introduction ........................................................................................................................................... 19
+
+          ETSI
+                      4     ETSI TS 104 089 V1.1.1 (2024-09)
+
+7.2.2.2          Sleep mode............................................................................................................................................19
+7.2.2.3          Monitor mode........................................................................................................................................20
+7.2.2.4          Audio mode...........................................................................................................................................20
+7.2.3        Initialization procedure ...............................................................................................................................21
+7.3      Mobile receivers ...............................................................................................................................................21
+7.3.1        Tuner capability ..........................................................................................................................................21
+7.3.2        Location awareness.....................................................................................................................................21
+7.3.3        Audio mode ................................................................................................................................................21
+7.4      User settings .....................................................................................................................................................22
+7.4.1        Alert message playback control ..................................................................................................................22
+7.4.2        Dismiss user controls ..................................................................................................................................22
+7.4.3        Monitor mode user controls ........................................................................................................................22
+7.5      Alert matching..................................................................................................................................................22
+7.5.1        Introduction................................................................................................................................................. 22
+7.5.2        Receivability matching ...............................................................................................................................22
+7.5.3        Stage matching............................................................................................................................................23
+7.5.4        Location matching ......................................................................................................................................23
+7.6      Alert mode........................................................................................................................................................24
+7.6.1        Preparation .................................................................................................................................................. 24
+7.6.2        Tuned ensemble alerts ................................................................................................................................24
+7.6.3        Other ensemble alerts..................................................................................................................................24
+7.6.4        Terminating an alert....................................................................................................................................24
+
+Annex A (normative):  DAB location code presentation format.......................................................26
+
+A.1 Introduction ............................................................................................................................................26
+
+A.2 Conversion process ................................................................................................................................26
+
+A.3 Presentation format.................................................................................................................................26
+
+A.4 URI definition ........................................................................................................................................27
+
+A.5 Possible webpage or app implementation example................................................................................27
+
+Annex B (informative): Example of EWS signalling...........................................................................28
+
+Annex C (informative): Example of coding an alert area...................................................................31
+
+Annex D (informative): Alert area translation method ......................................................................34
+
+D.1 Introduction ............................................................................................................................................34
+
+D.2 Translation procedure.............................................................................................................................34
+
+D.2.1 Generating the source data polygon(s) .............................................................................................................34
+
+D.2.2 Generating the location code set.......................................................................................................................35
+
+D.2.2.1  Introduction................................................................................................................................................. 35
+
+D.2.2.2  Initial parent level determination ................................................................................................................35
+
+D.2.2.3  Generating the parent set of location codes ................................................................................................35
+
+D.2.2.4  Generating the child set of location codes ..................................................................................................35
+
+D.2.2.5  Removing the "miniscule" location codes ..................................................................................................36
+
+D.2.3 Output formation ..............................................................................................................................................36
+
+Annex E (normative):  Definition of FIG 0/15 EWS information.....................................................37
+
+Annex F (normative):  DAB location coding ......................................................................................40
+
+F.1 Introduction ............................................................................................................................................40
+
+F.2 Coordinates.............................................................................................................................................40
+
+F.3 Division into zones.................................................................................................................................40
+
+F.4 Division of the banded zones .................................................................................................................42
+
+F.5 Division of the polar zones.....................................................................................................................44
+
+History ..............................................................................................................................................................46
+
+                      ETSI
+5     ETSI TS 104 089 V1.1.1 (2024-09)
+
+Intellectual Property Rights
+
+Essential patents
+
+IPRs essential or potentially essential to normative deliverables may have been declared to ETSI. The declarations
+pertaining to these essential IPRs, if any, are publicly available for ETSI members and non-members, and can be
+found in ETSI SR 000 314: "Intellectual Property Rights (IPRs); Essential, or potentially Essential, IPRs notified to
+ETSI in respect of ETSI standards", which is available from the ETSI Secretariat. Latest updates are available on the
+ETSI Web server (https://ipr.etsi.org/).
+
+Pursuant to the ETSI Directives including the ETSI IPR Policy, no investigation regarding the essentiality of IPRs,
+including IPR searches, has been carried out by ETSI. No guarantee can be given as to the existence of other IPRs not
+referenced in ETSI SR 000 314 (or the updates on the ETSI Web server) which are, or may be, or may become,
+essential to the present document.
+
+Trademarks
+
+The present document may include trademarks and/or tradenames which are asserted and/or registered by their owners.
+ETSI claims no ownership of these except for any which are indicated as being the property of ETSI, and conveys no
+right to use or reproduce any trademark and/or tradename. Mention of those trademarks in the present document does
+not constitute an endorsement by ETSI of products, services or organizations associated with those trademarks.
+
+DECTTM, PLUGTESTSTM, UMTSTM and the ETSI logo are trademarks of ETSI registered for the benefit of its
+Members. 3GPPTM and LTETM are trademarks of ETSI registered for the benefit of its Members and of the 3GPP
+Organizational Partners. oneM2MTM logo is a trademark of ETSI registered for the benefit of its Members and of the
+oneM2M Partners. GSM® and the GSM logo are trademarks registered and owned by the GSM Association.
+
+Foreword
+
+This Technical Specification (TS) has been produced by Joint Technical Committee (JTC) Broadcast of the European
+Broadcasting Union (EBU), Comité Européen de Normalisation ELECtrotechnique (CENELEC) and the European
+Telecommunications Standards Institute (ETSI).
+
+    NOTE 1: The EBU/ETSI JTC Broadcast was established in 1990 to co-ordinate the drafting of standards in the
+                 specific field of broadcasting and related fields. Since 1995 the JTC Broadcast became a tripartite body
+                 by including in the Memorandum of Understanding also CENELEC, which is responsible for the
+                 standardization of radio and television receivers. The EBU is a professional association of broadcasting
+                 organizations whose work includes the co-ordination of its members' activities in the technical, legal,
+                 programme-making and programme-exchange domains. The EBU has active members in about
+                 60 countries in the European broadcasting area; its headquarters is in Geneva.
+
+                   European Broadcasting Union
+                   CH-1218 GRAND SACONNEX (Geneva)
+                   Switzerland
+                   Tel: +41 22 717 21 11
+                   Fax: +41 22 717 24 81
+
+The Eureka Project 147 was established in 1987, with funding from the European Commission, to develop a system for
+the broadcasting of audio and data to fixed, portable or mobile receivers. Their work resulted in the publication of
+European Standard, ETSI EN 300 401 [1], for DAB (see note) which now has worldwide acceptance.
+
+    NOTE 2: DAB is a registered trademark owned by one of the Eureka Project 147 partners.
+
+The DAB family of standards is supported by World DAB, an organization with members drawn from broadcasting
+organizations and telecommunication providers together with companies from the professional and consumer
+electronics industry.
+
+ETSI
+6     ETSI TS 104 089 V1.1.1 (2024-09)
+
+Modal verbs terminology
+
+In the present document "shall", "shall not", "should", "should not", "may", "need not", "will", "will not", "can" and
+"cannot" are to be interpreted as described in clause 3.2 of the ETSI Drafting Rules (Verbal forms for the expression of
+provisions).
+
+"must" and "must not" are NOT allowed in ETSI deliverables except when used in direct citation.
+
+ETSI
+                                               7                     ETSI TS 104 089 V1.1.1 (2024-09)
+
+1 Scope
+
+The present document defines an Emergency Warning System (EWS) for DAB which features an additional FIG for
+signalling the identity, status and location of an emergency with the ability for suitably equipped receivers to wake from
+a low-power sleep mode to provide an audio alert message targeted to the specific geographical area of concern.
+
+The rules of implementation ensure that a reliable and consistent experience will be delivered for digital radio listeners;
+they provide implementation details for how the Fast Information Channel (FIC) signalling is used and how receivers
+will interpret and behave in response to receiving the FIC signalling.
+
+The present document is complemented by ETSI TS 104 090 [i.1], which sets out the testing required to be performed
+on receivers to demonstrate conformance to correct operation.
+
+2 References
+
+2.1 Normative references
+
+References are either specific (identified by date of publication and/or edition number or version number) or
+non-specific. For specific references, only the cited version applies. For non-specific references, the latest version of the
+referenced document (including any amendments) applies.
+
+Referenced documents which are not found to be publicly available in the expected location might be found at
+https://docbox.etsi.org/Reference/.
+
+    NOTE: While any hyperlinks included in this clause were valid at the time of publication, ETSI cannot guarantee
+                 their long term validity.
+
+The following referenced documents are necessary for the application of the present document.
+
+[1]    ETSI EN 300 401 (V2.1.1): "Radio Broadcasting Systems; Digital Audio Broadcasting (DAB) to
+
+       mobile, portable and fixed receivers".
+
+2.2 Informative references
+
+References are either specific (identified by date of publication and/or edition number or version number) or
+non-specific. For specific references, only the cited version applies. For non-specific references, the latest version of the
+referenced document (including any amendments) applies.
+
+NOTE: While any hyperlinks included in this clause were valid at the time of publication, ETSI cannot guarantee
+            their long term validity.
+
+The following referenced documents are not necessary for the application of the present document but they assist the
+user with regard to a particular subject area.
+
+[i.1]  ETSI TS 104 090: "Digital Audio Broadcasting (DAB); Emergency Warning System (EWS);
+
+       Minimum requirements and test specifications for receivers".
+
+[i.2]  OASIS Standard: "Common Alerting Protocol, V1.2, 01 July 2010".
+
+3 Definition of terms, symbols and abbreviations
+
+3.1 Terms
+
+For the purposes of the present document, the following terms apply:
+alert: information about a situation or incident with the potential of affecting life and well-being of humans
+
+                            ETSI
+                                          8                                   ETSI TS 104 089 V1.1.1 (2024-09)
+
+alert area: geographic area to which an alert applies
+
+alert audio: short audio element containing information about an emergency situation
+
+alert group: collection of FIG 0/15 instances that comprise the Trigger phase signalling for all simultaneous alerts
+
+alert message: alert audio and optional associated multimedia data service components describing the emergency
+situation
+
+alert set: collection of FIG 0/15 instances that comprise the Trigger or Pre-trigger phase signalling for one alert
+
+Change Event Indication (CEI): set of FIG fields with particular values to indicate a change of database content for
+certain service information features
+
+database entry: part of the service information addressed by a database key
+
+database key: set of FIG fields that sub-divide a database for certain service information features
+
+Emergency Warning System (EWS): infrastructure forming a signal chain to provide emergency warnings to the
+general public
+
+incident: cause and subject of one or several alerts, possibly long-lived and evolving over time
+
+ongoing alert: alert that is no longer providing switching information
+
+power mode: power-on state of a receiver
+
+    NOTE: Power modes are "sleep", "monitor" and "audio".
+
+tuning memory: information stored in a receiver from previous tuning actions providing details of ensembles, tuning
+frequencies and services
+
+service list: feature of a radio receiver where a list of service elements is used for service selection
+
+synchronized alert message: alert message timed to enable sleeping receivers to respond at the beginning of the alert
+message
+
+        NOTE: These alert messages start when the seconds count is 0.
+
+tracked incident: incident that is recognized from the source data, either directly or indirectly, and so can support user
+controls for alert dismiss
+
+user controls: all elements of a user interface of a radio receiver that are used to display service information and
+provide for user control
+
+3.2 Symbols
+
+Void.
+
+3.3 Abbreviations
+
+For the purposes of the present document, the following abbreviations apply:
+
+C/N  Current/Next
+CEI  Change Event Indication
+DAB  Digital Audio Broadcasting
+EId  Ensemble Identifier
+EWS  Emergency Warning System
+FIB  Fast Information Block
+FIC  Fast Information Channel
+FIG  Fast Information Group
+Id   Identifier
+IId  Incident Identifier
+MCI  Multiplex Configuration Information
+
+                   ETSI
+                                  9     ETSI TS 104 089 V1.1.1 (2024-09)
+
+OE   Other Ensemble
+
+P/D  Process/Discard
+
+SId  Service Identifier
+
+SIV  Service Information Version
+
+4 Overview
+
+4.1 Introduction
+
+Emergency warning systems take many forms, originating with the ringing of bells, messages from town criers and
+activation of warning sirens. In the modern age with extensive communication networks seemingly providing endless
+connectivity, it is easy to forget that natural disasters often play havoc with infrastructure that is not specifically
+designed to withstand the onslaught.
+
+Alerting the public to situations that represent a danger to health and well-being has long been a feature of broadcasting
+- the reach and immediacy of the medium, particularly the radio medium which is consumed both in the home and
+workplace, and on the move - along with generally high levels of trust, particularly for public service media, and very
+high reliability, make radio an excellent platform for alerting the public.
+
+The DAB EWS defined in the present document provides an effective way to provide a critical public warning function
+by utilizing the inherent reliability of DAB transmission infrastructure.
+
+The DAB EWS provides alert messages which consist primarily of audio information about the nature and extent of the
+emergency and instructions on how to react. The alert message may also include textual information, as the dynamic
+label, and optionally additional multimedia content when linked to the audio service. The alert message can be targeted
+to a specific geographic area such that receivers within the signalled alert area will respond, even when tuned to other
+DAB services, other media or when in a very low-power sleep mode, yet receivers outside the signalled alert area will
+not respond, allowing the user to continue with their chosen activity.
+
+The source and format of emergency information that feeds into the DAB EWS is outside the scope of the present
+document. It is expected that the source information for the alert messages will come from an appropriate safety
+authority, and that the services that carry the alert messages will be managed by appropriately trained and authorized
+providers. The DAB EWS works best when all DAB ensembles participate in the system. The design makes that
+straightforward because communication between ensembles is provided over-the-air to permit the relaying of
+EWS signalling.
+
+4.2 System architecture
+
+The DAB EWS consists of one or more DAB ensembles that carry specific signalling that both identifies the ensembles
+as participating in an EWS and also provides the signalling information to allow receivers to respond. Some ensembles
+will carry services that provide emergency alert messages, whilst others will carry only signalling information to
+redirect receivers to the ensemble carrying an alert message.
+
+In order for the geographic filtering to work, every receiver needs to know where it is. The DAB EWS is designed to
+use a specifically designed location coding system that is light weight and highly efficient. It allows the user to provide
+the receiver with its location when it is set up. More sophisticated receivers may be able to derive their location
+themselves, for example using a wireless link, a GNSS receiver, or some other means. The location coding system
+permits even the simplest receiver to be able to determine if it is in or out of an emergency alert area by a simple
+comparison of integers. An example of the use of location codes to describe and alert area is given in annex C.
+
+The content of the alert messages is not standardized but will typically include a description of the geographic area
+affected, the nature of the emergency and instructions on what to do and when to expect changes. Alert messages will
+be heard both by listeners who were already listening to the service before the alert message began and by those who
+have been redirected to it. The content of the alert message should therefore be crafted to take account of these different
+audience segments.
+
+                                  ETSI
+10    ETSI TS 104 089 V1.1.1 (2024-09)
+
+Because an emergency situation will generally develop over time, each incident is likely to consist of a number of alert
+messages. This sequence of messages can be linked together using an identifier, and this linking permits receiver
+manufacturers to offer user options to restrict responding to alert messages in specific ways, for example, not playing an
+alert message that has already been heard. These user options will only be available for a particular incident if the
+signalling permits it.
+
+To reduce the chances that portions of alert messages will be missed by receivers that have a very low-power sleep
+mode, the DAB EWS requires that receivers are synchronized to DAB time. This means that all sleeping receivers will
+check for emergency alerts at the same time, every minute. Therefore, the system performs best when alert messages
+begin when sleeping receivers are checking for alerts. The system is optimized for this mode of operation.
+
+4.3 Receiver behaviour
+
+The required receiver behaviour is defined in clause 7 of the present document. Manufacturers are able to check that
+their products conform to the requirements by performing the tests specified in ETSI TS 104 090 [i.1].
+
+5 EWS ensembles
+
+5.1 Baseline requirements
+
+An ensemble that participates in an EWS shall conform to the requirements of ETSI EN 300 401 [1]. It shall signal the
+date and time using FIG 0/10 in the long form. The date-time information provided in FIG 0/10 shall be accurate, which
+requires connection to a reliable source of real-time, such as GNSS or NTP. The time signalled by FIG 0/10, known as
+ensemble time, shall be the basis for all EWS signalling, which uses FIG 0/15.
+
+The participating ensemble shall provide FIG 0/15 (see annex E) in order to signal the status of alerts in the ensemble
+and in other ensembles, as defined in clause 6.6. The content of the FIG 0/15 shall be appropriate to the alert
+requirements. When no alert messages are being signalled, the ensemble signals its participation in an EWS with
+FIG 0/15 heartbeat signalling.
+
+The P/D flag in the type 0 header of FIG 0/15 is used for fine synchronization of receivers with a sleep function. The
+P/D flag of FIG 0/15 shall be set to 0 (Process) for every FIG 0/15 sent when the ensemble time has a seconds count of
+0 to 29 and shall be set to 1 (Discard) for every FIG 0/15 sent when the ensemble time has a seconds count of 30 to 59.
+The null symbol of the transmission frame provides the time reference for the time carried in FIG 0/10 (see ETSI
+EN 300 401 [1], clause 14.3.3). All the 12 FIBs of a transmission frame shall be considered to relate to the same time
+reference (i.e. the seconds count for FIG 0/15 is the seconds value of the time reference).
+
+An ensemble that provides alert messages shall provide FIG 0/15 signalling for each alert message it carries.
+
+A participating ensemble that overlaps the coverage area of another participating ensemble shall provide FIG 0/15
+signalling for every alert message in the overlapping other ensembles.
+
+5.2 Information sources
+
+An EWS ensemble that carries alert messages takes responsibility for the content and status settings of alert messages.
+The source or sources of information that are used to create an alert message and its signalling are not defined by the
+present document, but the following types of information are typically required:
+
+    · alert area;
+
+    · severity of alert;
+
+    · description of the current event;
+
+    · recommended actions;
+
+    · timeframe for development.
+
+ETSI
+11    ETSI TS 104 089 V1.1.1 (2024-09)
+
+The ensemble shall make available the information about an alert message to other EWS ensembles with overlapping
+coverage areas. The present document defines a standardized way for the information exchange to take place using the
+FIC, but other methods are also permitted.
+
+An EWS ensemble that provides signalling of alert messages in other ensembles shall use the information provided by
+the EWS ensemble that carries the alert message. This may be done by receiving and processing the FIC of the
+ensemble that carries the alert message, or by another method.
+
+5.3 Receiver considerations
+
+Ideally, all ensembles covering a particular location will participate in the DAB EWS. However, it is recognized that
+there may be reasons why this does not happen. The services carried in ensembles that do not participate should not be
+excluded from the receiver's service list, but the user shall be made aware when tuned to such services if the EWS
+function is inoperable (e.g. if the receiver has only a single tuner).
+
+6 Alert signalling
+
+6.1 Introduction
+
+The need to signal emergency warning alerts is unpredictable, and it is possible for there to be different incidents
+occurring in the same geographical location at the same time. However, although these incidents may be simultaneous,
+only one alert message can be carried in an ensemble at a time: therefore management of the timing of the alert
+messages is needed.
+
+Alert messages are carried in one ensemble but shall be signalled in all ensembles that participate in the EWS that
+provide coverage of the alert area. Since receivers can only play back one alert message at a time, consideration should
+be given as to whether coordination of alerts amongst ensembles is needed, and if so, how such coordination is
+managed. Such considerations are outside the scope of the present document. The signalling rules and receiver
+behaviour rules mean that receivers will play an alert in the tuned ensemble in preference to any alerts in other
+ensembles that are signalled at the same time.
+
+A given ensemble may have more than one incident active at any given time, but it shall have only one alert message
+active at a time. It may signal one or more alerts that are occurring in other ensembles at any time, including when it is
+signalling an alert message of its own.
+
+Alert providers have complete editorial freedom in the composition of the alert message and are encouraged to provide
+dynamic labels alongside the audio. SlideShows and other multimedia content is also possible, although the likely short
+duration of the alert message should be considered when allocating bitrate to such additional features.
+
+The impact and intelligibility of an alert message is likely to reduce if users connect to it part-way through. For this
+reason, alert providers are able to indicate at which point after the first 5 seconds of the alert message that receivers will
+no longer evaluate it for selection.
+
+Domestic EWS receivers are designed to respond to certain alerts even when they are in a low-power sleep state. To
+minimize power consumption, such receivers only monitor the DAB signal once per minute. In order to ensure that alert
+messages can be heard in full, even by sleep state receivers, the EWS has been designed to use real time to synchronize
+the evaluation of alerts by sleep state receivers.
+
+This means that all receivers use the time, as provided by FIG 0/10, to set their monitoring cycle and all receivers will
+be ready to evaluate EWS signalling at the beginning of every minute, i.e. when the seconds count is equal to 0. Alert
+providers are therefore strongly encouraged to begin their alert messages at the very beginning of the minute in order
+that the maximum population of receivers will react and play back the entire alert message: these alerts are termed
+synchronized alerts.
+
+Not all alert messages may be deemed of sufficient severity to wake-up receivers that are in a sleep state. Alerts are
+classified into two severity levels: Level 1 alerts are evaluated by all receivers, whereas Level 2 alerts are only
+evaluated by receivers that are awake.
+
+ETSI
+                 12    ETSI TS 104 089 V1.1.1 (2024-09)
+
+The EWS system allows alert messages to begin at any time and receivers that are awake and tuned to an EWS
+ensemble, or which have an additional tuner to monitor other ensembles within the alert area, will respond in a timely
+way. However, receivers that are in a sleep state will only respond at the start of each minute to Level 1 alerts that are
+providing the necessary signalling: they will ignore all Level 2 alerts.
+
+6.2 Source data
+
+6.2.1 Introduction
+
+The data for an EWS may come from many different types of agency. There may be a single national emergency centre,
+or there may be multiple agencies providing different kinds of data concerning weather events, security events,
+industrial accidents, etc. Wherever the data come from, they need to include sufficient detail for the composition of a
+coherent audio message and to set the values of the various data fields in the FIG 0/15 signalling.
+
+Emergency situations tend to develop over time. After a situation has been reported initially it may evolve and warrant
+further alert messages over the course of several hours or days.
+
+Different users will react differently to the content of the alert messages: for some, the information is very relevant and
+they will want to follow every development; for others, the information may be considered not relevant at some point
+due to particular circumstances. Provision is therefore made to allow users some control over the way that their receiver
+evaluates alerts. This provision comprises two parts: the Stage and the Incident Identifier. The Stage is used by the alert
+provider to signal the severity and development of the incident; the Incident Identifier to link together all the alerts that
+comprise a single incident.
+
+Emergency situations are relevant to a specific geographical area and provision is made to provide alert area
+information to allow receivers to respond to relevant alerts. When alert area information is provided, receivers outside
+the alert area will not respond to the signalling.
+
+6.2.2 Incident identification
+
+The ensemble that carries an alert message is responsible for setting the Incident Identifier.
+
+It is expected that in some cases, the source data will provide a reliable source of incident identification and the alert
+provider can use this information to allocate and maintain the Incident Identifier. In other cases, the alert provider may
+be able to use contextual information from the source data to associate different alerts to the same incident and so
+allocate and maintain the value. For these cases, known as tracked incidents, each subsequent alert provided for the
+same incident shall have the same Incident Identifier, and all stages (except Test) can be assigned to a particular alert.
+
+Each ensemble can have a maximum of 16 tracked incidents due to the limit of the signalling. If all 16 values of the
+IId have been allocated and a 17th incident begins, the alert provider shall decide which of the existing incidents shall
+cease to be tracked and the IId used for that incident shall be reused.
+
+If alerts cannot be associated to an incident, then the Incident Identifier shall be assigned an arbitrary unused value, and
+each alert shall be signalled using only the stages Level 1 Start or Level 2 Start.
+
+6.2.3 Incident stage
+
+When incident identification is supported by the alerting ensemble, users may be able to instruct their receiver to ignore
+alerts which are signalled as a repeat or update of an ongoing incident. This may be an appropriate action if the user
+considers that whilst the alert is geographically close to them, they are not in danger, for example, by being on high
+ground despite a localized flooding incident.
+
+An incident may develop such that its severity decreases or increases, and provision is made to allow alert providers to
+control the response of the receiver. Typically, all receivers within the alert area will be targeted, regardless of the
+power state of the receiver, but an incident may develop in such a way that using the wake-up function is seen to be
+overly invasive. Alternatively, the incident may develop such that it is imperative to ensure that all receivers will
+evaluate the alert.
+
+                 ETSI
+            13    ETSI TS 104 089 V1.1.1 (2024-09)
+
+To support user functionality and different levels of alert severity, the stage of the alert is signalled. Incidents begin at
+Level 1 Start if they are targeted at all receivers, or Level 2 Start if they are targeted at only those receivers that are
+already outputting audio. The Incident Identifier associated with this Start stage is then used for all subsequent alert
+messages for this incident. When a Start stage is received, receivers clear the alert user controls for that Incident
+Identifier. Incidents may move between Levels as they develop.
+
+An alert provider may use a Repeat stage to indicate that the same information has already been provided by the
+previous alert message associated with this Incident Identifier. Receivers with user control functionality can then
+identify repeated alert messages.
+
+An alert provider may use an Update stage to indicate that new information about an incident that is ongoing is
+contained in the alert message. Receivers with user control functionality that permits entire incidents to be skipped can
+then act appropriately.
+
+The choice of whether a Repeat stage or Update stage is appropriate to an ongoing incident is an editorial decision by
+the alert provider, but whenever the information about an incident changes, the Update stage should be signalled.
+
+The Level 1 Critical stage overrides all user alert controls and ensures that the alert message is evaluated by all
+receivers, regardless of their power state. However, it does not clear the user alert controls: for this function the Level 1
+Start stage is used.
+
+EXAMPLE 1:  An unexploded wartime bomb is discovered during construction of a new building. The device is
+            found in the early afternoon. After examination by police and bomb disposal experts, it is decided
+            to evacuate only a part of the city, but to inform the whole city as traffic disruption will result. The
+            first alert of the incident is signalled as Level 1 Start with location codes covering the whole city.
+            As the situation develops and more knowledge is gained, alerts at stages Level 1 Update and Level
+            1 Repeat are signalled. Listeners that feel they are not affected - because they live in another part
+            of the city and do not plan to leave their home for a while - can use the dismiss function of their
+            receiver to stop further interruptions. As night falls, the incident is still ongoing, but the majority
+            of city inhabitants have been informed and so know to stay away from the evacuation area. It is
+            decided at 21:00 to only provide alerts to those already listening to the radio, whichever service
+            they choose, and so subsequent alerts are signalled using Level 2 Update or Level 2 Repeat stages.
+            At 07:30 the following morning, further checking of the site by bomb disposal experts reveals a
+            second device. It is decided that this warrants a change back to alert all receivers, even those
+            whose owners had dismissed the incident, and so an alert is signalled using the Level 1 Critical
+            stage. After two hours, the decision is taken to move to Level 2 alerts again.
+
+EXAMPLE 2:  In a low mountain range, the weather forecast predicts heavy rainfall for the next 3 days. There is a
+            risk of local flooding. In the following days, the radio warns about the upcoming weather situation
+            as part of the normal news broadcasts without EWS signalling. The population is called upon to
+            pay greater attention.
+            Towards midday on the third day it becomes clear that the heavy rainfall will lead to widespread
+            flooding, particularly in settlements at the confluence of side valleys. The first alert for this
+            weather event occurs at 15:00, signalled as Level 1 Start with location codes that include the
+            affected settlements. As precipitation continues to increase, several Level 1 Update and Level 1
+            Repeat messages are sent. Towards the evening, the weather situation seems to ease somewhat,
+            and further alert messages use Level 2 Update and Level 2 Repeat stages. Evacuations have so far
+            only been necessary in a few parts of the affected settlements and have taken place in good time
+            before localized flooding occurred.
+            At 02:00 the threat situation suddenly increases dramatically. Several water waves enter a
+            reservoir at the same time, and a technical failure of a weir gate together cause the water level in
+            the reservoir to rise dangerously. There is imminent danger of a dam bursting, which would result
+            in a 10 m-high flood-wave downstream. A new alert message is issued for the immediate
+            evacuation of the endangered valleys as Level 1 Critical and with a significantly expanded alert
+            area using a bigger location code set. There is a risk of widespread flooding along all downstream
+            valleys, which could result in numerous deaths. The situation remains very critical for the next 10
+            hours, and all alert messages are issued and repeated at regular intervals as Level 1 Critical. The
+            situation is later mitigated as it becomes possible to reduce the water pressure in the reservoir by
+            controlled release of water. Once this is complete, further alert messages are signalled as Level 2
+            Update and Level 2 Repeat, which provide further information about the current status of the
+            danger until the situation changes back to normal.
+
+            ETSI
+                       14    ETSI TS 104 089 V1.1.1 (2024-09)
+
+EXAMPLE 3:  At around 21:00, simultaneous suicide terror attacks take place at three entrance gates to a fully
+            occupied football stadium. Initially, a Level 1 Start message with location codes for the area of the
+            stadium and the immediate surroundings is sent. It reports the current situation and asks the
+            population to avoid the area around the stadium or to remain in the stadium until further notice.
+            The developing situation in the area around the stadium is then reported at short intervals of a few
+            minutes as Level 1 Update or Level 1 Repeat messages with unchanged location codes.
+            At 21:20, in another, more distant part of the city, further attacks take place at the same time in
+            several places, including a theatre. For these new events, the authority triggers a new warning
+            Level 1 Start message with location codes that match these attack locations. Since a direct
+            connection to the previous events at the football stadium is not immediately apparent, the new
+            warning message is sent under a different Incident Id. Here too, Level 1 Update or Level 1 Repeat
+            messages are sent out at regular intervals as the situation develops.
+            As the night progresses, more terror attacks occur at various locations in the city, making it clear to
+            the authorities that all the events are connected. Therefore, the next warning message is sent as
+            Level 1 Start using a new Incident Id, and with location codes that cover the entire city area. The
+            following alert messages are sent as Level 1 Update and Level 1 Repeat. As the situation eases,
+            further warnings are sent as Level 2 Update and Level 2 Repeat until the warning situation has
+            reduced to such an extent that alert messages no longer need to be sent. A final Level 2 Update
+            message is issued informing the population that there is no longer an immediate risk of attacks, but
+            that they should continue to remain vigilant.
+
+An additional stage, the Test stage, may be used to indicate that the alert message is part of a test exercise for special
+receivers. These alerts are not evaluated by consumer receivers.
+
+6.2.4 Alert area
+
+By default, the alert area is the entire coverage area of the ensemble carrying the alert message: in this case no location
+codes are signalled. However, a specific alert area can be signalled by including location codes. To permit complex alert
+areas to be signalled, multiple location codes can be provided: the alert area is the sum of all the areas described by the
+set of location codes signalled. There is a limit to the total number of location codes that can be provided for an alert,
+which is limited by the maximum number of bytes that the location codes can occupy in a single FIG 0/15 instance and
+the maximum of four FIG 0/15 instances that are permitted in an alert set. The alert area provided in the source data has
+to be transformed from its incoming format to the DAB location code format and within the limits of capacity. Annex D
+provides a generic method to make the transformation.
+
+6.3 Forms of FIG 0/15
+
+6.3.1 Introduction
+
+FIG 0/15 is used for all aspects of signalling the EWS. The definition of the structure of FIG 0/15 is given in annex E.
+The P/D flag shall be set according to clause 5.1.
+
+An alert message is carried in one of the subchannels of the ensemble. The audio content of the alert message, the
+timing and the setting of all the control and information fields of the FIG 0/15 signalling is the responsibility of the alert
+provider and is derived from the incoming alert source data. Other ensembles that also carry signalling for the same
+alert derive the timing and setting of all the control and information fields of their FIG 0/15 signalling from that given
+by the alert provider, either through an EWS management system or from off-air monitoring.
+
+The signalling of an alert message has four phases, although some phases may be omitted in specific circumstances.
+The phases are as follows:
+
+    · Pre-trigger: may be used to deliver alert signalling to other ensembles, not evaluated by consumer receivers;
+
+    · Trigger: used to provide the identity, status and location information of the alert so that receivers can evaluate
+           whether the alert message shall be played;
+
+    · Sustain: used to signal the continuation of the alert message after the Trigger phase has ended;
+
+    · End: used to signal the end of the alert message.
+
+For other ensembles, only the Trigger phase signalling is provided.
+
+                       ETSI
+15    ETSI TS 104 089 V1.1.1 (2024-09)
+
+When there are no alerts active in the ensemble and no alerts in Trigger phase in other ensembles with overlapping
+coverage areas, the "no alert" form, known as the Heartbeat, is signalled.
+
+6.3.2 Heartbeat form
+
+In the Heartbeat form, the type 0 field of FIG 0/15 is empty.
+
+6.3.3 Trigger form
+
+In the Trigger form, the type 0 field of FIG 0/15 contains the Id field and the Status field and may contain a number of
+Location codes.
+Up to four FIG 0/15 instances of the Trigger form may be used to fully describe the alert area: the content of the Id field
+and Status field (except for the Last flag) shall be identical for each instance. Collectively these instances are known as
+an alert set.
+
+6.3.4 Pre-trigger form
+
+The Pre-trigger form may be used for inter-ensemble communication. It is identical to the Trigger form except for an
+additional field to define the start second.
+
+6.3.5 Sustain and End form
+
+In the Sustain and End form, the type 0 field of FIG 0/15 contains the Id field only.
+
+6.4 Describing an alert message carried in the ensemble
+
+6.4.1 Introduction
+
+Signalling is used to provide Trigger phase information that allows receivers to evaluate whether the alert message shall
+be played. Trigger signalling is provided for a minimum of 5 seconds for every alert.
+
+Alert providers can decide the point where receivers will stop evaluating whether an alert will be played. At this point,
+the signalling changes from Trigger phase to Sustain phase.
+
+At the end of the alert message, End phase signalling is provided.
+
+To permit other ensembles to provide correctly timed OE Trigger phase signalling, Pre-trigger phase signalling may be
+provided. Alternatively, an EWS management system may be used.
+
+6.4.2 Id field
+
+The Id field contains the 2-bit phase field and the 6-bit SubChId field. It is present for all signalling phases. For the
+"Pre-trigger" phase only, it contains two additional fields, the 2-bit Rfa field and the 6-bit Sec field.
+
+The Phase field shall indicate the phase of the alert.
+
+The SubChId field shall indicate the subchannel in the ensemble that carries the alert message. If the subchannel is
+introduced in a reconfiguration preceding an alert, the reconfiguration shall be completed by the time the Trigger phase
+signalling starts.
+
+The Rfa field, when present, shall be set to 0.
+
+The Sec field, when present, shall indicate the seconds count at which OE Trigger phase signalling shall start. The
+special value 63 shall be used to indicate an alert starting at seconds count 0 with a Trigger phase duration of 5 seconds.
+
+ETSI
+16    ETSI TS 104 089 V1.1.1 (2024-09)
+
+6.4.3 Status field
+
+The Status field shall only be present when the Phase field is set to "Pre-trigger" or "Trigger".
+
+The Status field contains the Last flag, the Stage field and the Incident Identifier (IId) field.
+
+The Last flag provides a control function and is not part of the alert information: it shall be set according to clause 6.6.
+
+The Stage field indicates the stage of an incident. The first alert of an incident shall set the stage to either Level 1 Start,
+which targets all receivers, or Level 2 Start, which targets only receivers already outputting audio.
+
+If the alert is part of a tracked incident, then subsequent alerts for the same incident, identified by the IId, may set the
+Stage field to any value except Test (see clause 6.2.3).
+
+The Stage field is also used to indicate a test alert: the stage Test shall only be used for specific test activities.
+
+The Incident Identifier (IId) provides the reference to an incident. The IId shall remain constant throughout the entire
+lifecycle of the incident as it permits receivers to provide users with options to ignore repeated and/or updated alert
+messages in an ongoing incident. The ensemble provider shall manage the use of IIds in the ensemble (see clause 6.2.2).
+
+The Incident Identifier has no meaning for test alerts and may be used as private data by the test provider.
+
+6.4.4 Location codes
+
+Location codes shall only be present when the Phase field is set to "Pre-trigger" or "Trigger".
+
+The alert area is signalled using zero (complete ensemble coverage area) or more location codes, as defined in annex F.
+Location codes are of variable length. Location codes shall occupy a maximum of 25 bytes in any given FIG 0/15
+instance. An alert area may require between one and four FIG 0/15 instances to describe, known as an alert set.
+
+The FIG 0/15 coding of location codes allows for efficient transport by the use of sub-coding: the translation of an alert
+area into a set of location codes that fulfil the limit of four FIG 0/15 instances is illustrated in annex D.
+
+The NFF field is not part of the location code but is used to help receivers determine the completeness of the alert set;
+the last FIG 0/15 instance in an alert set has NFF = 0.
+
+6.5 Describing an alert message in other ensembles
+
+6.5.1 Introduction
+
+Other ensembles signalling is used to provide Trigger phase information that allows receivers to evaluate whether the
+alert message in the other ensemble shall be played.
+
+Only Trigger phase signalling is provided for alerts in other ensembles with coverage areas that overlap the coverage
+area of the ensemble. The information to generate the Trigger phase signalling may come from an EWS management
+system or it may come from off-air monitoring device(s) tuned to other ensembles and decoding their Pre-trigger and
+Trigger phase signalling.
+
+An ensemble that monitors the signal of another ensemble can use the received Pre-trigger phase FIG 0/15 information,
+when available, to construct the FIG 0/15 OE signalling and provide it from the seconds count indicated in the Sec field.
+OE Trigger phase signalling shall continue to be provided whilst Trigger phase signalling for the alert is being received.
+
+        NOTE: Due to processing delays, OE Trigger phase signalling may be provided for a short period longer than
+                     the Trigger phase signalling in the ensemble carrying the alert message.
+
+If an EWS management system is used, the information is provided by the management system ahead of time instead of
+providing Pre-trigger phase signalling and precise timing can be assured.
+
+6.5.2 Id field
+
+The Id field is set to the Ensemble Identifier (EId) of the ensemble that carries the alert message.
+
+ETSI
+17                                ETSI TS 104 089 V1.1.1 (2024-09)
+
+6.5.3 Status field
+
+The Stage field and the Incident Identifier (IId) shall be set to exactly the same values as provided by the ensemble
+carrying the alert message.
+The Last flag provides a control function and shall be set according to clause 6.6.
+
+6.5.4 Location codes
+
+The Location codes shall be set to exactly the same values as provided by the ensemble carrying the alert message.
+
+6.6 Insertion rules for FIG 0/15
+
+6.6.1 Introduction
+
+The EWS provides a low-power monitoring function for receivers which is synchronized to real time. The insertion
+rules for FIG 0/15 are designed to allow receivers to evaluate alerts as efficiently as possible.
+
+The nominal repetition rate of FIG 0/15 is all information once per second, but due to the variable number of
+simultaneous alerts at any given time, and the variable number of FIG 0/15 instances needed to signal each alert, the
+FIC capacity used by FIG 0/15 may vary considerably. One or more FIBs might be used per transmission frame to carry
+FIG 0/15, and these FIBs can contain one or more FIG 0/15 instances.
+
+The timing of FIG 0/15 at the minute's edge is important as this is the time when sleeping receivers enter monitor mode.
+It is strongly recommended that transmission equipment ensures that FIG 0/15 is inserted into the first transmission
+frame that starts at or after the minute's edge in order to allow receivers in monitor mode to evaluate the alert situation
+as quickly as possible. More generally, inserting FIG 0/15 into the first transmission frame of each second is
+recommended.
+
+A new alert message can only begin in an ensemble when there is no alert message already active; alerts may begin in
+other ensembles at any time.
+
+Alerts may provide Pre-trigger phase signalling, which shall begin 5 seconds before the start of the Trigger phase
+signalling for the alert, to allow other ensembles to provide OE Trigger phase signalling from the start of the alert
+message.
+
+Pre-trigger and Trigger phase signalling is provided using alert sets of between one and four instances of FIG 0/15.
+
+At any given moment, there may be an alert message being carried in the ensemble (in either Trigger phase or Sustain
+phase), an alert message about to start (in Pre-trigger phase), an alert message just ended (in End phase), or no alert
+message at all. Similarly, in other ensembles with overlapping coverage areas, there may be one or more alert messages
+in Trigger phase that need signalling in this ensemble as OE alerts. Alerts in Trigger phase in the tuned ensemble and in
+overlapping other ensembles shall be composed into an alert group. The first alert set of the alert group shall be the
+alert set corresponding to the tuned ensemble (if it exists), with the alert sets from other ensembles following in any
+order. The alert group will be empty whenever there are no alerts in Trigger phase.
+
+The alert group shall be composed at the start of each minute, and alert groups are generally composed at the start of
+each subsequent second, corresponding with the nominal repetition rate. However, for the first 5 seconds of any alert,
+the signalling of alert groups is continuous: in this case the next alert group shall be composed immediately after the
+final FIG 0/15 of the previous alert group has been signalled.
+
+It is recommended to allocate sufficient space in the FIC for alert groups to be completely signalled in less than one
+second, but if this is not possible, for example when the number of concurrent alerts is high, the alert group may require
+more than one second to transmit: in this case the next alert group shall be composed immediately after the final
+FIG 0/15 of the previous alert group has been signalled. Once the alert group is able to be completely signalled in less
+than one second again, the composition of the alert group returns to the start of each second.
+
+For every composed alert group, FIG 0/15 signalling shall be provided according to the rules described in this
+clause 6.6.
+
+Examples of FIG 0/15 insertion are given in annex B.
+
+ETSI
+18    ETSI TS 104 089 V1.1.1 (2024-09)
+
+6.6.2 Alert group is empty
+
+When the alert group is empty it means that there are no alerts that require evaluation by receivers and consequently no
+Trigger phase signalling to provide (tuned or other ensembles).
+
+If there is an ongoing alert message in the ensemble, then Sustain phase signalling shall be provided at a nominal
+repetition rate of once per second. The C/N flag shall be set to 1.
+
+If an alert message has just ended, then End phase signalling shall be provided at a nominal repetition rate of once per
+transmission frame for 2 seconds. The C/N flag shall be set to 1.
+
+If neither of these situations exists, then the Heartbeat form of FIG 0/15 is signalled at a nominal repetition rate of once
+per second.
+
+In addition, if signalling is used for inter-ensemble communication and an alert message will begin in the ensemble,
+then Pre-trigger phase signalling shall be provided at a nominal repetition rate of the complete alert set once per second
+for three seconds and at an insertion rate of one FIG 0/15 instance per transmission frame. The Last flag of the last
+instance of FIG 0/15 of the alert set shall be set to 1; the Last flag of all other instances of FIG 0/15 of the alert set shall
+be set to 0.
+
+6.6.3 Alert group is not empty
+
+When the alert group is not empty it means that there are alerts that require evaluation by receivers and consequently
+Trigger phase signalling shall be provided (tuned and/or other ensembles).
+
+Except when the seconds count is 59, the alert group shall be signalled completely.
+
+When the seconds count is 59, alert group signalling shall be terminated before the end of the second, regardless of
+whether the entire alert group has been signalled to ensure that receivers entering monitor mode operate correctly.
+
+The Last flag of the last instance of FIG 0/15 of the alert group shall be set to 1; the Last flag of all other instances of
+FIG 0/15 of the alert group shall be set to 0. The alert group shall be signalled at a minimum insertion rate of one
+FIG 0/15 instance per transmission frame.
+
+In addition to the alert group signalling, the following signalling shall also be provided as required:
+
+    · if there is an ongoing alert message in the ensemble, then Sustain phase signalling shall be provided at a
+           nominal repetition rate of once per second. The C/N flag shall be set to 0;
+
+    · if an alert message has just ended, then End phase signalling shall be provided at a nominal repetition rate of
+           once per transmission frame for 2 seconds. The C/N flag shall be set to 0;
+
+    · if signalling is used for inter-ensemble communication and an alert message will begin in the ensemble, then
+           Pre-trigger phase signalling shall be provided at a nominal repetition rate of the complete alert set once per
+           second for three seconds and at an insertion rate of one FIG 0/15 instance per transmission frame. The Last
+           flag of the last instance of FIG 0/15 of the alert set shall be set to 1; the Last flag of all other instances of
+           FIG 0/15 of the alert set shall be set to 0.
+
+    NOTE: If Sustain phase or End phase is provided when the alert group is not empty, it means that only OE
+                 Trigger phase alerts are signalled.
+
+6.7 Signal chain tests
+
+If testing of the EWS is required in a similar way to a fire alarm drill, then the same kind of procedure for planning and
+informing the public is required so as not to cause unnecessary alarm. In this case an alert with the Stage field set to
+either Level 1 Start or Level 2 Start shall be used, with the alert message describing clearly that this is a test.
+
+To permit testing of the EWS without causing consumer receivers to respond, a test alert message can be provided.
+
+The Stage field shall be set to Test with all other fields set as required.
+
+ETSI
+                       19                                                          ETSI TS 104 089 V1.1.1 (2024-09)
+
+Since the test message will be carried in a normal service component (even if carried in a temporary service), the test
+message will be selectable for listening on consumer receivers, but consumer receivers will not evaluate the test
+message as an alert.
+
+7 Receiver behaviour and response
+
+7.1 Receiver types
+
+It is envisaged that the addition of EWS functionality in a receiver does not reduce the design options manufacturers
+may use. Therefore, many types of receivers are feasible. The minimum requirements for receivers are the subject of
+ETSI TS 104 090 [i.1].
+
+Different types of receivers will have different operating models and capabilities. Whenever the EWS signals location
+codes to describe alert areas, receivers need to know their location in order to determine if the alert is relevant: the
+method by which the receiver acquires and maintains its location is not defined, but as a minimum it needs to know the
+DAB location code that corresponds to its current position on the earth's surface. For a domestic receiver this may be
+achieved via a set-up procedure in the user interface or via a wireless data transfer protocol; for a mobile receiver this is
+most likely to be achieved through a GNSS receiver. The conversion of a WGS84 coordinate pair to a DAB location
+code is described in annex F. Annex A describes the format for a manually entered receiver location code.
+
+Receivers with a single DAB tuner need to be aware of all receivable ensembles by performing regular scans. This is
+because in order to respond to an alert message they need to be tuned to an EWS ensemble: if the alert message is
+carried by another EWS ensemble then the receiver needs to know whether that ensemble is receivable before retuning -
+otherwise listening may be unnecessarily interrupted resulting in a poor user experience.
+
+Receivers with more than one DAB tuner can perform background scans to enable them to be aware of which
+ensembles are receivable. A minimum of two DAB tuners is essential for mobile receivers to be able to play one service
+whilst remaining aware of all receivable ensembles.
+
+Fixed and portable receivers shall implement a set of power modes that allow the receiver to respond to alert messages
+even when the device is not being used. The operation and timing of the transition of these power modes are specified
+by the present document.
+
+In-vehicle receivers are not expected to react to alert messages when the vehicle is unoccupied.
+
+7.2 Fixed and portable receivers
+
+7.2.1 Single DAB tuner receivers
+
+Single tuner receivers can only respond to EWS alert messages when they are tuned to an EWS ensemble. This means
+that if the user selects a DAB service carried on an ensemble that does not participate in the EWS, no alert signalling
+will be received and so the receiver will be unaware of alerts. This also applies if the same tuner is used for reception of
+other broadcast services. Users shall be advised via the user interface of EWS capable receivers whenever the user
+makes a service selection that disables the EWS alert functionality.
+
+7.2.2 Power modes
+
+7.2.2.1  Introduction
+
+DAB receivers come in many forms - some are DAB only, whilst others include clock functions, FM reception, and
+other audio playback.
+
+7.2.2.2  Sleep mode
+
+In this mode the receiver is not outputting audio. This is the lowest power mode.
+
+                       ETSI
+                                                    20                            ETSI TS 104 089 V1.1.1 (2024-09)
+
+During sleep mode, the receiver shall ensure that a timer operates, synchronized to the time provided by FIG 0/10. The
+function of the timer is to initiate a transition to monitor mode such that the receiver is able to decode the FIC of the
+selected EWS ensemble at the beginning of each minute. The receiver shall begin the transition in sufficient time,
+according to its own architecture.
+
+7.2.2.3  Monitor mode
+
+In this mode the receiver is not outputting audio.
+
+The DAB tuner is tuned to an EWS ensemble and is able to decode the FIC. If FIC reception errors are experienced, the
+receiver shall not return to sleep mode prematurely: Trigger phase signalling repeats continuously for 5 seconds and
+during this period the receiver shall endeavour to capture a complete alert group (unless a matching alert is found). If
+FIC reception errors continue, the receiver shall behave as if no FIG 0/15 has been received (see below).
+
+During monitor mode, which shall be fully operational when the seconds count changes from 59 to 0, the receiver shall
+check that it is still aligned to the minute's edge by reference to the CIF count contained in FIG 0/0, which is present in
+every transmission frame. If alignment has been lost, it shall be reestablished by resynchronising to the time provided
+by FIG 0/10.
+
+All FIG 0/15 instances containing Pre-trigger phase signalling shall be ignored.
+
+The receiver shall examine the content of the FIG 0/15 instances it receives that have the P/D flag in the FIG type 0
+header set to 0 (Process). It shall ignore any FIG 0/15 instances it receives that have the P/D flag in the FIG type 0
+header set to 1 (Discard).
+
+If a FIG 0/15 instance containing the Heartbeat is examined, it tells the receiver that there are no alerts to be evaluated:
+the receiver shall return to sleep mode.
+
+If a FIG 0/15 instance containing Sustain phase or End phase signalling is examined and the C/N flag is set to 1, it tells
+the receiver that there are no alerts to be evaluated: the receiver shall return to sleep mode.
+
+If a FIG 0/15 instance containing Sustain phase or End phase signalling is examined and the C/N flag is set to 0, it tells
+the receiver that there are OE alerts to be evaluated: the receiver shall wait for the next instance of FIG 0/15.
+
+If a FIG 0/15 instance containing Trigger phase signalling is examined, it shall be evaluated. If an alert match is found
+(see clause 7.5), the receiver shall transition to alert mode (see clause 7.6) and play out the alert message. If an alert
+match is not found, then if the last flag is set to 0, the receiver shall evaluate the next instance of FIG 0/15, else it shall
+return to sleep mode.
+
+If no FIG 0/15 is received within 10 seconds, then the ensemble has ceased to be an EWS ensemble and it shall be
+removed from the list of EWS ensembles. The receiver shall retune to the next best candidate EWS ensemble and
+determine if this new ensemble provides FIG 0/15: if so the receiver synchronizes its sleep timer using the time
+provided by FIG 0/10 and returns to sleep mode with the new EWS ensemble as its monitoring ensemble; if not, the
+process of finding a new EWS ensemble shall continue until either a new EWS ensemble has been found, or all
+candidates have been exhausted. If no EWS ensemble is found, the receiver shall rescan the whole DAB band: for the
+purpose of the rescan the setting of the P/D flag is ignored. If no EWS ensemble is found on rescan, the receiver shall
+repeat the scan process after one hour.
+
+7.2.2.4  Audio mode
+
+In this mode the receiver is outputting audio.
+
+The receiver enters audio mode as a response to a user action.
+
+In audio mode, the receiver shall as far as possible use the DAB tuner to evaluate FIG 0/15 for matching alert messages.
+If access to the DAB tuner is not available, or if the user has selected a DAB service which is not carried in an EWS
+ensemble, then the receiver shall indicate to the user that the EWS function is inoperable.
+
+If a FIG 0/15 instance containing Trigger phase signalling is received, it shall be evaluated. If an alert match is found
+(see clause 7.5), the receiver shall transition to alert mode (see clause 7.6) and play out the alert message. If an alert
+match is not found, then the receiver continues with its current audio playback.
+
+If no FIG 0/15 is received within a period of 10 seconds, then the ensemble has ceased to be an EWS ensemble and it
+shall be removed from the list of EWS ensembles.
+
+                                                    ETSI
+                      21    ETSI TS 104 089 V1.1.1 (2024-09)
+
+If FIG 0/15 is received and the ensemble is not on the list of EWS ensembles, it shall be added to the list.
+
+When the receiver leaves audio mode as a response to a user action, and the tuned ensemble is an EWS ensemble, that
+ensemble should be selected as the EWS ensemble to monitor.
+
+7.2.3 Initialization procedure
+
+When the receiver is switched on for the first time (or after a system reset), it shall determine its location, either by
+requesting the user to input the corresponding DAB location code (see annex A), or by another means. If the only
+means the receiver has for knowing its location is via a user entered location code, and the user does not enter such a
+code, the receiver shall only evaluate alerts that are signalled without location codes, i.e. whole ensemble alerts. It is
+recommended that the receiver reminds the user to enter the code whenever the receiver is put into use.
+
+The receiver shall scan all DAB frequencies and acquire the service list and using the status of FIG 0/15 signalling in
+each ensemble, mark all ensembles with FIG 0/15 signalling as EWS ensembles. Since the nominal repetition rate of
+FIG 0/15 signalling is once per second or faster, the determination can be made in a timely fashion. Metrics of signal
+quality should also be made in order to determine a suitable EWS ensemble to monitor whenever the receiver is in
+monitor mode: stronger signals should be preferred.
+
+The initial selection of the EWS ensemble to monitor shall be made according to quality metrics, but a user option to
+select which EWS ensemble is preferred may be offered by providing the ensemble label to the user of each EWS
+ensemble that meets the minimum reception quality. Such user preference may be due to administrative boundaries,
+language, or other factors. If no EWS ensembles are found, then the receiver is unable to respond to EWS alerts and the
+receiver shall indicate to the user that the EWS function is inoperable.
+
+Once the EWS ensemble has been selected, it shall be tuned to, and the sleep timer shall be synchronized to the time
+provided by FIG 0/10. The CIF count, provided in every transmission frame by FIG 0/0, shall be recorded for the first
+transmission frame that corresponds to the seconds count of zero: this allows for a simple alignment check at each
+monitoring period as 1 minute contains exactly 2 500 CIFs.
+
+7.3 Mobile receivers
+
+7.3.1 Tuner capability
+
+An EWS mobile receiver requires a minimum of two DAB tuners. This allows it to play out audio and at the same time
+monitor other DAB ensembles for alert signalling and to determine whether a matched alert message is receivable.
+
+7.3.2 Location awareness
+
+A mobile receiver shall have a means to know its geographical location to a precision of at least 100 m. Typically, a
+GNSS receiver will be suitable.
+
+7.3.3 Audio mode
+
+An in-vehicle receiver shall be active whenever the vehicle is occupied.
+
+A mobile receiver that is not an in-vehicle receiver may offer options for availability of the EWS function.
+
+The receiver shall monitor the FIC of an EWS ensemble on a regular cycle to evaluate FIG 0/15 for matching alert
+messages. If the EWS ensemble is no longer receivable, the receiver shall seek another EWS ensemble for monitoring.
+The monitoring period shall include the time at which the seconds count is 0 as this is when synchronized alert
+messages will begin and FIG 0/15 with Trigger phase information is most likely to be present. Receivers shall also
+monitor the FIC of an EWS ensemble at other times, since an alert message might not be synchronized and so begin at
+any time.
+
+If a FIG 0/15 instance containing Trigger signalling is received, it shall be evaluated. If an alert match is found (see
+clause 7.5), the receiver shall transition to alert mode (see clause 7.6) and play out the alert message. If an alert match is
+not found, then the receiver continues with its current function.
+
+                      ETSI
+                    22    ETSI TS 104 089 V1.1.1 (2024-09)
+
+If no FIG 0/15 is received within 10 seconds, then the ensemble has ceased to be an EWS ensemble and it shall be
+removed from the list of EWS ensembles: another EWS ensemble shall be selected to monitor.
+
+If FIG 0/15 is received and the ensemble is not on the list of EWS ensembles, it shall be added to the list.
+
+7.4 User settings
+
+7.4.1 Alert message playback control
+
+Receivers may offer user settings to allow users to control the playback of certain alert messages.
+
+7.4.2 Dismiss user controls
+
+A "dismiss repeats" function may be offered which when engaged by the user will prevent the playing of alert messages
+for the same incident that have the stage Level 1 Repeat or Level 2 Repeat.
+
+A "dismiss incident" function may be offered which when engaged by the user will prevent the playing of further alert
+messages for the same incident that have the stage Level 1 Update, Level 1 Repeat, Level 2 Update, or Level 2 Repeat.
+
+By default, or if these user settings are not offered via the user interface, then the user settings are false and playback
+will be unaffected.
+
+The user settings are applicable to the incident identified by the combination of the Ensemble Id (EId) and the Incident
+Identifier (IId). For alert messages carried in the tuned ensemble, the EId is provided by FIG 0/0; for alert messages
+carried in other ensembles the EId is provided in the Id field of FIG 0/15.
+
+When an alert message with the stage Level 1 Start or Level 2 Start is received, the user settings corresponding to that
+EId + IId are reset to "false" because this indicates a new incident. Since IIds are periodically reused, consideration
+should be given to a time-out period for user controls for an incident: if the IId has not been received for a certain period
+of time (perhaps one week), then the user controls should be reset for that EId + IId combination.
+
+7.4.3 Monitor mode user controls
+
+A user function may be offered to users to instruct a receiver with sleep mode to evaluate a Level 2 alert as if it was
+signalled as the corresponding Level 1 alert. This could be linked to the time of day, so that Level 2 alerts signalled
+during certain hours only are evaluated when the receiver is in monitoring mode.
+
+By default, or if this user setting is not offered via the user interface, then the user setting is false and playback will be
+unaffected (i.e. the receiver will react according to the signalled stage).
+
+A user function may be offered to users to prefer an EWS ensemble to use in monitor mode. The user is offered the list
+of EWS ensembles currently receivable by displaying their Ensemble Labels. The ordering of the list could be made by
+such metrics as signal quality and ECC + country code.
+
+7.5 Alert matching
+
+7.5.1 Introduction
+
+Alert matching shall be performed either when the received FIG 0/15 OE flag is 0 and the Phase field is set to
+"Trigger", or when the OE flag is 1 (all OE signalling is Trigger phase signalling).
+
+Various criteria exist to determine if a signalled alert message will be played out: only when all the matching criteria are
+positive shall the alert message be played. The order of the matching process is arbitrary but can be optimized.
+
+7.5.2 Receivability matching
+
+If the OE flag is set to 0 then the alert message is carried in the tuned ensemble. The Id field identifies the subchannel
+that carries the audio of the alert message. If the subchannel is present in the FIG 0/1 MCI, receivability matching is
+positive, if not, it is negative.
+
+                    ETSI
+                                                       23                      ETSI TS 104 089 V1.1.1 (2024-09)
+
+        NOTE: A receiver cannot rely on stored configuration information when it has been in sleep mode because a
+                     reconfiguration may have occurred: the count field in FIG 0/7 provides for simple determination of a
+                     changed configuration.
+
+If the OE flag is set to 1 then the alert message is carried in another ensemble. Single tuner receivers shall determine
+whether the ensemble referenced by the EId in the Id field exists within tuning memory: if it is, receivability matching
+is positive, if not, it is negative. Receivers with multiple tuners shall confirm that the ensemble referenced by the EId in
+the Id field is receivable: if it is, receivability matching is positive, if not, it is negative.
+
+7.5.3 Stage matching
+
+Stage matching depends on the value of the Stage field and the value of user settings (if provided) as shown in table 1.
+
+                               Table 1: Stage matching
+
+      Stage           User setting for this EId + IId  Match for receivers in  Match for receivers in
+
+                                                             Audio mode                  Monitor mode
+
+                                                                                         (see note)
+
+Level 1 Start  n/a                                     Positive                Positive
+
+Level 1 Update Incident dismiss (EId + IId) = false    Positive                Positive
+
+               Incident dismiss (EId + IId) = true     Negative                Negative
+
+Level 1 Repeat Repeat dismiss (EId + IId) = false and Positive                 Positive
+
+               Incident dismiss (EId + IId) = false
+
+               Repeat dismiss (EId + IId) = true or Negative                   Negative
+
+               Incident dismiss (EId + IId) = true
+
+Level 1 Critical n/a                                   Positive                Positive
+
+Level 2 Start  n/a                                     Positive                Negative
+
+Level 2 Update Incident dismiss (EId + IId) = false    Positive                Negative
+
+               Incident dismiss (EId + IId) = true     Negative                Negative
+
+Level 2 Repeat Repeat dismiss (EId + IId) = false and Positive                 Negative
+
+               Incident dismiss (EId + IId) = false
+
+               Repeat dismiss (EId + IId) = true or Negative                   Negative
+
+               Incident dismiss (EId + IId) = true
+
+Test           n/a                                     Negative                Negative
+
+NOTE: If a user setting to instruct the receiver to evaluate Level 2 alerts as Level 1 alerts is active then the Level 1
+
+      row shall be evaluated.
+
+7.5.4 Location matching
+
+If the alert signalling does not include any location codes, then the alert area is the entire ensemble coverage area. In
+this case, the location match is automatically positive.
+
+If the alert signalling includes location codes, the receiver compares the first location code in the alert set to the
+location code of its current position. For a fixed or portable receiver this is the location code captured at initialization,
+for a mobile receiver it is the location code computed from the GNSS received data: the same receiver location code
+shall be used for all location codes in the alert set. If the zone and digits common to both codes (left-aligned) are
+identical, the location match is positive and location matching terminates. If the zone and digits common to both codes
+(left-aligned) do not match, the next location code in the alert set is compared, and so on until either the location match
+is positive, or all location codes have been tested and a location match has not been found: in this case the location
+match is negative. Receivers can determine whether all FIG 0/15 instances have been evaluated for an alert set by
+means of the C/N flag and the NFF field.
+
+EXAMPLE:       An alert set contains the location codes: Z1:91F, Z1:92C, Z1:953, Z1:960. The receiver location
+               code is Z1:92CB81. The zone and digits of the receiver location code truncated to the same
+               number of digits as the received location codes provide a match for Z1:92C, so the location match
+               is positive on the second comparison and the final two location codes are not compared.
+
+                                                       ETSI
+                24    ETSI TS 104 089 V1.1.1 (2024-09)
+
+7.6 Alert mode
+
+7.6.1 Preparation
+
+After an alert match is positive, the receiver shall store its functional status in memory to allow for a seamless return to
+that status after the alert playback is terminated.
+
+7.6.2 Tuned ensemble alerts
+
+The receiver shall play the audio from the subchannel indicated by the Id field. To determine whether the audio is coded
+as DAB audio or DAB+ audio it is necessary to find the SubChId in the FIG 0/2 MCI. If the alert audio carries PAD
+applications (for example, dynamic label or SlideShow), or the service includes data service components, these should
+be presented according to the capabilities of the receiver. The service label of the alert service shall be displayed.
+
+The alert audio shall be played within 5 s of the alert match decision.
+
+The receiver shall not delay audio playback if the service label is not yet available.
+
+    NOTE: Although the service label will often be available from tuning memory, the alert service may have been
+                 introduced by an ensemble reconfiguration.
+
+The alert shall continue to be played whilst the Trigger or Sustain phase signalling with the same SubChId is received,
+unless the alert is terminated by the user (see clause 7.6.4).
+
+7.6.3 Other ensemble alerts
+
+The receiver shall attempt to retune to the ensemble indicated by the Id field using the information in its tuning
+memory. If the ensemble cannot be tuned, the receiver shall return to the previous functional state.
+
+    NOTE: Receivability matching has already been performed, so if the ensemble cannot be tuned, the receiver
+                 should review the state of its tuning memory.
+
+Once tuned, the FIC shall be decoded and the MCI and FIG 0/15 information evaluated. Any Trigger phase or Sustain
+phase FIG 0/15 instance with the OE flag set to 0 provides the identity of the subchannel carrying the alert audio in the
+Id field. If no FIG 0/15 is received, or the subchannel does not exist in the FIG 0/1 MCI, the receiver shall return to the
+previous functional state.
+
+The receiver then follows the process for the tuned ensemble alert (clause 7.6.2).
+
+7.6.4 Terminating an alert
+
+Receivers may offer various user functions to terminate the playback of an alert before it is completed. The user
+functions may be:
+
+    · to terminate the currently playing alert only;
+
+    · to terminate the currently playing alert and engage the "dismiss repeats" function to prevent future playback of
+           repeated messages of the currently playing incident (identified by the EId + IId);
+
+    · to terminate the currently playing alert and engage the "dismiss incident" function to prevent future playback
+           of repeated and updated messages of the currently playing incident (identified by the EId + IId).
+
+During alert playback, the user may operate a user function to terminate the alert playback.
+
+The end of the alert message is usually signalled using FIG 0/15 with OE set to 0 and the Phase field set to "End", but in
+exceptional circumstances, when another alert message in the same ensemble immediately follows, the "End" phase is
+replaced by the "Trigger" phase of the new alert: the receiver shall terminate the alert playback.
+
+                ETSI
+25    ETSI TS 104 089 V1.1.1 (2024-09)
+
+Whether alert playback is terminated by the user or by reaching the end of the alert message, audio playback shall be
+stopped and the receiver shall evaluate FIG 0/15 and determine if any other alerts are being signalled. If no such alerts
+are being signalled, the receiver shall return to the stored prior functional state; if such alerts are signalled, they shall be
+evaluated appropriately according to the type of receiver and if a match is found shall be played; otherwise the receiver
+shall return to the stored prior functional state. However, it shall be ensured that the receiver does not restart playing an
+alert that the user has terminated.
+
+ETSI
+                                                                               26  ETSI TS 104 089 V1.1.1 (2024-09)
+
+Annex A (normative):
+DAB location code presentation format
+
+A.1 Introduction
+
+The coding of DAB location codes in FIG 0/15 is optimized for signalling efficiency, but it is not very human friendly.
+This annex describes the way that location codes are to be presented and used in the consumer setting, for example, for
+a user to be able to enter the location code at receiver set-up.
+
+The presentation format is designed to be suitable for entry on receivers with basic user controls, such as up/down/select
+functionality. Therefore, the number of symbols is restricted and the symbols are grouped into blocks.
+
+A.2 Conversion process
+
+The DAB location code at maximum resolution is a 30-bit binary coded integer. The most significant 6 bits represent
+the zone and the least significant 24 bits represent the six digits of the location code.
+
+The modulo-61 division of the 30-bit integer produces a 6-bit checksum. The checksum is appended to create a 36-bit
+integer.
+
+This 36-bit integer is separated into three blocks of four octal digits.
+
+A.3 Presentation format
+
+The presentation format consists of three groups of four symbols, separated with the hyphen character. The symbols
+used are the digits 1 to 8. Each octal digit (value range 0 to 7) is converted to a presentation symbol by adding 1 to give
+the symbols "1" to "8".
+
+EXAMPLE 1:  The location code for BBC Broadcasting House is Z10:B736BB.
+            In binary: Zone 10 = 001010; B736BB = 1011 0111 0011 0110 1011 1011.
+            As a 30-bit binary integer: 001010101101110011011010111011.
+            In decimal: 179 779 259.
+            The modulo 61 checksum (in decimal): 59.
+            The modulo 61 checksum (in binary): 111011.
+            The 36-bit integer: 001010101101110011011010111011111011.
+            The three block, 4-digit octal representation: 1255 6332 7373.
+            The presentation code: 2366-7443-8484.
+
+EXAMPLE 2:  The location code for Svalbard Museum is Z0:152FF1.
+            In binary: Zone 0 = 000000; 152FF1 = 0001 0101 0010 1111 1111 0001.
+            As a 30-bit binary integer: 000000000101010010111111110001.
+            In decimal: 13 885 529.
+            The modulo 61 checksum (in decimal): 47.
+            The modulo 61 checksum (in binary): 101111.
+            The 36-bit integer: 000000000101010010111111110001101111.
+            The three block, 4-digit octal representation: 0005 2277 6157.
+            The presentation code: 1116-3388-7268.
+
+NOTE: The generation of the location codes in these examples is given in annex F.
+
+                         ETSI
+                        27                           ETSI TS 104 089 V1.1.1 (2024-09)
+
+A.4 URI definition
+
+To enable "smart" devices to use the presentation format, a URI is defined as follows:
+    · DLI://<presentation code>
+
+Table A.1 shows the examples above in URI format with illustrative QR codes.
+
+Table A.1: Example of URI coding and QR code presentation of examples above
+
+          Location      URI encoded location string                                     QR code for location
+BBC Broadcasting House       DLI://2366-7443-8484
+
+        Z10:B736BB
+
+Svalbard Museum         DLI://1116-3388-7268
+    Z0:152FF1
+
+A.5 Possible webpage or app implementation example
+
+To provide users with the location code to input into their receiver, a map-based implementation could be devised.
+Figure A.1 shows an example.
+
+NOTE: Map data is available under the Open Database License, see Copyright and License | OpenStreetMap.
+        Figure A.1: Example of map-based webpage to provide presentation format location code
+
+                                                                             ETSI
+            28          ETSI TS 104 089 V1.1.1 (2024-09)
+
+Annex B (informative):
+Example of EWS signalling
+
+Figure B.1 illustrates the coverage areas of three ensembles, A, B and C which all participate in an EWS.
+
+            Ensemble A
+
+Incident 1              Ensemble C
+                             Incident 2
+
+                                          Ensemble B
+
+                   Figure B.1: Coverage areas of ensembles A, B and C, and incidents 1 and 2
+
+Ensembles A and C will each make synchronized alerts at the beginning of the next minute - ensemble A will make an
+alert concerning incident 1 and ensemble C will make an alert concerning incident 2. The coverage areas of the
+ensembles overlap, and so each ensemble signals all the alerts provided by these three ensembles.
+
+Figure B.2 shows the progression of the FIG 0/15 signalling made in each ensemble at the start of the alerts. Before the
+alert begins, all ensembles are signalling the Heartbeat once per second to identify themselves as EWS ensembles.
+Ensemble A and ensemble C each carry a synchronized alert message and so signal all phases of tuned ensemble
+signalling, beginning with the Pre-trigger phase at seconds count = 55 using the special Sec field value of 63. This
+signalling is received off-air and fed to the FIC generators of the other ensembles to construct their OE signalling.
+Starting at seconds count = 0, ensembles A and C signal Trigger phase signalling for their own alert followed by OE
+signalling for the alert in the other ensemble, and ensemble B signals OE signalling for both alerts. In each case, the
+two alert sets may have one to four FIG 0/15 instances to provide the alert area, and the two alert sets form the alert
+group. The signalling of the alert group is repeated continuously until seconds count = 4 (inclusive). Due to the length
+of the alert group, the trigger signalling spills into the beginning of seconds count = 5. Ensembles A and C then begin
+signalling Sustain phase at a rate of once per second until the end of the alert message, and ensemble B signals the
+Heartbeat.
+
+Figure B.3 shows a later period where the alert concerning incident 1 has ended. In ensemble C, the alert concerning
+incident 2 comes to its end during seconds count = 42, with End phase signalling provided rapidly for two seconds. An
+update is made concerning incident 1 in ensemble A at seconds count = 44 and the ensemble signals Pre-trigger phase
+signalling from seconds count = 39 until seconds count = 41 (inclusive) with the Sec field set to 44. Ensemble A signals
+trigger phase continuously from seconds count = 45 for 5 seconds and then signals trigger phase at once per second for
+1 additional second due to the length of the start jingle. Ensembles B and C provide OE signalling from seconds
+count = 44: in ensemble C the OE Trigger phase signalling overlaps with the End phase signalling. The OE signalling in
+ensembles B and C continue longer than the trigger phase signalling in ensemble A dues to processing delays between
+off-air reception of ensemble A and FIC encoding.
+
+                                                                             ETSI
+                                                    29                              ETSI TS 104 089 V1.1.1 (2024-09)
+
+53     54      55  56            57  58         59  00    01        02  03     04   05                                      06  07
+
+seconds count
+
+audio              programme                                            alert
+
+FIG 0/15 insertion ­ ensemble A
+
+FIG 0/15 insertion ­ ensemble B
+
+FIG 0/15 insertion ­ ensemble C
+
+Heartbeat          Pre-trigger       Trigger        Other ensemble  Sustain    End      1                                       2
+
+                                 FIG 0/15 type                                      Incident number
+
+               Figure B.2: FIG 0/15 signalling in ensembles A, B, and C: start of synchronized alerts for incidents1 and 2
+
+                                                    ETSI
+                                                    30                                            ETSI TS 104 089 V1.1.1 (2024-09)
+
+38     39      40  41            42  43         44  45                        46  47  48     49   50     51                           52
+
+seconds count
+
+audio              programme                                                          alert
+
+FIG 0/15 insertion ­ ensemble A
+
+FIG 0/15 insertion ­ ensemble B                                                              OE Triggers continue longer than TE Trigger
+
+FIG 0/15 insertion ­ ensemble C      End and OE Trigger provided in parallel
+
+Heartbeat          Pre-trigger       Trigger        Other ensemble                Sustain    End      1                               2
+
+                                 FIG 0/15 type                                                    Incident number
+
+       Figure B.3: FIG 0/15 signalling in ensembles A, B, and C: end of alert for incident 2 and start of a new alert for incident 1
+
+                                                    ETSI
+31  ETSI TS 104 089 V1.1.1 (2024-09)
+
+Annex C (informative):
+Example of coding an alert area
+
+Figure C.1 shows an approximation of the official service area of the Cardiff and Newport ensemble in the United
+Kingdom (red area). It also shows an approximation of the overspill area (pink area) where good reception is a
+consequence of geography and transmitter antenna patterns. The ensemble area is in Zone 10, which extends from
+(36, -36) to (72, 0). The first division of Zone 10 produces areas of 9° × 9° and the second of 2,25° × 2,25°. The area
+shown in figure C.1 extends from (49,5, -4,5) to (51,75, -2,25) and is identified by location code Z10:B6. It is divided
+into 16 sub-areas, which are labelled.
+
+         Figure C.1: Coverage of Cardiff-Newport ensemble within the Z10:B6 spherical rectangle
+                                                    (Map source: © 2024 Google)
+
+It can be seen that for this location (about 51° N) that the spherical rectangles have an aspect ratio of about 2:3
+(cos 51° = 0,6293).
+
+                                                                             ETSI
+32  ETSI TS 104 089 V1.1.1 (2024-09)
+
+When an emergency situation arises in Cardiff, the authorities wish to provide a warning to those affected, whilst not
+disturbing others, especially since the overspill area is some distance away. Therefore, location codes need to be
+provided to identify the valid area of the alert. It can be seen that Cardiff is located in sub-area 2. Figure C.2 provides an
+enlargement of this sub-area.
+
+                        Figure C.2: Cardiff alert area within the Z10:B62 spherical rectangle
+                                                    (Map source: © 2024 Google)
+
+It can be seen that the alert area is contained within four sub-areas of the Z10:B62 spherical rectangle. Figure C.3
+provides an enlarged view of the alert area.
+
+                                                                             ETSI
+33  ETSI TS 104 089 V1.1.1 (2024-09)
+
+                                                Figure C.3: Cardiff alert area detail
+                                                    (Map source: © 2024 Google)
+
+The alert area consists of 17 spherical rectangles with 5-digit location codes (in this location, each spherical rectangle
+with a 5-digit code is approximately 4 km north-south by 2,5 km east-west).
+Since the area is within four 4-digit location codes, the area can be coded successfully by using sub-codes. The alert
+area is coded with four location codes (LC) as follows:
+
+    · LC1: Zone = 10; SCF = 1; Num Digits = 3; Digit 1 = B; Other digits = 624; Padding = 0; Sub-codes = CC00.
+    · LC2: Zone = 10; SCF = 1; Num Digits = 3; Digit 1 = B; Other digits = 625; Padding = 0; Sub-codes = F730.
+    · LC3: Zone = 10; SCF = 0; Num Digits = 4; Digit 1 = B; Other digits = 6283.
+    · LC4: Zone = 10; SCF = 1; Num Digits = 3; Digit 1 = B; Other digits = 629; Padding = 0; Sub-codes = 0007.
+LC3 is coded without the use of sub-codes as there is only one sub-area inside the alert area. The location codes use a
+total of 22 bytes (3 × 6 + 4 bytes). The four location codes therefore fit into a single FIG 0/15.
+
+                                                                             ETSI
+                                                                               34  ETSI TS 104 089 V1.1.1 (2024-09)
+
+Annex D (informative):
+Alert area translation method
+
+D.1 Introduction
+
+The alert area is the geographical area in which users are presented with the alert message by the matching algorithm in
+the EWS receiver. The alert area may be the entire coverage area of the DAB ensemble, or it may be an area defined by
+use of DAB location codes. In the latter case, the maximum number of location codes that can be signalled is limited in
+order to ensure that the alert area is signalled in a timely way.
+
+The raw alert information will typically be provided by a national authority and the source format most commonly uses
+the CAP standard [i.2]. The CAP standard specifies alert areas as polygons or circles, using co-ordinate systems, or as
+geocodes which have national encoding formats such as SAME or SHN. For many national formats official public
+domain area definitions exist, so that a highly accurate geographic polygon can be obtained from an administrative
+entity identifier by way of dereferencing.
+
+A DAB EWS has a coverage area within which suitable receivers can respond to signalled alerts. The coverage area of
+the DAB EWS is the superposition of all the DAB ensembles that participate in the EWS.
+
+Every incident will be relevant to a particular geographical area. This alert area may be deemed to be sufficiently close
+to one of the coverage areas of a participating EWS ensemble that the entire ensemble area is appropriate as the alert
+area, or it may be that the alert area does not correspond to any EWS ensemble coverage area, in which case the alert
+area will be described by the use of location codes. The general recommendation is that the ensemble that carries the
+alert message has a coverage area that is greater than the full extent of the alert area.
+
+A DAB EWS may be centrally managed, in which case the assignment of incidents to ensembles will be a matter of the
+management system, or it may be managed in a distributed way, whereby ensembles manage their own provision of
+incidents. In the latter case, there is the possibility that more than one EWS ensemble could choose to carry an alert for
+the same incident, although the precise content of the alert messages will be different in some ways.
+
+The alert source information will usually be provided by a responsible institution and will be the result of an
+administrative decision and may also represent a sovereign act that is legally protected. As such the process to translate
+the source alert area into DAB location codes should not reduce the spatial extent.
+
+A DAB location code identifies a spherical rectangle; the dimensions of the spherical rectangle are defined by the
+number of digits that make up the location code - the larger the number of digits, the smaller the area of the spherical
+rectangle identified. The DAB alert area is therefore the addition of all the spherical rectangles described by a set of
+location codes needed to include the entire alert area described by the source data.
+
+The DAB alert area is necessarily different from the source alert area. The translation procedure ensures that the output
+set of location codes completely includes the source alert area, except if it can be numerically shown that the source
+alert area overlaps a location code only by a miniscule amount: in this case the location code can be omitted from the
+output set of location codes.
+
+This annex contains a reference encoding procedure for generating a set of location codes that adheres to the EWS
+signalling constraints that allow a maximum of four location code fields, each with a maximum length of 25 bytes.
+
+D.2 Translation procedure
+
+D.2.1 Generating the source data polygon(s)
+
+Whatever the format of the source alert data, each alert area needs to be accurately mapped to one or more polygons
+using the WGS84 coordinate system, as this is the basis of the DAB location coding system. In the process described in
+this annex, each alert area is assumed to be described by such polygons using WGS84 coordinates. For source data
+defined in a coordinate system other than WGS84, a coordinate transform is applied to the source data before the
+translation procedure. The process aims to provide the best fit to the source alert area within the capacity constraints of
+the signalling whilst ensuring that accuracy requirements are met.
+
+ETSI
+                                    35                                   ETSI TS 104 089 V1.1.1 (2024-09)
+
+The alert area defined in the alert source information is accurately mapped to one or more polygons, each consisting of
+a line string of geographic points, each expressed as a pair of polar coordinates defined by WGS84 latitude and
+longitude.
+
+D.2.2 Generating the location code set
+
+D.2.2.1 Introduction
+
+The translation procedure consists of four steps. The algorithm is defined on an abstract level in natural language as to
+not limit the implementation beyond the requirements.
+
+The "level" describes the number of hexadecimal digits in the location code and thus the size of the area described:
+level 1 (L1) has one digit and describes the largest area; level 6 (L6) has six digits and describes the smallest area.
+
+D.2.2.2 Initial parent level determination
+
+From the source data polygon(s), determine the dimensions (in degrees) of the latitude extent and the longitude extent
+of the alert area: the latitude extent is the difference between the minimum and maximum values of all the geographic
+points of the polygon(s), similarly the longitude extent. The smallest extent (either latitude or longitude) determines the
+initial parent level as given by table D.1.
+
+                    Table D.1: Initial parent level from smallest extent
+
+Smallest extent, E  E > 9°  9°  E > 2,25° 2,25°  E > 0,5625° 0,5625°  E > 0,140625° 0,140625°  E
+Parent level          L1
+                            L2              L3                              L4      L5
+
+D.2.2.3 Generating the parent set of location codes
+
+The parent set is the set of location codes at the parent level that when taken together completely include the alert area
+as defined by the source data polygon. If the parent set contains more location codes than the count threshold defined in
+table D.2, the parent level is reduced by one (that is, it now describes a larger spherical rectangle) and a new parent set
+at the new parent level is generated.
+
+                            Table D.2: Count thresholds at parent level
+
+Parent Level                    L1  L2          L3  L4                  L5      L6
+Count Threshold
+                                24  24          20  20                  16      -
+
+D.2.2.4 Generating the child set of location codes
+
+The child level is set at one level greater than the parent level (that is it describes a smaller spherical rectangle). The
+child set is the set of location codes at the child level that when taken together completely include the alert area as
+defined by the source data polygon(s). If the child set contains fewer than, or an equal number of location codes to, the
+count threshold defined in table D.3, the child level is increased by one (that is, it now describes a smaller spherical
+rectangle) and a new child set at the new child level is generated.
+
+                            Table D.3: Count thresholds at child level
+
+Child Level                     L1  L2          L3  L4                  L5      L6
+Count Threshold
+                                -   24          20  20                  16      16
+
+                                    ETSI
+                               36                       ETSI TS 104 089 V1.1.1 (2024-09)
+
+D.2.2.5 Removing the "miniscule" location codes
+
+When a location code in the child set overlaps the source data polygon(s) by only a miniscule amount, the inclusion of
+the location code becomes disproportionate because the vast majority of the area described is outside the source alert
+area. The overlap between the alert areas defined by the source data polygon(s) and a location code exists if any point of
+the alert area lies within the location code spherical rectangle. To avoid this situation, location codes in the child set are
+discarded if they overlap by an area that is smaller than the area threshold. The area threshold is a fraction of the
+spherical rectangle area with a numerator of 1 and the denominator according to the location code level as defined in
+table D.4.
+
+                        Table D.4: Area thresholds
+
+Level                      L1  L2    L3             L4  L5  L6
+Area threshold (1/N)
+                           -   4096 1024 256 64             16
+
+The output set of location codes is the result of discarding the miniscule location codes from the child set. The output
+set is the encoded alert area and is used for output formation.
+
+D.2.3 Output formation
+
+The alert area is carried in FIG 0/15 using a formatted set of location codes. In the output set, all the location codes are
+at the same level, which is the output level. The level below the output level is called the stem level (that is, it has one
+fewer hexadecimal digit). For efficient coding in the FIG 0/15, location codes can be grouped together using the stem
+level and sub-coding.
+
+The output set of location codes is grouped into sub-sets sorted by the stem level location code: if location codes in the
+output set share a common stem level code, they fall into the same group. Every group has up to 16 location codes, only
+different in the last hexadecimal digit. Each group is then encoded to a format that depends on the group size, as defined
+in table D.5.
+
+Table D.5: Location code format in output
+
+Group size              1            2 to 15                16
+Encoded format
+                      Output level Stem level with subcode Stem level
+
+If the group has one location code, it is encoded as a single location code at the output level as this is the most efficient
+coding. If a group has more than one and fewer than 16 location codes, the group is coded as the stem level location
+code with a sub-code field that has one bit set for every location code in the group determined by its last digit. If a group
+has 16 location codes, it is coded as a single location code at stem level.
+
+    NOTE: The translation procedure is defined such that the number of groups will never exceed the parent level
+                 threshold. This guarantees that the entire output set can be transmitted within four FIG 0/15 instances.
+
+                               ETSI
+                                                   37                                   ETSI TS 104 089 V1.1.1 (2024-09)
+
+Annex E (normative):
+Definition of FIG 0/15 EWS information
+
+The EWS information description is encoded in Extension 15 of FIG type 0 (FIG 0/15). Figure E.1 shows the structure
+of the EWS information field which is part of the Type 0 field (see also ETSI EN 300 401 [1], figure 7). FIG 0/15
+signals participation of an ensemble in an EWS, and the status and localization for EWS audio alerts that are carried in
+the tuned ensemble or in another ensemble. The alert area, when smaller than the complete ensemble coverage area, is
+defined by the use of location codes (see annex F). In order to allow complex alert areas to be signalled, a set of
+FIG 0/15s can be signalled: the set comprises between one and four FIG 0/15 instances. One or more alerts may be
+signalled concurrently: in this case there will be a set of one to four FIG 0/15s for each alert; the complete collection of
+FIG 0/15s that describe the current alert information is known as an alert group.
+
+The FIG type 0 flags (see ETSI EN 300 401 [1], clause 5.2.2.1) are used as follows: C/N flag - SIV; OE flag - OE;
+P/D flag - special definition.
+
+The P/D flag is used to ensure synchronization between the transmission equipment and receiving equipment that
+operates a sleep mode. It shall be set as follows:
+
+    · 0: Process
+
+    · 1: Discard
+
+This feature shall use the SIV signalling (see ETSI EN 300 401 [1], clause 5.2.2.1). The database shall be divided by
+use of a database key. Changes to the database shall not be signalled using the CEI mechanism, because an alert
+database only exists during the alert.
+
+A special form of FIG 0/15 is used as a heartbeat indicator (control function, C/N flag is set to 1) to identify that the
+ensemble is part of an EWS and will carry alert information when alerts are active. The heartbeat form has an empty
+type 0 field and is identified by the length field of the FIG type 0 header being equal to 1. The OE flag shall be set to 0.
+The heartbeat form of FIG 0/15 shall not be transmitted when alerts are signalled.
+
+                                                   Type 0 field for extension 15
+
+       8 or 16 bits           0 or 8 bits              0 to 48 bits                     0 to 48 bits
+
+       Id field               Status field         Location code a                ....  Location code l
+
+                              1 bit 3 bits 4 bits
+
+                              b7 b6 b4 b3              b0
+
+                              Last Stage Incident Id
+
+                                    0 or 2 0 or 6  2 bits 6 bits 1 bit 3 bits 4 bits 0 to 20 bits 0 or 4 bits 0 or 16 bits
+               2 bits 6 bits bits bits
+                                                   b7 b6 b5 b0 b7 b6 b4 b3 b0
+Tuned b7 b6 b5 b0 b7 b6 b5 b0                       NFF Zone SCF Num Digit 1 Other digits Padding Sub-codes
+ensemble
+(OE = 0) Phase SubChId Rfa Sec                                                 digits
+
+                     16 bits
+
+Other     b15                 b0
+
+ensemble             EId
+(OE = 1)
+
+                              Figure E.1: Structure of EWS information field
+
+                                                   ETSI
+38    ETSI TS 104 089 V1.1.1 (2024-09)
+
+The following definitions apply:
+
+Id field: this 8- or 16-bit field shall contain the identity of the alert audio service component or the ensemble that carries
+the alert audio service component. The OE flag in the FIG type 0 header field (see ETSI EN 300 401 [1], clause 5.2.2.1)
+shall determine if the service component is in the tuned ensemble or another ensemble. The following definitions apply:
+
+    · Phase: this 2-bit field shall indicate the phase of the tuned ensemble alert, as follows:
+
+                  0 0: Pre-trigger;
+
+                  0 1: Trigger;
+
+                  1 0: Sustain;
+
+                  1 1: End.
+
+    · SubChId: this 6-bit field shall identify the sub-channel which contains the audio service component carrying
+           the audio alert.
+
+    · Rfa: this 2-bit field shall only be present when the Phase field = Pre-trigger. The bits are reserved for future
+           addition and shall be set to 0.
+
+    · Sec: this 6-bit field, coded as an unsigned binary integer, shall only be present when the Phase
+           field = Pre-trigger and shall contain the seconds count corresponding to the start of the Trigger phase.
+
+    · EId (Ensemble Identifier): this 16-bit field shall identify the other ensemble that carries the audio alert.
+
+Status field: this 8-bit field, when present, shall provide information about the alert. The following definitions apply:
+
+    · Last: this 1-bit flag shall indicate if this is the last FIG 0/15 to be signalled in this alert group as follows:
+
+                  0: not the last FIG 0/15 of the alert group
+
+                  1: the last FIG 0/15 of the alert group
+
+    · Stage: this 3-bit field shall indicate the stage of the EWS alert, as follows:
+
+                  0 0 0: Level 1 Start
+
+                  0 0 1: Level 1 Update
+
+                  0 1 0: Level 1 Repeat
+
+                  0 1 1: Level 1 Critical
+
+                  1 0 0: Level 2 Start
+
+                  1 0 1: Level 2 Update
+
+                  1 1 0: Level 2 Repeat
+
+                  1 1 1: Test
+
+    · Incident Identifier (IId): this 4-bit field, coded as an unsigned binary integer, shall identify an incident that is
+           composed of a series of audio alerts. The value is assigned by the ensemble that carries the audio alert and
+           shall be maintained through the various stages of an incident.
+
+Location code: these n × 8-bit fields define the geographic area that the EWS alert applies to. The areas specified are
+additive. If no location codes are provided then the alert is relevant to the entire ensemble coverage area. The number of
+location codes carried is not specified, but location codes fill the rest of the FIG 0/15 specified by the length field of the
+FIG 0/15 header. The following definitions apply:
+
+    · NFF: this 2-bit field, expressed as an unsigned binary number in the range 0 to 3, shall indicate the number of
+           FIG 0/15s for this alert set which follow in order to signal the complete alert area.
+
+    NOTE 1: NFF is not part of the location code, it is provided for determining the integrity of the complete alert area.
+
+ETSI
+39    ETSI TS 104 089 V1.1.1 (2024-09)
+
+    NOTE 2: When the C/N flag in the type 0 header is set to 0, (NFF + 1) indicates the total number of FIG 0/15s in
+                 the alert set.
+
+    · Zone: this 6-bit field, expressed as an unsigned binary number, shall identify the global zone as defined in
+           annex E.
+
+    · SCF: this 1-bit flag shall indicate whether the Sub-codes field is present or not, as follows:
+
+                  0: Sub-codes field is absent: the location code contains a single spherical rectangle.
+
+                  1: Sub-codes field is present: the location code contains 2 to 15 spherical rectangles.
+
+    · Num digits: this 3-bit field, expressed as an unsigned binary number, shall indicate the number of digits, in
+           the range 0 to 5, contained in the subsequent Other digits field.
+
+    NOTE 3: When SCF=1, the smallest spherical rectangles are sub-coded and Num digits is in the range 0 to 4.
+
+    · Digit 1: this 4-bit field shall specify the most significant digit of the location code (see annex E). The special
+           value 0 may be used for the polar zones to indicate the entire zone.
+
+    · Other digits: this 0- to 20-bit field shall only be present when the Other digits field is greater than 0. It shall
+           contain all the remaining digits of the location code when SCF = 0 and all but the least significant digit of the
+           remaining digits when SCF = 1.
+
+    NOTE 4: When SCF=1, the smallest spherical rectangles are sub-coded and so there are a maximum of 4 other
+                 digits.
+
+    · Padding: this 4-bit field shall only be present when Num digits is an odd number. All bits shall be set to 0.
+
+    · Sub-codes: this 16-bit flag field shall only be present when the SCF flag is set to 1. It shall specify between
+           2 and 15 spherical rectangles that are the sub-areas of the area specified by the zone and coded digits. The
+           definition of the sub-areas is given in annex E. The use of sub-codes permits efficient coding of a more
+           precisely defined area to be specified. The flags shall be coded as follows:
+
+                  bi (i = 0 to 15)
+
+                  0: sub-area i is not part of alert area
+
+                  1: sub-area i is part of alert area
+
+    NOTE 5: For 1 spherical rectangle, the coding efficiency is greater by including the least significant digit in the
+                 Other digits field; for 16 spherical rectangles, the sub-coding is not required as all sub-areas are part of
+                 the alert area.
+
+The database key comprises the OE flag (see ETSI EN 300 401 [1], clause 5.2.2.1) and the Id field.
+
+There is no Change Event Indication (CEI).
+
+When no alert is signalled, the heartbeat form of FIG 0/15 shall be used to indicate that the ensemble is part of the
+EWS.
+
+    NOTE 6: If multiple EWS alerts are active concurrently, the capacity of the FIC for all other features could be
+                 reduced. Receivers may expect that the nominal repetition rates of FIG 0/15 and of other FIGs may be
+                 affected.
+
+ETSI
+                                                                               40  ETSI TS 104 089 V1.1.1 (2024-09)
+
+Annex F (normative):
+DAB location coding
+
+F.1 Introduction
+
+Incidents and activities will rarely affect the same area as the coverage area of a particular DAB ensemble, and in many
+cases DAB ensembles have overlapping coverage areas. DAB location coding is applicable to any place on earth and
+uses a hierarchy of spherical rectangles (that is, rectangles defined in terms of polar coordinates). Each location code
+has a variable length with the first level of the code identifying the largest area, with each subsequent level identifying a
+sub-division of the previous level. The longer the code, the finer the spatial resolution. By providing a set of location
+codes, any arbitrary area may be described.
+
+A location code consists of a top-level zone using 6-bits and up to six sub-division levels, each using 4-bits, to form
+location codes with a maximum length of 30 bits and a minimum length of 10 bits (zone plus one sub-division). The
+maximum spatial resolution of the scheme is 977 m north-south. In the east-west direction, the spatial resolution is
+978 m at the equator and 302 m at 72° latitude. This level of precision is appropriate for a broadcast system. Each digit
+removed from the end of the location code reduces the spatial resolution by factor four, and increases the area described
+by a factor of 16.
+
+F.2 Coordinates
+
+In WGS84, the latitude is 0° at the equator, 90° at the north pole and -90° at the south pole, and the longitude is given as
+the position east of the Greenwich meridian, with 0° at the meridian and increasing positively eastwards to 180° and
+negatively westwards to -180°.
+
+To make calculations simpler for determining the location code, the WGS84 coordinates are translated using a simple
+mapping to use positive numbers only.
+
+The WGS84 latitude is translated to the Southerly Extent (SE) by subtracting the WGS84 latitude from 90°; thus the
+north pole becomes 0°, the equator 90° and the south pole 180°.
+
+The WGS84 longitude is translated to the Easterly Extent (EE) by adding 360° to negative values only; thus, for
+example, -10° becomes 350°.
+
+F.3 Division into zones
+
+The top level of the hierarchy is a zone. There are 42 zones, as shown in figure F.1:
+    · 40 banded zones, which are spherical rectangles 36° × 36°; and
+    · 2 polar zones, also 36° × 36°, which extend 18° from the poles.
+
+The vast majority of the populated area of the globe is contained within the banded zones, that is between 72°N and
+72°S from the equator.
+
+ETSI
+                                                    41                            ETSI TS 104 089 V1.1.1 (2024-09)
+                   Polar zone                                                         Zone 0
+         Zone 10                                                                             Zone 1
+Banded zone
+               Equator                                                                          Zone 11
+
+Zone 40
+
+                                                                                  Zone 41
+
+                     Figure F.1: Representation of the zones
+
+The north polar zone is zone 0; the south polar zone is zone 41. The banded zones are numbered 1 to 40, in four rows of
+10 zones, moving southwards and eastwards.
+
+The identity of the zone may be determined from the SE and EE values as follows:
+
+case (SE < 18)       zone = 0;
+                     zone = 10 × int((SE - 18)/36) + int(EE/36) + 1;
+case (18  SE < 162)  zone = 41;
+case (SE  162)
+
+where int indicates that only the integer part of the result is used.
+
+Zone 1 therefore comprises the area contained within WGS84 coordinates from (36, 0) to (72, 36); zone 2 from (36, 36)
+to (72, 72); ... ; zone 10 from (36, -36) to (72, 0); zone 11 from (0, 0) to (36, 36); and so on to zone 40 from (-72, -36)
+to (-36, 0). This is shown in figure F.2.
+
+                     ETSI
+42  ETSI TS 104 089 V1.1.1 (2024-09)
+
+                        Figure F.2: Position of the zones (variant of the Mercator projection)
+The polar zones have a radius of 18°, approximately 2 000 km. The zones bordering the equator are approximately
+4 000 km north-south; 4 000 km at the equator, and 3 200 km at 36° from the equator, east-west. The zones adjoining
+the polar zones are also approximately 4 000 km north-south; 3 200 km at 36° from the equator, and 1 250 km at
+72° from the equator, east-west.
+
+F.4 Division of the banded zones
+
+The first division of the banded zones, and all subsequent divisions, are performed as follows.
+The area is divided into 16 sub-areas of equal polar co-ordinate dimensions in a 4 × 4 pattern, as shown in figure F.3.
+Each sub-area is numbered to identify its position, beginning at the north-west corner and moving eastwards and
+southwards.
+
+    NOTE: Using a 4-bit integer to identify a sub-area, the left-most (most significant) 2 bits count north-south and
+                 the right-most (least significant) 2 bits count west-east.
+
+                                                                             ETSI
+                       43       ETSI TS 104 089 V1.1.1 (2024-09)
+
+                 0  1        2  3
+
+                 4  5        6  7
+
+          South  8  9 10 11
+
+                 12 13 14 15
+
+                                                              East
+                 Figure F.3: Division of spherical rectangles
+
+For any point on the earth's surface within the banded zones, the digits for the location code are calculated as follows:
+
+Southerly Code (SC) = int(frac((SE - 18)/36) × 212) expressed as a 12-bit integer
+Easterly Code (EC) = int(frac(EE/36) × 212) expressed as a 12-bit integer
+
+where int indicates that only the integer part of the result is used and frac indicates that only the fractional part of the
+result is used.
+
+The Combined Code (CC) is then formed by interleaving the SC and EC, 2-bits at a time, to produce a 24-bit
+integer, the most significant 2-bits are from the SC, the next 2-bits from the EC, and so on. That is, the digits
+representing a sub-area at each level of the 24-bit integer are formed by combining piecewise 2-bits from the
+SC and 2-bits from the EC.
+
+EXAMPLE:  BBC Broadcasting House in London is located at WGS84 (51,5187412, -0,1434571)
+          First, the coordinates are translated:
+
+              SE = 90 - 51,5187412 = 38,4812588
+              EE = -0,1434571 + 360 = 359,8565429
+          Second, the zone number is calculated:
+              Zone = 10 × int((38,4812588 - 18)/36) + int(359,8565429/36) + 1 = 10
+          Third, the digits are calculated:
+              SC = int(frac((38,4812588 - 18)/36) × 4 096) = 2330 = 91A16 = 10 01 00 01 10 102
+              EC = int(frac( 359,8565429/36) × 4 096) = 4079 = FEF16 = 11 11 11 10 11 112
+              CC = 1011 0111 0011 0110 1011 10112 = B736BB16
+          The location code for BBC Broadcasting House is thus Z10:B736BB.
+
+                       ETSI
+                                                          44            ETSI TS 104 089 V1.1.1 (2024-09)
+
+F.5 Division of the polar zones
+
+The polar zones have a special coding for their first digit, because the area of a polar zone is circular. The first division
+of the polar zones is shown in figure F.4. Each sub-area is numbered to identify its position.
+
+                                                              (-81, 0)  (-72, 0)
+
+         65                                               (-72, -36)                  (-72, 36)
+
+   7                                                                 10 1           2
+            13
+                                 4                             9                                   (-72, 72)
+ 8 14 12                                                              15 11
+         15 11                     3                                                  3
+                                                              8 14 12
+   9                                            (72, 72)                13          4
+        10 1
+                                 2                              7
+(72, -36)
+                                               (81, 0)                65
+                        (72, 0)   (72, 36)
+          North pole - Zone 0
+                                                              South pole - Zone 41
+
+                            Figure F.4: First division of polar zones (WGS84 co-ordinates)
+
+Subsequent digits are divided in the same way as for the banded zones (see figure F.3).
+
+For any point on the earth's surface within the north polar zone, the digits for the location code are calculated as
+follows:
+
+    if (SE < 9) then {
+            Digit 1 = int(EE/72) + 11
+            Southerly Code (SC) = int(SE/9 × 210) expressed as a 10-bit integer
+            Easterly Code (EC) = int(frac(EE/72) × 210) expressed as a 10-bit integer}
+
+           else {
+            Digit 1 = int(EE/36) + 1
+            Southerly Code (SC) = int(frac((SE - 9)/9) × 210) expressed as a 10-bit integer
+            Easterly Code (EC) = int(frac(EE/36) × 210) expressed as a 10-bit integer};
+
+    the Combined Code (CC) is then formed by concatenating Digit 1 (most significant) with the result of interleaving
+    the SC and EC, 2-bits at a time, to produce a 20-bit integer, the most significant 2-bits are from the SC, the next 2-
+    bits from the EC, and so on.
+
+For any point on the earth's surface within the south polar zone, the digits for the location code are calculated as
+follows:
+
+    if (SE < 171) then {
+            Digit 1 = int(EE/36) + 1
+            Southerly Code (SC) = int(frac((SE - 162)/9) × 210) expressed as a 10-bit integer
+            Easterly Code (EC) = int(frac(EE/36) × 210) expressed as a 10-bit integer}
+
+           else {
+            Digit 1 = int(EE/72) + 11
+            Southerly Code (SC) = int(frac((SE - 171)/9) × 210) expressed as a 10-bit integer
+            Easterly Code (EC) = int(frac(EE/72) × 210) expressed as a 10-bit integer};
+
+                                 ETSI
+          45    ETSI TS 104 089 V1.1.1 (2024-09)
+
+the Combined Code (CC) is then formed by concatenating Digit 1 (most significant) with the result of interleaving
+the SC and EC, 2-bits at a time, to produce a 20-bit integer, the most significant 2-bits are from the SC, the next 2-
+bits from the EC, and so on.
+
+NOTE: In the polar zones, the linear dimension of the edge of spherical rectangles that touch the pole is 0.
+
+EXAMPLE:  Svalbard Museum in Longyearbyen is located at WGS84 (78,222609, 15,651605)
+          First, the coordinates are translated:
+
+              SE = 90 - 78,222609 = 11,777391
+              EE = 15,651605
+          Second, the zone number is calculated:
+              Zone = 0
+          Third, the digits are calculated:
+              Digit 1 = int(15,651605/36) + 1 = 1
+              SC = int(frac((11,777391 - 9)/9) × 1 024) = 316 = 13C16 = 01 00 11 11 002
+              EC = int(frac(15,651605/36) × 1 024) = 445 = 1BD16 = 01 10 11 11 012
+              CC = 0001 0101 0010 1111 1111 00012 = 152FF116
+          The location code for Svalbard Museum is thus Z0:152FF1
+
+          ETSI
+         46                                                ETSI TS 104 089 V1.1.1 (2024-09)
+
+History
+
+V1.1.1                                   Document history
+
+         September 2024 Publication
+
+         ETSI
+

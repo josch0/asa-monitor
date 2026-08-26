@@ -1,0 +1,1543 @@
+     ETSI TS 102 980 V2.1.2 (2019-02)
+
+TECHNICAL SPECIFICATION
+
+                     Digital Audio Broadcasting (DAB);
+                        Dynamic Label Plus (DL Plus);
+                            Application specification
+2  ETSI TS 102 980 V2.1.2 (2019-02)
+
+                                                                    Reference
+                                                                       RTS/JTC-DAB-95
+
+                                                                    Keywords
+                                                                     broadcast, DAB, text
+
+                                                                       ETSI
+
+                                                                   650 Route des Lucioles
+                                                     F-06921 Sophia Antipolis Cedex - FRANCE
+
+                                                  Tel.: +33 4 92 94 42 00 Fax: +33 4 93 65 47 16
+
+                                                                       Siret N° 348 623 562 00017 - NAF 742 C
+                                                                     Association à but non lucratif enregistrée à la
+                                                                     Sous-Préfecture de Grasse (06) N° 7803/88
+
+                                                             Important notice
+
+                                                The present document can be downloaded from:
+                                                        http://www.etsi.org/standards-search
+
+The present document may be made available in electronic versions and/or in print. The content of any electronic and/or
+print versions of the present document shall not be modified without the prior written authorization of ETSI. In case of any
+
+    existing or perceived difference in contents between such versions and/or in print, the prevailing version of an ETSI
+                        deliverable is the one made publicly available in PDF format at www.etsi.org/deliver.
+
+    Users of the present document should be aware that the document may be subject to revision or change of status.
+                          Information on the current status of this and other ETSI documents is available at
+                                             https://portal.etsi.org/TB/ETSIDeliverableStatus.aspx
+
+            If you find errors in the present document, please send your comment to one of the following services:
+                                          https://portal.etsi.org/People/CommiteeSupportStaff.aspx
+
+                                                         Copyright Notification
+
+  No part may be reproduced or utilized in any form or by any means, electronic or mechanical, including photocopying
+                                     and microfilm except as authorized by written permission of ETSI.
+
+                  The content of the PDF version shall not be modified without the written authorization of ETSI.
+                            The copyright and the foregoing restriction extend to reproduction in all media.
+
+                                                                       © ETSI 2019.
+                                                       © European Broadcasting Union 2019.
+
+                                                                    All rights reserved.
+ DECTTM, PLUGTESTSTM, UMTSTM and the ETSI logo are trademarks of ETSI registered for the benefit of its Members.
+
+                     3GPPTM and LTETM are trademarks of ETSI registered for the benefit of its Members and
+                                                        of the 3GPP Organizational Partners.
+
+                        oneM2MTM logo is a trademark of ETSI registered for the benefit of its Members and
+                                                                of the oneM2M Partners.
+
+                     GSM® and the GSM logo are trademarks registered and owned by the GSM Association.
+
+                                                                               ETSI
+          3     ETSI TS 102 980 V2.1.2 (2019-02)
+
+Contents
+
+Intellectual Property Rights ................................................................................................................................4
+
+Foreword ............................................................................................................................................................. 4
+
+Modal verbs terminology....................................................................................................................................4
+
+1 Scope ........................................................................................................................................................5
+
+2 References ................................................................................................................................................5
+
+2.1    Normative references .........................................................................................................................................5
+
+2.2    Informative references........................................................................................................................................5
+
+3 Definition of terms, symbols and abbreviations.......................................................................................5
+
+3.1    Terms .................................................................................................................................................................. 5
+
+3.2    Symbols ..............................................................................................................................................................6
+
+3.3    Abbreviations .....................................................................................................................................................6
+
+4 Introduction ..............................................................................................................................................7
+
+5 DL Plus objects ........................................................................................................................................8
+
+5.0    Introduction ........................................................................................................................................................8
+
+5.1    Content types......................................................................................................................................................9
+
+5.2    Linking of DL Plus objects...............................................................................................................................10
+
+5.2.0  Introduction................................................................................................................................................. 10
+
+5.2.1  Aggregating DL Plus objects (category Item) ............................................................................................10
+
+5.2.2  Compiling DL Plus objects into tables .......................................................................................................11
+
+5.2.3  Linking a Descriptor object to another DL Plus object...............................................................................12
+
+5.3    Life time, updating and deletion.......................................................................................................................12
+
+5.3.0  Introduction................................................................................................................................................. 12
+
+5.3.1  Updating objects .........................................................................................................................................13
+
+5.3.2  Deleting objects ..........................................................................................................................................13
+
+6 DL Plus tags ...........................................................................................................................................13
+
+6.0    Introduction ......................................................................................................................................................13
+
+6.1    Creating a dummy object .................................................................................................................................14
+
+6.2    Creating a delete object ....................................................................................................................................14
+
+7 Command structure ................................................................................................................................15
+
+7.1    Transport of DL Plus commands......................................................................................................................15
+
+7.2    DL Plus commands: general structure..............................................................................................................16
+
+7.3    The DL Plus tags command .............................................................................................................................16
+
+7.4    Transmission sequence.....................................................................................................................................17
+
+8 Receiver behaviour.................................................................................................................................17
+
+8.0    Introduction ......................................................................................................................................................17
+
+8.1    Basic requirements ...........................................................................................................................................17
+
+8.2    History .............................................................................................................................................................. 18
+
+Annex A (normative): List of DL Plus content types ..................................................................................19
+
+Annex B (informative): Use cases and Examples.........................................................................................22
+B.1 Use cases ................................................................................................................................................22
+B.2 Examples for navigation and display use ...............................................................................................26
+B.3 Prioritization...........................................................................................................................................26
+
+Annex C (informative): DL Plus and the compatibility with RDS/RT+....................................................28
+
+Annex D (informative): Bibliography...........................................................................................................29
+History ..............................................................................................................................................................30
+
+          ETSI
+4     ETSI TS 102 980 V2.1.2 (2019-02)
+
+Intellectual Property Rights
+
+Essential patents
+
+IPRs essential or potentially essential to normative deliverables may have been declared to ETSI. The information
+pertaining to these essential IPRs, if any, is publicly available for ETSI members and non-members, and can be found
+in ETSI SR 000 314: "Intellectual Property Rights (IPRs); Essential, or potentially Essential, IPRs notified to ETSI in
+respect of ETSI standards", which is available from the ETSI Secretariat. Latest updates are available on the ETSI Web
+server (https://ipr.etsi.org/).
+
+Pursuant to the ETSI IPR Policy, no investigation, including IPR searches, has been carried out by ETSI. No guarantee
+can be given as to the existence of other IPRs not referenced in ETSI SR 000 314 (or the updates on the ETSI Web
+server) which are, or may be, or may become, essential to the present document.
+
+Trademarks
+
+The present document may include trademarks and/or tradenames which are asserted and/or registered by their owners.
+ETSI claims no ownership of these except for any which are indicated as being the property of ETSI, and conveys no
+right to use or reproduce any trademark and/or tradename. Mention of those trademarks in the present document does
+not constitute an endorsement by ETSI of products, services or organizations associated with those trademarks.
+
+Foreword
+
+This Technical Specification (TS) has been produced by Joint Technical Committee (JTC) Broadcast of the European
+Broadcasting Union (EBU), Comité Européen de Normalisation ELECtrotechnique (CENELEC) and the European
+Telecommunications Standards Institute (ETSI).
+
+    NOTE 1: The EBU/ETSI JTC Broadcast was established in 1990 to co-ordinate the drafting of standards in the
+                 specific field of broadcasting and related fields. Since 1995 the JTC Broadcast became a tripartite body
+                 by including in the Memorandum of Understanding also CENELEC, which is responsible for the
+                 standardization of radio and television receivers. The EBU is a professional association of broadcasting
+                 organizations whose work includes the co-ordination of its members' activities in the technical, legal,
+                 programme-making and programme-exchange domains. The EBU has active members in about
+                 60 countries in the European broadcasting area; its headquarters is in Geneva.
+
+                   European Broadcasting Union
+                   CH-1218 GRAND SACONNEX (Geneva)
+                   Switzerland
+                   Tel: +41 22 717 21 11
+                   Fax: +41 22 717 24 81
+
+The Eureka Project 147 was established in 1987, with funding from the European Commission, to develop a system for
+the broadcasting of audio and data to fixed, portable or mobile receivers. Their work resulted in the publication of
+European Standard, ETSI EN 300 401 [1], for DAB (see note 2) which now has worldwide acceptance.
+
+    NOTE 2: DAB is a registered trademark owned by one of the Eureka Project 147 partners.
+
+The DAB family of standards is supported by World DAB, an organization with members drawn from broadcasting
+organizations and telecommunication providers together with companies from the professional and consumer
+electronics industry.
+
+Modal verbs terminology
+
+In the present document "shall", "shall not", "should", "should not", "may", "need not", "will", "will not", "can" and
+"cannot" are to be interpreted as described in clause 3.2 of the ETSI Drafting Rules (Verbal forms for the expression of
+provisions).
+
+"must" and "must not" are NOT allowed in ETSI deliverables except when used in direct citation.
+
+ETSI
+                                             5  ETSI TS 102 980 V2.1.2 (2019-02)
+
+1 Scope
+
+The present document defines a backward compatible extension of the Dynamic Label feature used in Digital Audio
+Broadcasting (DAB) (ETSI EN 300 401 [1]).
+
+2 References
+
+2.1 Normative references
+
+References are either specific (identified by date of publication and/or edition number or version number) or
+non-specific. For specific references, only the cited version applies. For non-specific references, the latest version of the
+referenced document (including any amendments) applies.
+
+Referenced documents which are not found to be publicly available in the expected location might be found at
+https://docbox.etsi.org/Reference.
+
+    NOTE: While any hyperlinks included in this clause were valid at the time of publication, ETSI cannot guarantee
+                 their long term validity.
+
+The following referenced documents are necessary for the application of the present document.
+
+[1]  ETSI EN 300 401 (V2.1.1): "Radio Broadcasting Systems; Digital Audio Broadcasting (DAB) to
+
+     mobile, portable and fixed receivers".
+
+[2]  IEC 62106: "Radio data system (RDS) - VHF/FM sound broadcasting in the frequency range from
+
+     64,0 MHz to 108,0 MHz".
+
+2.2 Informative references
+
+References are either specific (identified by date of publication and/or edition number or version number) or
+non-specific. For specific references, only the cited version applies. For non-specific references, the latest version of the
+referenced document (including any amendments) applies.
+
+    NOTE: While any hyperlinks included in this clause were valid at the time of publication, ETSI cannot guarantee
+                 their long term validity.
+
+The following referenced documents are not necessary for the application of the present document but they assist the
+user with regard to a particular subject area.
+
+Not applicable.
+
+3 Definition of terms, symbols and abbreviations
+
+3.1 Terms
+
+For the purposes of the present document, the terms given in ETSI EN 300 401 [1] and the following apply:
+category: group of content types
+content type: classification of the content of a DL Plus object
+Dynamic Label (DL): feature of DAB for providing a programme with text messages; it also provides commands,
+e.g. for presentation on the receiver terminal
+
+                              ETSI
+                   6                                                          ETSI TS 102 980 V2.1.2 (2019-02)
+
+Dynamic Label (DL) message: text messages that are associated with a programme service and are transmitted in the
+PAD part of that programme
+
+    NOTE: One single DL message should be sufficient for complete comprehension by a (human) listener.
+
+Dynamic Label Plus (DL Plus): extension of the Dynamic label feature; it allows storing and filtering parts of the text
+(sent as DL messages) in the receiver terminal as DL Plus objects, which then can be selected and accessed by the
+listener independently from the currently transmitted DL messages
+
+DL plus command: mechanism for carrying the DL tags necessary for identifying DL Plus objects
+
+DL plus object: text string created in a receiver with a defined content type to allow selection by the listener
+
+DL plus tag: contains the location and the content type of a DL Plus object carried in a corresponding Dynamic Label
+Message
+
+programme item: time-slice of a programme, for example, a piece of music or a documentary report
+
+3.2 Symbols
+
+Void.
+
+3.3 Abbreviations
+
+For the purposes of the present document, the following abbreviations apply:
+
+CD       Compact Disc
+CRC      Cyclic Redundancy Check
+DAB      Digital Audio Broadcasting
+DL Plus  Dynamic Label Plus
+DL       Dynamic Label
+EPG      Electronic Programme Guide
+FIG      Fast Information Group
+FM       Frequency Modulation
+IR       Item Running
+IT       Item Toggle
+MMS      Multimedia Message Service
+NT       Number of Tags
+ODA      Open Data Application
+PAD      Programme Associated Data
+PC       Personal Computer
+PDA      Personal Digital Assistant
+PMP      Personal Media Player
+RDS      Radio Data System
+RT       RadioText
+RT+      RadioText Plus
+SMS      Short Message Service
+UECP     Universal Encoder Communication Protocol
+URL      Universal Resource Location
+USB      Universal Serial Bus
+
+                   ETSI
+7     ETSI TS 102 980 V2.1.2 (2019-02)
+
+4 Introduction
+
+Digital Audio Broadcasting DAB [1] provides the text feature Dynamic Label (DL) which allows the service provider
+to send text messages with information such as track playing, now/next, news headlines, weather, sport results, etc. To
+serve all the different interests of listeners, the service provider has to send DL messages frequently and with different
+content, one after the other, each message replacing the one before. The more information he wants to provide, the more
+frequently he has to update the messages, and the less time is left for presentation of a message on the display and for
+reading by a listener. So it will happen that a listener has to wait until specific information he is interested in shows up
+and - even worse - has to observe the display continuously in order not to miss the instant when the desired information
+is displayed.
+
+DL Plus solves this dilemma by allowing the listener to select the kind of information he is interested in. For that
+purpose DL messages are complemented by tags which identify specific content of the DL message by its content type.
+Users can select the content types of information to be presented; they do not need to read, or even be aware of, the
+complete stream of DL messages.
+
+DL Plus is a backwards compatible extension of the DL feature: the transmitted tags are not visible in the DL message
+so that listeners with receivers without a DL Plus decoder still view the DL messages as before. For the broadcaster, the
+additional data rate (for tag transmission) is significantly less than the data rate necessary for text.
+
+A receiver can use the content classification and tagging in two different ways: by improving the presentation of the text
+messages and/or by providing the information to other applications and devices.
+
+DL messages may contain any kind of text: some will be quite general - news headlines, for example - whilst others
+relate directly to the audio - artist and title information, for example. In this latter case, special consideration is given to
+allow correct grouping of all the different item-related information and an unambiguous reference to the audio of the
+respective programme item. This timing information may also be used to ensure that the text and audio make sense for
+time-shifted programmes.
+
+DL Plus, by identifying text by content type, can automatically provide information to other devices like mobile phones,
+PDAs, PCs and personal audio players. This means listeners can interact with the radio station more easily because the
+transfer of telephone and SMS numbers, web addresses and event information may be done with a single click. DL Plus
+is designed to stimulate the integration of radio with other devices in order to strengthen the competitiveness of radio
+with respect to other media and to gain new and greater audiences.
+
+Figure 1 illustrates the way that a DL Plus decoder in a receiver processes the received DL message and DL Plus tags to
+create DL Plus objects that are then displayed or stored. In this example, the DL message contains the title and artist of
+a music item that is currently on air. These two pieces of text are tagged so that the receiver may identify them and
+create the DL Plus objects.
+
+ETSI
+8  ETSI TS 102 980 V2.1.2 (2019-02)
+
+                      Figure 1: Example of a simplified schematic of DL Plus object creation
+                                               from DL message and DL Plus tags
+
+The DL Plus tags are carried in the PAD using the same mechanism as the DL message but utilizing the command
+feature of the DL application. Up to four DL Plus tags may correspond to a single DL message. DL Plus tags contain a
+content type, a start marker and a length marker to identify the piece of text to be assigned to a DL Plus object. The DL
+Plus objects may contain additional data fields, if so required by the receiver functionality. It is recommended to store a
+time stamp indicating the time when the corresponding DL message was received (see clause 8.2). This allows history
+oriented handling of the DL Plus objects, e.g. by assembling a play list with the last received programme items.
+DL Plus offers similar functionality to the FM-RDS RT+ feature (see annex C).
+
+5 DL Plus objects
+
+5.0 Introduction
+
+DL Plus objects are created in receivers from DL messages and associated DL Plus tags. Therefore the DL Plus objects
+inherit some basic properties from the DL messages they are based on:
+
+    · The text of DL Plus objects shall be contained within a single DL message, and so has a maximum text length
+           determined by the limit of 128 bytes.
+
+    · The throughput of DL Plus objects is limited by the throughput of DL messages; the need for non-DL Plus
+           equipped receivers to be able to display all DL messages limits the throughput.
+
+    · These limitations restrict the overall amount of data that can be made available for the DL Plus application
+           decoder.
+
+                                                                             ETSI
+                                                            9  ETSI TS 102 980 V2.1.2 (2019-02)
+
+5.1 Content types
+
+Each DL Plus object is assigned a content type chosen by the service provider from those available. 64 content types are
+currently defined, see table A.1. These content types correspond exactly to those defined for the FM-RDS RT+ feature.
+A further 64 content types are reserved for future addition.
+
+The user can select which content types should be presentable to him and therefore which should be filtered and chosen
+from the stream of received DL Plus objects.
+
+The content types are grouped in the following categories:
+
+· Item
+      Content types within this category are related closely to the current audio programme item. A programme item
+      could be a music track from a popular music programme, or a feature in a magazine programme. In some cases
+      there may be a single programme item in a programme, in other cases there may be many programme items.
+      All content types in the Item category conform to the use of ID3 tags.
+
+· Info
+      Content types within this category carry information that is more or less unrelated to the audio, but offers
+      important additional information to the listener, including news, headlines, alarms, advertisements and events.
+
+· Programme
+      Content types within this category describe the programme and the programme service (i.e. the "radio
+      station").
+
+· Interactivity
+      Content types within this category include telephone numbers, SMS numbers, e-mail addresses or web
+      addresses (URLs) to support the implementation of interactivity by integration of radio and mobile phones,
+      PCs and PDAs.
+
+· Private
+      Content types within this category are defined by the service provider and have no pre-determined use. The
+      interpretation is dependent on the programme service and may be used in closed user groups with special
+      receivers.
+
+· Descriptor
+      Content types within this category are used to provide further detail to another DL Plus object
+      (see clause 5.2.3).
+
+Up to four DL Plus objects can be created from each DL message and the DL Plus objects may contain different text,
+the same text, or a portion of the same text which corresponds to the assigned content type.
+
+EXAMPLE:  The DL message "Coming soon: Performance featuring the SSSSSS in Concert, on Saturday
+          11.8.2017 at the RRRRR AAAAAA HHHH."
+          DL Plus tags are transmitted to produce the following DL Plus objects:
+          INFO.EVENT: "Performance featuring the SSSSSS in Concert, on Saturday 11.8.2017 at the
+          RRRRR AAAAAA HHHH"
+          DESCRIPTOR.APPOINTMENT: "11.8.2017"
+          DESCRIPTOR.PLACE: "RRRRR AAAAAA HHHH"
+          The text for both descriptor objects are completely contained in that of the INFO.EVENT object.
+          So the service provider ensures that a receiver can filter, store and present all details but also
+          allows for a more advanced receiver to identify the descriptor objects APPOINTMENT and
+          PLACE and provide them to calendar managing software on a PDA or PC.
+
+                   ETSI
+                         10     ETSI TS 102 980 V2.1.2 (2019-02)
+
+5.2 Linking of DL Plus objects
+
+5.2.0 Introduction
+
+In general, DL Plus objects carry information that is meaningful in itself, without knowledge of information provided
+by other DL Plus objects (except for DL Plus objects in category Descriptor).
+
+DL Plus provides mechanisms to combine the information of two or more DL Plus objects. There are three structuring
+methods:
+
+    · Aggregating all DL Plus objects with content types belonging to the Item category related to the same
+           programme item.
+
+    · Compiling several DL Plus objects of the same content type to a table (applicable to the categories Info,
+           Programme and Interactivity).
+
+    · Linking a DL Plus object with content types belonging to the Descriptor category to another DL Plus object.
+
+5.2.1 Aggregating DL Plus objects (category Item)
+
+Whilst a programme item is in progress, several DL messages may be sent and some of them will signal the creation of
+various DL Plus objects with content types in the Item category (with information about title, artist, composer, etc.) and
+all referring to the same programme item. These may be aggregated to give a fuller description of the programme item.
+To ensure that DL Plus objects are associated correctly to the appropriate programme item, two flag bits are defined: the
+item toggle bit and the item running bit.
+
+These flag bits are set according to the audio and are transmitted with the DL Plus tags (see clause 6). The timing
+precision of the signalling is dependant on the transmission of the DL Plus tags.
+
+The value of the item toggle bit is changed at the start of each programme item.
+
+The value of the item running bit is normally set to 1, but it is reset to 0 when the programme is interrupted, for example
+by a news bulletin or by an announcer, for the duration of the interruption. When the item running bit is 0, a receiver
+should not display DL Plus objects in the Item category and may interrupt recording of the programme.
+
+The item toggle bit and the item running bit are used by receivers for the association of DL Plus objects in the Item
+category with programme items and to control the recording of a programme.
+
+If the broadcaster does not wish to signal the boundaries between programme items, then the item toggle bit and the
+item running bit should be set to zero. However, it is recommended that these bits be correctly signalled to assist time-
+shifting of programmes (both audio and messages) and the operation of "rewind-radio" devices.
+
+Some examples of the use of these bits are shown below.
+
+    EXAMPLE 1:
+
+Audio            Item 1         Item 2
+
+Item toggle bit
+
+     Item running bit
+
+  Figure 2: Setting of item toggle bit and item running bit when one programme item follows another
+
+In example 1, each programme item follows the previous one. The item toggle bit changes at the start of each
+programme item; the item running bit remains set for the whole programme.
+
+                         ETSI
+                                11    ETSI TS 102 980 V2.1.2 (2019-02)
+
+EXAMPLE 2:        Item 1        News          Item 2
+
+  Audio
+
+Item toggle bit
+
+Item running bit
+
+Figure 3: Setting of item toggle bit and item running bit when news interrupts a programme
+
+In example 2, a news item is transmitted between programme items in the middle of a programme. The item toggle bit
+changes at the start of each programme item; the item running bit is set for each programme item, but reset for the
+duration of the news.
+
+    EXAMPLE 3:
+
+Audio             Item 1  Talk        Item 1
+
+Item toggle bit
+
+Item running bit
+
+           Figure 4: Setting of item toggle bit and item running bit when an announcer interrupts
+                                                            a programme item
+
+In example 3, an announcer interrupts a programme item. The item toggle bit changes at the start of the programme
+item; the item running bit is set for the programme item, but reset for the duration of the announcer's interruption.
+
+5.2.2 Compiling DL Plus objects into tables
+
+DL Plus objects can be compiled to a table, provided:
+
+    · they all have the same content type from categories Info, Programme or Interactivity; and
+
+    · the text of the objects contains redundant spaces.
+
+The term "redundant spaces" is defined as two or more space/blank characters together within the text of the DL
+message.
+
+The table is identified by a content type belonging to the Info, Programme or Interactivity category - all DL Plus objects
+with the same content type contribute DL Plus objects to the same table.
+
+The text of DL Plus objects destined for tables shall consist of a keyword followed by one or more elements each
+separated by redundant spaces. The keyword is used to identify each row of the table and the elements populate the
+columns of the table. The combination of the content type and the keyword uniquely identify an entry in a table. The
+entries in the table may be ordered by reception time or alphabetically by the keyword. The broadcaster may assist
+receivers to display the information in columns by varying the number of space/blank characters within each redundant
+spaces separator. Receivers may arrange the information on the display as desired to provide the best presentation.
+
+Some examples are given below. The notation " " is used to indicate redundant spaces:
+
+    · INFO.STOCKMARKET
+           "Company Value () Change High Low Volume"
+           "NNNNNN 12.27 0.41 12.31 12.15 23,332,238"
+
+    · INFO.SPORT
+           "Bayern München:AC Milano 5:5"
+
+                                ETSI
+12                                    ETSI TS 102 980 V2.1.2 (2019-02)
+
+    · INFO.WEATHER
+           "London 16 C"
+           "Munich 23 C"
+
+    · INTERACTIVITY.PHONE.OTHER
+           "Deutsches Museum 089323990"
+
+    NOTE: For the example INFO.STOCKMARKET, the first line could appear as a middle row in the table if the
+                 receiver sorts alphabetically and the stock information for BBBBBB is provided.
+
+The service provider may omit elements from the right if necessary.
+
+5.2.3 Linking a Descriptor object to another DL Plus object
+
+A Descriptor object is meaningful only in combination with another DL Plus object and it provides further detail of the
+other object.
+
+A DL Plus object (parent object) and its Descriptor objects shall be transmitted in the same DL message; therefore a DL
+message may carry one parent object with three linked Descriptor objects, or two parent objects each with a linked
+Descriptor object, or any other combination, provided the limit of four DL Plus objects per DL message is observed.
+The Descriptor objects are intended to be passed to intelligent terminals that can automatically use the information. The
+Descriptor objects may also be provided to the user.
+
+PLACE and APPOINTMENT are intended to provide data for schedule planning software on PDAs and PCs (Calendar
+function). They provide address information and time and date information for events foreseen in the future and for
+appointments.
+
+PLACE can be combined with: EVENT, SCENE, CINEMA, TV and ADVERTISMENT of category INFO.
+
+APPOINTMENT can be combined with: EVENT, SCENE, CINEMA, TV and ADVERTISMENT (all of category
+INFO) and PROGRAMME.NEXT.
+
+IDENTIFIER is intended to be used as input for a template to be completed for ordering an item.
+
+IDENTIFIER can be combined with: ITEM.TITLE and ITEM.ALBUM.
+
+PURCHASE and GET_DATA are intended as Hyperlink to Websites, they are directed to internet browsers and other
+software. In context with SMS numbers, these can be forwarded directly to the phone or to the contact management
+software on PDAs and PCs.
+
+PURCHASE can be combined with: ITEM.TITLE, ITEM.TRACK; also with EVENT, SCENE, CINEMA, and
+ADVERTISMENT of category INFO. It allows the ordering of music items, tickets for events, products announced in
+the commercial or advertisement. It also includes acquiring goods that are provided free of charge.
+
+GET_DATA can be combined with almost all content types (of category Item, Info (also for single table entries),
+Programme, Interactivity and Private). It allows via link to an SMS or Web source to retrieve additional data referring
+to the object with which it is combined, by applying the indicated SMS number or URL address.
+
+5.3 Life time, updating and deletion
+
+5.3.0 Introduction
+
+DL Plus allows a receiver to store at least as many up-to-date DL Plus objects as there are content types defined. If the
+receiver supports the compilation of objects into tables, it will store multiple objects with the same content type. The
+receiver shall respect the life time of the multiple objects. The object starts its life (within a receiver), when it is
+received for the first time. The object's life time ends, when:
+
+    · an object is updated: it then is replaced by a new object;
+
+    · a "delete" object is received;
+
+    · if the object belongs to the Item category, the item toggle bit changes its value or the running bit is set to "0";
+
+ETSI
+                                 13                         ETSI TS 102 980 V2.1.2 (2019-02)
+
+    · the user switches to another programme or switches off the receiver.
+
+When an object's lifetime is over, it is no longer current, but it may be archived to form a history of objects (see
+clause 8). In this case, the receiver shall store the times when the object starts and ends its life.
+
+5.3.1 Updating objects
+
+Objects are updated by transmitting a new object with the same content type as an existing object. When a new DL Plus
+object is received, it replaces the object stored under the same content type. In the case of tables, the keyword qualifies
+which object is to be replaced.
+
+5.3.2 Deleting objects
+
+Objects are deleted by transmitting a "delete" object (see clause 6.2) with the same content type as an existing object.
+When a "delete" object is received, it removes the object stored under the same content type. In the case of tables, the
+complete table is removed. It is not possible to delete individual table entries.
+
+6 DL Plus tags
+
+6.0 Introduction
+
+The receiver constructs the DL Plus objects from the received DL message and DL Plus tags (see figure 1).
+The first character of the DL message is character 0. DL messages may contain up to 128 characters, depending on the
+indicated character set (see ETSI EN 300 401 [1], clause 7.4.5.2).
+The coding of a DL Plus tag is as follows.
+
+                          DL Plus tag (24 bits)
+
+1 bit      7 bits  1 bit         7 bits          1 bit      7 bits
+ b7
+  rfa  b6          b0 b7     b6                  b0 b7  b6             b0
+
+           Content Type rfa      Start Marker rfa       Length Marker
+
+                                              Figure 5: Structure of the DL Plus tag
+
+The following definitions shall apply:
+
+    · rfa: these 1-bit fields are reserved for future amendments, and shall be set to 0 until defined.
+
+    · Content Type: this 7-bit field shall specify the Content Type of a DL Plus object as defined in annex A.
+           Content Types 0 to 63 are identical to RT+; Content Types 64 to 127 are reserved for future additions in DL
+           Plus.
+
+    · Start Marker: this 7-bit field shall specify the position of the first character of the DL message that forms the
+           DL Plus object in the range 0 to 127.
+
+    · Length Marker: this 7-bit field shall specify the number of characters following the first character of the DL
+           message that forms the complete DL Plus object in the range 0 to 127.
+
+                                 ETSI
+               14                   ETSI TS 102 980 V2.1.2 (2019-02)
+
+6.1 Creating a dummy object
+
+DL Plus tags may be used to create dummy objects, either to improve the timing accuracy of the item toggle bit and
+item running bit (see clause 5.2.1), to inform receivers that DL Plus is still active when there are no DL Plus objects
+associated with the current DL message, or for compatibility with RT+.
+
+To create a dummy object, the content type is set to "DUMMY" and the start and length markers are set to 0.
+
+If a DL message carries text for only one DL Plus object, and therefore requires only one DL Plus tag, but the service is
+simulcast using FM-RDS with RT+, then a second tag with the Content Type set to "DUMMY" may be sent (see
+annex C).
+
+6.2 Creating a delete object
+
+To create a delete object, the content type is set to the required value, the start marker specifies a blank character and
+the length marker is set to 0. Any blank character may be specified.
+
+    EXAMPLE:
+
+Hotline: 0123456677
+0----0----1----1----2----2----3----3----4----4----5----5----6---
+0----5----0----5----0----5----0----5----0----5----0----5----0---
+
+Content Type         PHONE.HOTLINE
+ Start Marker                   9
+Length Marker                   9
+
+Content Type         INFO.NEWS
+ Start Marker               8
+Length Marker               0
+
+The first DL Plus tag creates a DL Plus object of content type "PHONE.HOTLINE", text string "0123456677". The
+second DL Plus tag creates a delete object for content type "INFO.NEWS", and demonstrates that a separate DL
+message is not required for deleting objects.
+
+               ETSI
+                         15               ETSI TS 102 980 V2.1.2 (2019-02)
+
+7 Command structure
+
+7.1 Transport of DL Plus commands
+
+DL commands are transported using the same mechanism as that for DL messages, see ETSI EN 300 401 [1],
+clause 7.4.5.2. When the Command field = 0 0 1 0 (DL Plus command), Field 2, Field 3 and the DL Command field
+shall be used as follows:
+
+                             4 bits
+
+                     b7               b4
+
+                             Field 2
+
+                     1 bit 3 bits
+
+                     b7      b6       b4
+
+First = 1            L           Rfa
+First = 0
+                     1 bit 3 bits
+
+                     b7      b6       b4
+
+                     L Seg Num
+
+                                            Figure 6: Structure of Field 2 for DL Plus
+
+The following definitions apply:
+
+    · Field 2: the interpretation of this 4-bit field shall depend on the value of the First flag (b14) as follows:
+
+           - First flag = "1":
+
+                   L (Link bit): in commands that are linked to a DL message, this bit shall carry the same value as
+                         the toggle bit of the DL message segments; otherwise it shall be set to zero.
+
+                   Rfa: 3-bit field shall be reserved for future additions. These bits shall be set to zero until they are
+                         defined.
+
+           - First flag = "0":
+
+                   L (Link bit): in commands that are linked to a DL message, this bit shall carry the same value as
+                         the toggle bit of the DL message segments; otherwise it shall be set to zero.
+
+                   SegNum (Segment Number): this 3-bit field, expressed as an unsigned binary number, shall
+                         specify the sequence number of the current segment minus 1. (The second segment of a command
+                         corresponds to SegNum=1, the third segment to SegNum=2, etc.) The value 0 is reserved for future
+                         use.
+
+    · Field 3: this 4-bit field, expressed as an unsigned binary number, shall specify the number of bytes in the DL
+           Command field minus 1.
+
+    · DL Command field: this field shall carry the payload of the DL Plus command segment.
+
+                     ETSI
+                                   16                        ETSI TS 102 980 V2.1.2 (2019-02)
+
+7.2 DL Plus commands: general structure
+
+The presence of DL Plus is signalled implicitly by the occurrence of DL Plus commands in the same X-PAD data
+stream as the DL messages (application types 2 and 3) i.e. the presence of DL commands where the Command field
+contains the value "0 0 1 0". Figure 7 shows the general structure of the DL Plus command.
+
+                                   DL Plus command
+
+    4 bits         4 bits                                 n × 8 bits
+                                                        Command body
+b7          b4 b3              b0
+
+    CId            CB
+
+                                   Figure 7: General structure of the DL Plus command
+
+The following definitions apply:
+CId: this 4-bit field bit shall identify the specific command as follows:
+
+    "0 0 0 0": DL Plus tags command;
+    other values are reserved for future use.
+CB: this 4-bit field shall be defined by each specific command.
+Command body: this field shall be defined by each specific command.
+DL Plus commands shall be transported using the X-PAD data group for dynamic label segment in the DL Command
+field (see clause 7.1).
+
+7.3 The DL Plus tags command
+
+DL tags are conveyed in the DL Plus tags command. It may be segmented in several DL Plus command fields. A DL
+Plus tags command can transport up to 4 DL Plus tags that refer to the same DL message. Figure 8 shows the structure
+of the DL Plus tags command.
+
+                                                                    DL Plus tags command
+
+    4 bits         4 bits                                 n × 8 bits
+                                                        Command body
+b7          b4 b3              b0
+
+    CId            CB
+
+    4 bits  1 bit 1 bit 2 bits             24 bits                    24 bits
+
+b7          b4 b3  b2      b1      b0 b23           b0       b23                                b0
+
+    0000    IT IR              NT  DL Plus tag 1        ...       DL Plus tag j
+
+                                     Figure 8: Structure of the DL Plus tags command
+The following definitions apply:
+CId: this 4-bit field bit shall take the value "0 0 0 0" to indicate the DL Plus tags command.
+CB: this 4-bit field is defined for the DL Plus tags command as follows:
+
+    · IT (Item Toggle bit): this bit shall be set according to clause 5.2.1.
+
+                                   ETSI
+17    ETSI TS 102 980 V2.1.2 (2019-02)
+
+    · IR (Item Running bit): this bit shall be set according to clause 5.2.1.
+    · NT (Number of Tags): this 2-bit field, expressed as unsigned binary number, shall specify the number of DL
+
+           tag fields present in the command body field minus 1.
+
+Command body: the Command body contains between one and four DL tags.
+
+    · DL Plus tag: see clause 6.
+The NT field shall be evaluated by receivers to determine the correct number of DL tags.
+
+    NOTE: The DL Plus tag(s) may in future be followed by other data which is reserved for future amendments.
+
+In general, the order of the DL Plus tags is arbitrary. However, in the case of Descriptor tags (see clause 5.2.3), these
+shall follow the DL Plus tag carrying the parent content type.
+
+7.4 Transmission sequence
+
+The complete DL message shall be transmitted before the related DL Plus command(s) are transmitted. The L (Link) bit
+of the DL Plus tags command shall be set to the same value as the T (Toggle) bit of the related DL message. The DL
+message and DL Plus command(s) may be repeated to guard against transmission errors, but the sequence of DL
+message followed by DL Plus command(s) shall be observed. The transmission of the DL Plus commands shall be
+completed before another dynamic label command (if any) is transmitted.
+
+When the transmission of a different DL message is started, the value of the T (Toggle) bit for the DL message is
+changed and the L (Link) bit for the DL Plus tags command is changed to match.
+
+If there are no DL Plus tags associated with a DL message then a DL Plus tag with content type "DUMMY" shall be
+sent to inform the receiver that it should continue to present DL messages using DL Plus. This also allows the
+broadcaster to continue to send the item toggle bit and item running bit to associate text to programme items
+(see clause 5.2.1). The timing precision can be further improved by reducing the delay before these bits will be
+transmitted in the next DL Plus tags command. This may be achieved by stopping the transmission of the current DL
+message and then transmitting a DL message consisting of a single space character and a DL Plus tag indicating
+"DUMMY" (however this may cause the display of non-DL Plus receivers to blank).
+
+8 Receiver behaviour
+
+8.0 Introduction
+
+DL Plus provides an enhanced way to view DL messages. This allows a great variety of receiver terminals with
+different concepts, depending on the user expectations and requirements, the terminal hardware and software resources.
+Some DL Plus use cases are given in annex B.
+
+8.1 Basic requirements
+
+Receivers shall be capable of processing both the DL messages and the DL Plus tags that are carried in the DL Plus
+commands.
+
+When a receiver is tuned to a service, it shall start by processing the DL messages only. As soon as a DL Plus command
+is received it shall start processing DL messages and DL Plus commands to create the DL Plus objects. It shall remain
+in the DL Plus mode, as long as DL Plus tags are received with DL messages.
+
+    NOTE: Broadcasters send DL Plus tags with content type "DUMMY" whenever a DL message is sent which does
+                 not contain DL Plus objects.
+
+When a receiver is re-tuned to a different service, all DL Plus objects shall be deleted (see clause 5.3).
+
+ETSI
+18    ETSI TS 102 980 V2.1.2 (2019-02)
+
+The synchronization of DL messages and DL Plus commands in the receiver is achieved by observing that the
+T (Toggle) bit in the prefix of the DL message and the L (Link) bit in the associated DL Plus command have the same
+value.
+
+If the receiver detects a change to the T (Toggle) bit of the received DL message or the L (Link) bit of the received DL
+Plus tags command does not match the T (Toggle) bit of the DL message, then this indicates that a new DL message
+and associated DL Plus tags command are being transmitted and processing of the previous message shall end, even if
+reception errors (indicated by a failure of the segment CRC) have not permitted the DL Plus objects to be created.
+
+DL Plus receivers shall be able to filter the DL Plus objects according to their content types. Very simple receivers may
+have filters based on a small number of content types preconfigured by the manufacturer according to the main interests
+of the users (e.g. title and artist). Other receivers will allow the user himself to configure the filter and select those
+content types that are of interest. Selection of single Descriptor objects is meaningless, they may be enabled for display
+or storage if the object they refer to is selected. Objects from the Private category should also be selectable for storage
+and display. Not all programmes will provide every user with the DL Plus objects requested. Therefore, it shall be
+possible for the user to disable DL Plus and the receiver shall revert to displaying the DL messages. If the display size is
+sufficiently large, it should allow a simultaneous presentation of the DL Plus objects requested and the current DL
+message.
+
+Very simple receivers will forward the text carried by a DL Plus object of requested content type to the display as soon
+as it becomes available. The receiver will be more attractive for a user if it stores the DL Plus objects, so that he can
+browse through the stored information at any time he wishes to. (See also annex B: use cases B1, B2). DL Plus allows
+storing as many up-to-date DL Plus objects as there are content types defined (see annex A). If the receiver is able to
+compile tables from DL Plus objects with the same content type, it can store as many DL Plus objects as there are
+different received keywords. The broadcaster will ensure that all the DL Plus objects stored in the receiver are kept
+up-to-date: normally by replacing an obsolete DL Plus object by sending the information for a new DL Plus object of
+the same content type (and with the same keyword). The broadcaster can also delete obsolete DL Plus objects by
+creating a delete object (see clause 5.3).
+
+The lifetime of DL Plus objects from the Item category are generally controlled by the item toggle bit and the item
+running bit, although a delete object may also be used. Whenever the lifetime of a DL Plus object from the Item
+category is completed, all DL Plus objects of the category Item shall also be deleted and removed from the display.
+
+8.2 History
+
+A simple receiver will only handle the current DL Plus objects, e.g. it displays the current news headline. A more
+advanced receiver may provide a history function, so that it can offer the information carried in objects previously
+received, so a user could recall the last headlines received. A receiver with such a history function shall display the
+object with the start and end times of the object's life to ensure that users are aware that the information is taken from
+the history and that the current DL Plus object of the requested content type may carry different information.
+
+In case of a programme item, the start time and the stop time are derived from the item toggle bit and the item running
+bit (see clause 5.2.1). This information allows a receiver to provide the user with a playlist of e.g. the last ten music
+items. A receiver with such history functionality could keep the stored playlist information even when the user changes
+the programme. However, the receiver shall keep the DL Plus objects for each service separate.
+
+When a receiver implements a time-shifting function, the PAD is stored with the audio and therefore the DL Plus
+objects may be recovered on playback. Special attention should be paid to the history function in this case since the
+playback time will not be the same as the original transmission time and the start and end times of the objects' lives will
+relate to the time the DL Plus objects are decoded.
+
+ETSI
+                                              19                     ETSI TS 102 980 V2.1.2 (2019-02)
+
+Annex A (normative):
+List of DL Plus content types
+
+The list of DL Plus Content Types are defined in table A.1. Content Types 0 to 63 are identical with the list of Content
+Types defined with RT+; Content Types 64 to 127 are reserved for future additions in DL Plus.
+
+                           Table A.1: List of DL Plus content types
+
+Category  Code DL Plus content type        MP3 id3v2                 Description
+ Dummy
+          0 DUMMY                                     To permit item timing and RT+ compatibility
+   Item                                               (see clauses 6.1 and 7.3)
+
+    Info  1 ITEM.TITLE               TIT2 TITLE       Title of the current item on air; e.g. title of track
+                                                      that belongs to an album
+
+          2 ITEM.ALBUM               TALB ALBUM       The collection name to which this item belongs
+
+          3 ITEM.TRACKNUMBER TRCK TRACKNUM The track number of the item on the album on
+                                                                                       which it was originally released
+
+          4 ITEM.ARTIST              TPE1 ARTIST      A person or band/collective generally
+                                                      considered responsible for the work
+
+          5 ITEM.COMPOSITION TIT1          COMPOSITION A complete composition (classical music
+                                                                 broadcasters should use this item to identify
+                                                                 the composition)
+
+          6 ITEM.MOVEMENT            TIT3  MOVEMENT   A movement is a large division of a
+                                                      composition or musical form (classical music
+                                                      broadcasters should use this item to identify
+                                                      the movement)
+
+          7 ITEM.CONDUCTOR           TPE3  CONDUCTOR The artist(s) who performed the work. In
+                                                                 classical music this would be the conductor
+
+          8 ITEM.COMPOSER            TCOM COMPOSER Name of the original composer/author
+
+          9 ITEM.BAND                TPE2 BAND        Band/orchestra/accompaniment/musician
+
+          10 ITEM.COMMENT            COMM COMMENT Any comment related to the content
+
+          11 ITEM.GENRE              TCON CONTENTTYP The main genre of the audio, e.g. "classical",
+
+                                           E          "hip-hop", "jazz", "oldies", "drama", etc.
+
+          12 INFO.NEWS                                News headline (see note 4)
+
+          13 INFO.NEWS.LOCAL                          Local news (see note 4)
+
+          14 INFO.STOCKMARKET                         Quote information; may be built from several
+                                                      distinct parts, e.g. "name latest value
+
+                                                         change high low volume"
+                                                      (see notes 1 and 4)
+
+          15 INFO.SPORT                               Result of a game; may be built from several
+                                                      distinct parts, e.g. "match result" (see note 4)
+
+          16 INFO.LOTTERY                             Raffle / lottery (see note 4)
+
+          17 INFO.HOROSCOPE                           Horoscope; key word for a table, e.g. "sign of
+                                                      the zodiac" (see note 4)
+
+          18 INFO.DAILY_DIVERSION                     Daily tip / diversion / joke / etc. (see note 4)
+
+          19 INFO.HEALTH                              Information about health (see note 4)
+
+          20 INFO.EVENT                               Info about an event (see note 4)
+
+          21 INFO.SCENE                               Information for the target audience of the
+                                                      programme service; for a youth programme
+                                                      info for the community and about its scene (hot
+                                                      locations to be) (see note 4)
+
+          22 INFO.CINEMA                              Information about movies in cinema
+                                                      (see note 4)
+
+          23 INFO.TV                                  Information about TV-movies (see note 4)
+
+          24 INFO.DATE_TIME                           Not used in DL Plus (date and time given by
+                                                      FIG (0/10)) (see note 6)
+
+          25 INFO.WEATHER                             Information about weather (see note 4)
+
+          26 INFO.TRAFFIC                             Information about traffic. This shall alert users
+
+                                                      in case of exceptional traffic news (see note 4)
+
+          27 INFO.ALARM                               Alarm information and other urgent information;
+                                                      if implemented by a receiver, it should be
+                                                      presented immediately to the user. The
+                                                      receiver configuration should allow de-selection
+                                                      of this feature
+
+                                           ETSI
+                                          20                      ETSI TS 102 980 V2.1.2 (2019-02)
+
+Category Code DL Plus content type        MP3 id3v2                                      Description
+                  28 INFO.ADVERTISEMENT                           Advertisement (e.g. book review, commercial
+                                                                  etc.), may be additional information to an
+29 INFO.URL                                                       advertisement currently sent out in the audio
+30 INFO.OTHER                                                     channel of that programme (see note 4)
+                                                                  URL link to interesting information sources;
+Programme 31 STATIONNAME.SHORT
+                   32 STATIONNAME.LONG                            <Keyword> <URL> (see notes 4 and 5)
+                   33 PROGRAMME.NOW                               Other information, topic defined by service
+                   34 PROGRAMME.NEXT                              provider; different topics may be specified by
+
+                   35 PROGRAMME.PART                              keywords; <Keyword> <information> (see
+                                                                  note 4)
+                   36 PROGRAMME.HOST      WORS WWW                Name describing the radio station (in USA: call
+                                                       RADIOPAGE  letters as station identifiers)
+                   37 PROGRAMME.                                  Name describing the radio station (and its
+                         EDITORIAL_STAFF                          motto)
+                                                                  Info about the current programme (EPG
+                   38 PROGRAMME.                                  present); useful if DAB EPG service is not
+                         FREQUENCY                                available or terminal has no DAB EPG decoder
+                                                                  Info about the next programme (EPG following)
+                   39 PROGRAMME.                                  or upcoming highlights of the programme;
+                         HOMEPAGE                                 useful if DAB EPG service is not available or
+                                                                  terminal has no DAB EPG decoder
+                   40 PROGRAMME.                                  Part of the current programme
+                         SUBCHANNEL                               (PROGRAMME.NOW); if a programme is
+                                                                  consisting of several parts, this info explains
+Interactivity 41 PHONE.HOTLINE                                    the content of the current part on air; if
+                                                                  transmitted, this info should be presented in
+                   42 PHONE.STUDIO                                context with the PROGRAMME.NOW info
+                                                                  (see note 4)
+                   43 PHONE.OTHER                                 Name of the host of the radio show
+                                                                  (see note 4)
+                   44 SMS.STUDIO                                  Name of the editorial staff; e.g. name of
+                   45 SMS.OTHER                                   editorial journalist (see note 4)
+                                                                  Not used in DL Plus (see note 6)
+                   46 EMAIL.HOTLINE
+                   47 EMAIL.STUDIO                                Link to radio station homepage
+                   48 EMAIL.OTHER
+                                                                  Not used in DL Plus (see note 6)
+49 MMS.OTHER
+50 CHAT                                                           The telephone number of the radio station's
+51 CHAT.CENTER                                                    hotline
+52 VOTE.QUESTION                                                  The telephone number of the radio station's
+                                                                  studio
+                                                                  Name and telephone number: "<key word>
+
+                                                                     <number>" (see notes 4 and 5)
+                                                                  The SMS number of the radio station's studio
+                                                                  Name and SMS number: "<key word> <SMS
+                                                                  number>"(see notes 4 and 5)
+                                                                  The email address of the radio stations hotline
+                                                                  The email address of the radio stations studio
+                                                                  Name and email address;
+
+                                                                  <Keyword> <email address> (see notes 4
+                                                                  and 5)
+
+                                                                  Name and mms number; <Keyword> <mms
+                                                                  number> (see notes 4 and 5)
+                                                                  Chat content is broadcast by the radio station
+                                                                  as part of a DL message, may be a chat
+                                                                  contribution from a listener
+                                                                  Address (may be URL or SMS), where a
+                                                                  listener should send his replies as chat
+                                                                  contribution to
+                                                                  A question sent as DL Plus object and
+                                                                  concerning a vote; could be binary, i.e. with two
+                                                                  valid answers ("yes" or "no" or "1" or "2"), could
+
+                                          ETSI
+                                    21                                         ETSI TS 102 980 V2.1.2 (2019-02)
+
+Category Code DL Plus content type  MP3 id3v2                                  Description
+
+     53 VOTE.CENTRE                                              also be a multiple choice question; could also
+                                                                 be used with riddles, 10-Questions etc.
+rfu  54                                                          URL or SMS number to send the answer to: the
+                                                                 range of values for an expected answer will be
+     55                                                          indicated by VOTE.QESTIONS (preferred
+                                                                 characters are decimal numbers, alphabet
+                                                                 characters not excluded)
+
+                                                                 Reserved for future use
+                                                                 Reserved for future use
+
+Private 56                                                       (see note 2)
+classes 57                                                       (see note 2)
+                                                                 (see note 2)
+                58
+
+Descriptor 59 DESCRIPTOR.PLACE                                   Adds info about a location, address etc.;
+                                                                 important use case: in conjunction with
+     60 DESCRIPTOR.                                              INFO.EVENT (see note 3)
+           APPOINTMENT
+                                                                 Adds in general info about date and time for
+     61 DESCRIPTOR.                 TSRC ISRC                    something in future; important use case:
+           IDENTIFIER                                            appointment in conjunction with INFO.EVENT
+                                                                 (see note 3)
+
+                                                                 For music it is the International Standard
+                                                                 Recording Code (http://www.ifpi.org/isrc/)
+                                                                 (see note 3)
+
+     62 DESCRIPTOR.                 WPAY WWW                     Address (URL or SMS number) where item can
+           PURCHASE                              PAYMENT         be ordered or purchased; includes items free of
+                                                                 charge (see note 3)
+
+     63 DESCRIPTOR.                                              SMS number or URL as source to retrieve
+
+                    GET_DATA                                     more data about that is linked to the
+
+                                                                 corresponding DL Plus object (see note 3)
+
+NOTE 1: = space/blank character; two or more consecutive blanks act as a separator between several parts of the DL
+
+     Plus object.
+
+NOTE 2: Private classes may be defined by the service provider.
+
+NOTE 3: A Descriptor will always provide more information about another DL Plus object that it is referring to (see
+
+     clauses 5.2.3).
+
+NOTE 4: Multiple DL Plus objects of this class can be compiled to a table (see clause 5.2.2): such an object is built
+
+     from several distinct parts, which are separated by two or more consecutive space or blank characters.
+
+NOTE 5: Multiple Phone numbers, SMS numbers, MMS numbers, URLs and e-mail addresses: the name shall serve
+
+     as keyword; the keyword and each second part of the object text (i.e. the number, the e-mail address, or the
+
+              URL) are separated by redundant spaces: " ":<Keyword> <Column 2>, here column 2 with numbers or
+              address respectively. Multiple Objects of each class can be compiled to a table; (clause 5.2.2).
+NOTE 6: Intended for RT+ receivers; DL Plus equipped receivers ignore this content type.
+
+                                    ETSI
+22    ETSI TS 102 980 V2.1.2 (2019-02)
+
+Annex B (informative):
+Use cases and Examples
+
+B.1 Use cases
+
+DL Plus is basically a simple extension of the DL feature. It requires some additional software only, because most DAB
+receivers today already have the necessary hardware: a (text) display and keys for selecting DL messages to be output
+on the display.
+
+Table B.1 lists informally a range of use cases, that differ in respect to the users expectations, the broadcasters target
+audience, the receiver requirements in hardware and software (for implementing the proper functionality).
+
+The table lists the type of receiver terminal: Stereo/HiFi (sitting room), Portable (kitchen or bathroom), Pocket Radio
+(also with file storage: PMP=Personal Media Player, or combined with Pocket TV), Mobile Phone with DAB, Radio in
+PDA, Radio on a USB-Stick or on a PC-Card.
+
+Each type addresses a specific user context:
+
+    · where is the user listening: at home in the sitting room, in the bath, in the car, on a train or other public
+           transport, at his desk with a computer;
+
+    · does he expect daily entertainment with no need for any interaction, or does he want to always have a choice,
+           with interaction, also with other media.
+
+The table further lists which receiver resources are needed. So use cases are given for better presentation (A1), better
+access to the text information by making a selection (A2, B1, B2), support of rewind radio and recording (C1, C2),
+media and device integration (radio with TV and colour display, mobile phone (D1, D2a, D3a, D5; phone, SMS, MMS,
+Internet), PDA, PCs (D2b, D3b, D4, D5; Internet: Websites, e-Mail, etc.).
+
+ETSI
+                                       23                                                                      ETSI TS 102 980 V2.1.2 (2019-02)
+
+                                       Table B.1: Use cases
+
+Case Receiver  Resources                                                     Function                                           User: Expectations and actions
+
+Terminal              needed           See figure B.2: Display of Title, Artist, Composer; static              User gets most important information about current
+                                       template; a display with higher resolution allows presentation of       programme item; strong user requirement for this
+                      (including       additional DL Plus information (ITEM.COMMMENT); user can                information, he can expect this with every MP3 player,
+                                       switch between DL and DL Plus mode.                                     many satellite radios, etc.; now this information is also
+               DL Display)             Display could also be integrated on the remote control (e.g. of the     available in DAB! User observes display from time to
+                                       HiFi-stereo receiver)                                                   time or in case of unknown items; no interaction with the
+A1 Stereo HiFi, Car Toggle Key for                                                                             receiver; main focus is on music or on other activities (like
+                                       User can configure his DL Plus terminal: selects content types of       car driving, etc. with radio as background entertainment)
+Radio, Portable switching between      his interest (bookmarks/favourites); default content types: category    User interacts with the receiver only during its
+                                       item; terminal displays the information that has been                   configuration; then, in normal use situations, user
+               DL and DL Plus          preselected (and so is most interesting for the user)                   observes display from time to time or in case of unknown
+                                                                                                               items; but no further interaction with the receiver needed,
+A2 Stereo HiFi, Car 1 dimensional      See figure B.1 (including explanations):Terminal offers (inter-)        same as in case A1
+                                       active navigating through Info (and other current DL Plus objects       User wants to browse through the latest news, so he
+Radio, Portable navigation (rotary     of other content types; these should be organized in a 2-level          requests information interactively; audio may have less
+                                       hierarchy: navigation through categories first, then through            focus, may be used for background entertainment. Later on,
+(Pocket Radio) control + selection     content types of selected category; object aggregation in tables        after news reading, user will resume his earlier activities
+                                       would allow 3rd level of hierarchy: browsing through a table with       (radio listening, etc.). All categories of content type are
+               key; or equivalent      keyword for selections:                                                 adapted to users' interest, category Info is best suited
+                                       menu presentation always in a fixed order, e.g. like in table A.1 in
+               tool)                   annex A; menu items only presented if DL Plus objects of that           User focus is on the programme items, user is ready to
+                                       content type have been received; book-marking in addition would         actively pursue his specific music interests; can be used
+B1 Pocket Radio; menu driven           allow a user-defined order and selection of favourites                  e.g. in a music shop to find the product; he then can
+                                       Terminal produces a playlist, e.g. of the last 10 music items; items    easily buy the item
+or Radio       (soft keys)             are provided with time stamps and ISRC-Identifier; user can             User needs time shift: Urgent home activities prevents him
+                                       initiate the persistent storage of the identifier, for later retrieval  from linear listening; or he has an incoming telephone call,
+combined with                                                                                                  or is distracted by driving a car etc.; in such a use case he
+                                       Based on the principle of Rewind Radio: item running and toggle         can resume listening later on; another scenario is: the user
+mobile phone,                          bits allow the receiver to find the cue marks of the audio. This        listens to a CD during the news programme, later on he can
+                                       allows the user to step from item to item (this is far more             step (inter-) actively through the stored news, advance
+PC or PDA                              convenient than continuously browsing through the audio). The title     directly to the most interesting news (and skip the
+                                       information and other item related DL Plus objects allow selection      others)
+B2 Pocket Radio, 1 dimensional         of (audio) items by title
+
+Stereo HiFi, etc. navigation (rotary
+
+               control+ selection
+
+               key; or soft keys)
+
+C1 Pocket Radio, 2 or 4 keys for step
+
+Portable, car or (re-) wind
+
+radio, mobile (backwards &
+
+phone radio    forwards);
+
+               audio storage for
+
+               20 minutes or so
+
+                                       ETSI
+                                                                              24                              ETSI TS 102 980 V2.1.2 (2019-02)
+
+Case  Receiver              Resources needed                                     Function                                           User: Expectations and actions
+      Terminal                    (including
+                                 DL Display)     Function in addition to C1: if user decides so during        User can take more benefit from radio programmes by repeating
+C2 Pocket Radio                                  listening, he can initiate recording by pressing recording   the highlights of a programme, so this strengthens his link to the
+                            same as in C1,       key, programme items are persistently recorded,              programme
+D1 Mobile Phone             integration with a   together with all item related information, in ID3           The user is offered more freedom in selecting interactively the
+         radio              PMP (Personal        format; recorded material has same visual appearance         highlights; this interactivity prevents him to replace radio by
+                            Media Player)        on the display as any MP3 material.                          other, e.g. interactive, media
+D2a Mobile Phone                                 (Rewind functionality would allow that persistent storage
+         radio              Backchannel via      could be initiated later, even when in the meantime other    User participation in the activities of a live programme (phone
+                            Mobile Phone         items are already on air) This feature could also be used    in, SMS chat, voting), so listeners are becoming members of the
+D2b (Pocket) radio                               for a complete programme to be recorded                      radio community
+         linked via USB to  Backchannel via      DL Plus objects (category Interactivity) carry SMS and
+         PC                 Mobile Phone and     telephone numbers, web addresses; after selecting a          SMS Chat, chat conference: the host of the radio show initiates
+                            easy text input      telephone number from the list (i.e. after navigating        SMS chat by sending text as DL. Listeners contribute to the chat
+D3a like D1                                      through DL Plus objects of category "Interactivity") one     by sending their replies by SMS to the chat centre. The replies
+                            Backchannel via      key stroke ("red button") activates the telephone call       will be broadcast as DL to whole community and will find broad
+D3b (Pocket) radio          internet             Receiving chat messages as DL objects CHAT via DAB,          attention. Contributor of smart SMS messages could be called
+         linked via USB to                       writing replies via SMS to a chat centre of the radio        instantaneously and interviewed
+         PC                                      show, the SMS-number of which is forwarded                   Like D2a
+                                                 automatically as DL Plus object to the dial function of the
+D4 Mobile Phone,                                 mobile phone
+         Radio in PDA or
+         (Pocket) Radio                          Like D2a, the only difference: The chat replies are sent
+         linked via USB to                       using a PC-radio and an internet link
+         PC
+                            Backchannel via      Voting requires similar functions like chat: A question      Voting, like SMS Chat, supports the live character of radio.
+D5 Mobile Phone,            Mobile Phone and     concerning the vote is received as DL Plus object and        A simple question with possible answers yes/no or 1/2 is swiftly
+         Radio in PDA or    with easy numerical  displayed to the user. His answer is sent by SMS             answered, the votes are easy to collect and immediately
+         (Pocket) Radio     (or text) input                                                                   published. Could also be used with riddles, 10-Questions, etc.
+         linked via USB to  Backchannel via      Like D3a, the only difference: Votes are send via PC and     Like D3a
+         PC                 internet             an internet link (instead of mobile phone)
+
+                            Mobile Phone         If a stationary internet link is available (instead mobile   During live broadcasting, the user is directed to the website of the
+                                                                                                              broadcaster with additional information. The radio service and the
+                            channel or stationary phone), user can respond by e-mail or via websites          internet presentation of a programme provider are aiming at an
+                                                                                                              integrated media experience
+                            internet link        directly and without delay.
+                                                                                                              Convenience by easy and spontaneous ordering
+                                                 User can find extra information to any issue which is
+
+                                                 identified by a web address and by a content type (all
+
+                                                 categories and classes): simply one key stroke acts as
+
+                                                 hyper link for the browser
+
+                            Mobile Phone         Programme items (especially music items), tickets for
+
+                            channel or stationary events, and articles announced during advertisements,
+
+                            internet link        can be ordered and purchased, either by visiting the
+
+                                                 appropriate website or by a SMS-number. Public
+
+                                                 broadcasters may also provide some of their music items
+
+                                                 etc. free of charge
+
+                                                                              ETSI
+                                                                      25                                          ETSI TS 102 980 V2.1.2 (2019-02)
+
+                     ITEM           Playlist (1)            Politics      A very famous song             Get It!     Our offer: 1!
+                                    Title (2)               Science       Big Celebrity                              Do you really want it?
+DL Plus                             Artist (3)              Culture       Politics:                      More        So click.....
+                     Info           Comment           Keyword (C)                                        Info?       Big Celebrity was born
+                     (0)            News (4)                                                       Descriptor        in Somewhere etc.
+                     Interactivity  Event
+                                    SMS Studio                                                                    Web Browser
+                                    Hotline mail
+                                    (5)                                                                              To: Broadcaster
+                                                                                                                     Ref: Radio Show R1
+                                                                                                                     Please play more hip...
+
+                                    Chat (6)                              "I love your music, and                 Mail Client
+                                    ChatCentre(7)                         Christina too!"
+                                                                                                                     D2: "Congratulations
+                                                                                                   Chat              to Rose! Please play
+                                                                                                   Centre (7)        .......^ for her"
+
+                                                                                                                  Mobile Phone SMS
+
+Category (A)                        Content Type (B)                  Display (D)
+
+Figure B.1: Navigation through DL Plus objects stored in a receiver; Display of DL Plus objects; Display of linked applications:
+                                                                Web Browser, Mail Client, SMS Client
+
+                                                                      ETSI
+         26                  ETSI TS 102 980 V2.1.2 (2019-02)
+
+B.2 Examples for navigation and display use
+
+Figure B.1 shows the browsing through DL Plus objects stored in the receiver. A 2-dimensional cursor key is assumed;
+left/right: hierarchy; up/down: select in the menu of that hierarchy; could be of 2-dimensional cursor or a 1-dimensional
+rotary control with selection key.
+
+User selects navigating through a 2- or 3-level hierarchy tree (A: Category; B: Content Type; C: optional keyword).
+User will be informed about selected branches in his display, as notated in the following lines for some examples,
+leading number refers to selected Content Type in figure B.1:
+
+    (0) If no DL Plus object of category PROGRAMME is available, the receiver does not offer this menu item (not
+           visible or shadowed).
+
+    (1) ITEM/Playlist: Display: xyz (Menu item Playlist is no DL Plus object, but may be inserted here in case of a
+           receiver with history function).
+
+    (2) ITEM/Title/Display: xyz; / "GetIt!" With activating Descriptor PURCHASE, it will start web browser which
+           will then be used for further navigation, including ordering, paying, etc.
+
+    (3) ITEM/Artist/Display: xyz; / "More Info?!" With activating Descriptor GET_DATA, it will start web browser
+           which then will be used for further navigation on websites linked to the topic.
+
+    (4) Info/News/Politics/Display: xyz; (Example marked in yellow, here keyword used; because broadcasters uses
+           those and provides them inside the DL Plus objects of class NEWS).
+
+    (5) INTERACTIVITY/HOTLINE.EMAIL: Mail client is started with the proper e-mail addresses (e.g. for
+           destination).
+
+    (6) INTERACTIVITY/CHAT: DL Plus object of Class CHAT, with latest Chat text on mobile phone display; if
+           listener likes to, he then can activate SMS software and send his SMS to the proper number.
+
+    (7) INTERACTIVITY/CHAT.CENTRE: A user might be motivated by the audio broadcasting to send an SMS to
+           the Chat Centre; by selecting the appropriate menu item, mobile phone will start of SMS software to send
+           SMS.
+
+Figure B.2 shows the most simple, nevertheless one of the most import use cases (A1): Display of title and artist,
+together with the DL (may be scrolling in case of insufficient display size; no selection necessary).
+
+Title    A very famous song
+Artist       Big Celebrity
+
+Dynamic  Lee Hazlewood, who wrote Nancy Sinatra's "These Boots
+  Label       Were Made For Walkin'", dies of cancer aged 78.
+
+Figure B.2: Display with DL Plus and Dynamic Label and configured
+                        to show title and artist information
+
+B.3 Prioritization
+
+Broadcasters offer their programme content to listeners with a wide range of sometimes diverging interests. DL Plus
+helps to direct the DL information to the right and interested listener. So broadcasters will use DL Plus to provide as
+many as possible of them with a wide spectrum of information.
+
+         ETSI
+27    ETSI TS 102 980 V2.1.2 (2019-02)
+
+Information on programme item (DL Plus object of category ITEM) is felt as most important. This information is
+available in every studio and can be sent as DL Plus easily. DAB receivers with display should have no implementation
+problems. Receiver manufacturers should consider updating the software of the receivers they have already on the
+market.
+
+Information contained in the DL Plus objects of Category INFO, PROGRAMME and PRIVATE can be displayed as
+easily as item related information.
+
+Item based rewind radio with segment-wise stepping and item based recording seems very attractive, for broadcasters
+and listeners. Receiver manufacturers should consider upgrading their rewind radio concept balancing the additional
+complexity and the market potential.
+
+Mobile phones with DAB, pocket Radios with a USB or wireless interface, PDA Radios and USB-Stick Radios allow to
+integrate the Radio medium with the (stationary, home based) Internet-Websites. Broadcasters have already now a lot of
+radio associated data in the web that could be used (by evaluating DL Plus objects of category INTERACTIVITY).
+These efforts will be reinforced when more receivers of this type are on the market and the listener will ask for it.
+
+ETSI
+                                 28             ETSI TS 102 980 V2.1.2 (2019-02)
+
+Annex C (informative):
+DL Plus and the compatibility with RDS/RT+
+
+DL Plus offers equivalent functionality as RT+ (together with the feature RDS RadioText (RT), see IEC 62106 [2]) that
+is defined and in use for analogue FM-broadcasting.
+
+A broadcaster may broadcast the same programme on FM and DAB simultaneously. He then can offer the same service
+with RT+ and DL Plus using the same studio equipment with the same interfaces generating basically the same signal,
+provided he takes into account that the features of DL Plus cannot be used to the full extent, i.e. the RT+/DL Plus
+generator is restricted to the limits that are allowed for RT+ (see table C.1). RT+ is limited to 64 characters per RT
+message, to 64 content types and to 2 tags per RT message. In RT+ the tags cannot mark overlapping text, i.e. the
+corresponding DL Plus objects cannot overlap. Some RT messages will be marked with tags of one or even two dummy
+content types.
+
+Table C.1: Comparison of RT+ and DL Plus features
+
+            Feature                         RT+ DL Plus
+
+Text length (in characters)          64     128
+
+Object/Text overlapping              no     yes
+
+Number of tags/objects per RT/DL message 2  1 to 4
+
+Number of content types              64     128
+
+Template number signalling           yes    no
+
+Server Control bits                  yes    no
+
+CB flag (template is available)      yes    no
+
+Extendable                           yes    yes
+
+DL Plus commands, ODA 3A/            3 bits yes
+
+RDS/RT+ Application Group            no
+
+UECP Message Element Code
+
+RT/DL                                MEC0A MECAA
+
+ODA/DL Plus command                  MEC46 MEC48
+
+DL Plus with text length up to 128 characters allows for more complex messages. However, the text length should not
+mislead a broadcaster to combine different pieces of information to one message. While simulcasting with RT+ the
+message is restricted to 64 characters in any case. The data rate is, with both RT and DL, limited by the reading speed
+of the user, not by the message length. RDS has more limitations in respect to the data rate and the error robustness, so
+that normally the text speed is significantly lower than the reading speed.
+
+The RT+ generator provides the RT+ information to the RDS-Coder applying the UECP protocol.
+
+If the UECP protocol is used also for interfacing the DL Plus generator (information source) with a PAD-multiplexer
+for data insertion, then the message field of the UECP command (MEC 48) will be copied transparently to the
+parameter field of the DL Plus commands.
+
+Receiver manufacturer can reuse the same functionality of RT+ and DL Plus for implementation of FM and DAB
+radios. This is of greatest importance because combined FM/DAB receivers are required in all countries. This is also of
+importance for the user, who expects to have this functionality with FM/RDS as well as with DAB radios.
+
+                             ETSI
+29    ETSI TS 102 980 V2.1.2 (2019-02)
+
+Annex D (informative):
+Bibliography
+
+    · RDS Forum R06/040_1: "RadioText Plus (RT+); Specification (Version 2.1)".
+    · RDS Forum SPB 420: "UECP RDS Universal Encoder Communication Protocol".
+
+ETSI
+         30                                                ETSI TS 102 980 V2.1.2 (2019-02)
+
+History
+
+V1.1.1                                   Document history
+V2.1.1
+V2.1.2   September 2008 Publication
+         January 2017 Publication
+         February 2019 Publication
+
+         ETSI
+

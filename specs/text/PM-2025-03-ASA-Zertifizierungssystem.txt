@@ -1,0 +1,94 @@
+PRESSEMITTEILUNG
+
+                  Berlin, 25. März 2025
+
+Leben retten mit DAB+ Radio: Weltweites
+Zertifizierungssystem für Sicherheitsmeldungen
+,,Automatic Safety Alert" gestartet
+
+WorldDAB, das internationale Forum für DAB+, hat ein neues Zertifizierungssystem
+vorgestellt. Damit lassen sich DAB+ Radios auf das weltweit eingeführte
+Sicherheitsfeature ,,Automatic Safety Alert" (ASA) hin testen. Internationales
+Partnerlabor für die Prüfungen ist ,,DTG Testing" in London.
+
+Das Warnsystem ,,Automatic Safety Alert (ASA)" schützt die Bevölkerung in Not- und
+Krisenfällen mit verlässlichen Sicherheitsmeldungen im Radio. Hörerinnen und Hörer
+profitieren von einem System, das sie auch dann informiert, wenn Mobilfunk- oder
+Internetverbindungen unterbrochen sind. ASA arbeitet im Hintergrund automatisch,
+kann für den Wohnort regional angepasst werden und bietet eine hohe Verfügbarkeit.
+Der neue Standard ist weltweit eingeführt; erste Tests sind am letzten bundesweiten
+Warntag im September 2024 erfolgt. Ab Mitte dieses Jahres werden neue
+Gerätegenerationen von DAB+ Radios den ASA-Standard unterstützen und im Markt
+verfügbar sein.
+
+Das neue ASA-Logo auf der Produktverpackung steht für geprüfte Sicherheit und
+schafft Vertrauen beim Verbraucher. Nach bestandener Zertifizierung stellt
+WorldDAB den Herstellern das Logo inklusive Styleguide kostenlos zur Verfügung ­
+als Teil eines neuen Marketing-Toolkits. Die Marke ASA ist bei der EUIPO für die EU,
+das Vereinigte Königreich und die Schweiz registriert.
+
+Das neue Zertifizierungssystem gewährleistet, dass Produkte mit dem ASA-Logo die
+Zertifizierungsprüfung erfolgreich durchlaufen haben und den Mindestanforderungen
+der ETSI-Spezifikation TS 104 090 entsprechen. Die Vergabe des ASA-Logos sowie
+der zugehörigen Produktlizenz erfolgt durch DTG Testing ­ eine unabhängige,
+gemeinnützige Prüfstelle, die auch das britische ,,DAB Tick Mark-Programm" betreut.
+
+Hersteller können bei DTG Testing verschiedene Optionen in Anspruch nehmen ­
+sowohl für Geräte im Haushalt als auch im Automobilbereich. Dazu zählen auch
+Prüfungen gemäß ETSI TS 104 090 v1.1.2.
+
+,,Wir freuen uns, Hersteller ab sofort zur Teilnahme an unserem neuen
+Zertifizierungsprogramm einzuladen", sagt Lindsay Cornell, Vorsitzender des
+WorldDAB Technical Committees. ,,In enger Zusammenarbeit mit DTG Testing haben
+wir den Ablauf so effizient wie möglich gestaltet ­ die Zertifizierung ist in weniger als
+zwei Wochen abgeschlossen. Dies bringt echten Mehrwert: Es gibt Herstellern
+
+                                                                                                                          1
+Sicherheit in der Entwicklung und Verbrauchern die Gewissheit, dass zertifizierte
+Geräte Warnmeldungen zuverlässig ausgeben ­ genau dann, wenn sie am
+dringendsten gebraucht werden."
+
+Interessierte Hersteller können sich direkt über die Website von DTG Testing für die
+ASA-Zertifizierung anmelden: www.dtgtesting.com/services.
+
+Die Webseite www.dabplus.de/asa bietet weiterführende Informationen zu den
+Sicherheitsfeatures.
+
+Die englische WorldDAB-Webseite zu ASA lautet: www.worlddab.org/dab/asa-
+emergency-warnings
+
+ASA ist standardisiert in ETSI TS 104 089 ,,Digital Audio Broadcasting (DAB);
+Notfallwarnsystem (EWS); Definition und Verhaltensregeln."
+
+Die dazugehörige Empfängerspezifikation ist ETSI TS 104 090 ,,Digital Audio
+Broadcasting (DAB); Notfallwarnsystem (EWS); Mindestanforderungen und
+Prüfspezifikationen für Empfänger."
+
+###
+
+Über DAB+: Digitalradio DAB+ ist der überall frei empfangbare Radiostandard von heute, der die analoge
+Frequenzknappheit beendet. DAB+ folgt auf UKW und verbindet den klassischen Radioempfang ohne
+Internetkosten mit der Vielfalt digitaler Programmangebote. Alle öffentlich-rechtlichen und immer mehr
+Privatradios strahlen Programme über DAB+ aus, wobei die Zahl der Angebote, die exklusiv über DAB+
+verfügbar sind, ständig wächst. In Neuwagen ist DAB+ gesetzlich vorgeschrieben. Das ab Mitte 2025 verfügbare
+Warnsystem ,,Automatic Safety Alert (ASA)" schützt die Bevölkerung in Not- und Krisenfällen und übermittelt
+Sicherheitsmeldungen über DAB+ im Radio. Hörerinnen und Hörer profitieren von einem System, das sie auch
+dann informiert, wenn Mobilfunk- oder Internetverbindungen unterbrochen sind. ASA arbeitet im Hintergrund
+automatisch, kann für den Wohnort regional angepasst werden und bietet eine hohe Verfügbarkeit dank des
+Sendenetzes von DAB+ Radio. Alle DAB+ Radios haben UKW inklusive.
+
+Über uns: Das Digitalradio Büro Deutschland mit Sitz in Berlin ist eine Gemeinschaftsinitiative des Vereins
+Digitalradio Deutschland, also von ARD, Deutschlandradio, privaten Radioveranstaltern, Geräteherstellern und
+Netzbetreibern, die sich zum Ziel gesetzt haben, Digitalradio DAB+ in Deutschland zu etablieren. Das Digitalradio
+Büro informiert die Öffentlichkeit über die Möglichkeiten und die Einführung von DAB+ in Deutschland. Der
+Zugang zum Digitalradio Deutschland e.V. steht allen Marktteilnehmern offen, die sich für DAB+ engagieren.
+Weitere Informationen zu DAB+ unter dabplus.de.
+
+Kontakt für Medienvertreter:
+Carsten Zorger
+Digitalradio Büro Deutschland
+presse@dabplus.de
+www.dabplus.de/news
+
+                                                                                                                          2
+

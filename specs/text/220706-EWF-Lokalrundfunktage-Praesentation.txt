@@ -1,0 +1,427 @@
+KATASTROPHEN-WARNMELDUNGEN FÜR ALLE­
+EWF ÜBER DIGITALRADIO DAB+
+
+Lokalrundfunktage Nürnberg 2022
+
+
+Applications
+Fraunhofer Institut für Integrierte Schaltungen IIS
+
+ 
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Emergency Warning Functionality
+
+n Aktuelle Situation der Warnsysteme in Deutschland
+n Warum Warn Apps und Cell Broadcast alleine nicht ausreichen
+n Warum Rundfunk im Katastrophenfall unverzichtbar ist
+n Warnprioritäten des BBK
+n MoWaS ­ Das Modulare Warnsystem des BBK
+n EWF ­ Das barrierefreie Echtzeit-Warnsystem für DAB+
+n EWF ­ Entwicklung bis heute
+n Aktuelle Arbeiten, Projekte und Ausblick
+n Praktische Vorführung
+n Diskussion und Fragen
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Aktuelle Situation der Warnsysteme in Deutschland
+
+n Sirenen
+n Radio
+n Fernsehen
+n Lautsprecherwagen der Feuerwehr und Polizei
+n Mobilfunk-Apps (Nina, Katwarn, ...)
+n Cellbroadcast (noch in Vorbereitung)
+n Öffentliche Anzeigetafeln (vereinzelt)
+n Öffentliche Durchsage-Systeme (vereinzelt, z.B. DB)
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum Warn Apps und Cell Broadcast nicht ausreichen
+
+n Zerstörte Infrastrukturen, Wiederaufbau komplex und langwierig
+n Überlastung durch zuviele Teilnehmer bzw. zu hohes Datenaufkommen
+n Längere Stromausfälle
+n Bei Terroranschlägen auch bewusstes Abschalten der Netze, um Attentätern die
+
+   Kommunikation und z.B. auch Fernzündung von Bomben zu erschweren
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum WarnApps und Cellbroadcast nicht ausreichen
+
+ Blackout
+ n Dramatische Situation für die Gesellschaft
+ n Kein stationäres Internet mehr verfügbar
+ n Smartphones und Mobilfunk-Basis-Stationen
+
+   nach kurzer Zeit ohne Strom
+ n Wiederanfahren der Stromnetze kompliziert und langwierig
+ n Anweisungen und Informationen müssen schnell, umfassend
+
+   und effizient an die Bevölkerung verteilt werden
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum WarnApps und Cellbroadcast nicht ausreichen
+
+n 2005 New Orleans, Hurrikan Katrina
+n 2010 Haiti, Erdbeben
+n 2012 Norditalien, Erdbeben
+n 2013 Boston, Bombenattentate
+n 2013 Philippinen, Taifun Haiyan
+n 2015 Vanuatu, Zyklon Pam
+
+ © Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum WarnApps und Cellbroadcast nicht ausreichen
+
+ n 2015 Terroranschläge, Paris
+ n 2019 Attentäter, Halle (Sachsen-Anhalt)
+ n 2020 Terroranschlag, Nizza
+ n 2020 Terroranschlag, Wien
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum WarnApps und Cellbroadcast nicht ausreichen
+
+ n 2013 Hochwasser Deggendorf:
+    Mobilfunknetz überlastet, teilweise ausgefallen
+
+ n 2016 Flutwelle Simbach:
+    Mobilfunknetz ausgefallen, keine kurzfristige Warnung möglich
+
+ n 2016 Amoklauf München:
+    Mobilfunkbasierte Warndienste verzögert wegen Überlastung,
+    irreführende Meldungen in den sozialen Netzwerken
+
+ n 2021 Ahrtal-Katastrophe:
+    Mobilfunknetz teilweise über Wochen ausgefallen, Festnetz noch länger
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum Rundfunk im Katastrophenfall unverzichtbar ist
+
+n Exponierte Sende-Standorte, große Reichweiten
+n Gut gesicherte Sendeanlagen mit autarker Notstromversorgung
+n Robuste und redundante Signalzuführung (IP, Satellit, Richtfunk, ...)
+n Gleichwellennetz bei Digitalradio toleriert Ausfälle einzelner Sender
+n Rundfunksender können im Havariefall schnell wieder aufgebaut
+
+   und betrieben werden
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warum Rundfunk im Katastrophenfall unverzichtbar ist
+
+n Autoradios funktionieren auch bei lang anhaltenden Stromausfällen
+n Batteriebetriebene Empfangsgeräte
+n Frei empfangbar (ohne Provider-Vertrag)
+n Einfach und intuitiv von jedem nutzbar
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+Warnstufen des BBK
+
+n Extreme Gefahr (Prio-1): Kurzfristige, erhebliche Auswirkungen auf
+       n Gesundheit
+       n Eigentum
+       n öffentlicher Infrastruktur
+
+n Gefahr (Prio-2): Auswirkung auf
+       n Gesundheit
+       n Eigentum
+       n öffentlicher Infrastruktur
+
+n Gefahreninformation (Prio-3):
+       n Erwartete oder eingetretene Beeinträchtigung des normalen Tagesablaufes
+       n Eine besondere Beobachtung
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+MoWaS ­ Das modulare Warnsystem des BBK
+
+                  © Bundesamt für Bevölkerungsschutz und Katastrophenhilfe
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+MoWaS ­ Multiplikatoren-Vereinbarung
+
+n Multiplikatoren-Vereinbarung zwischen Programmanbieter und BBK
+
+       Hat eine Warnung die höchste Prioritätsstufe (von drei möglichen), darf der
+       Warnmultiplikator diese nicht redaktionell bearbeiten und muss sie maximal innerhalb einer
+       Minute nach Erhalt übermitteln. Eine solche Warnung wird mit der Bezeichnung ,,Amtliche
+       Gefahrendurchsage" bzw. ,,Aktualisierung Amtliche Gefahrendurchsage" versehen. Der
+       Warnmultiplikator nennt dabei den Sendeberechtigten als Emittenten.
+       [Auszug aus der Verpflichtung zur Sendung amtlicher Katastrophenwarnungen des SWR]
+
+n Warn-Priorität 1:                   © Bundesamt für Bevölkerungsschutz und Katastrophenhilfe
+      n Schnellstmögliche Aussendung
+      n Im originalen Wortlaut
+      n Ohne redaktionelle Prüfung
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Das barrierefreie Echzeit-Warnsystem für DAB+
+
+n Aufweck-/Alarmierungsfunktion,
+   automatische Umschaltung
+
+n Verzögerungsfrei
+   (direkte, automatisierte Anbindung an MoWaS)
+
+n Detaillierte Textinformationen (Journaline)                           © Fraunhofer IIS / BDR
+n Testalarm-Option zur Funktionsprüfung
+
+n Keine längere Unterbrechung regulärer Programme
+   (schmalbandiges, temporäres Zusatzprogramm im DAB+ Multiplex,
+   der Nutzer kann jederzeit zum regulären Program zurückschalten)
+
+n Kostengünstig für existierende und zukünftige DAB+ Netze aktivierbar
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Das barrierefreie Echzeit-Warnsystem für DAB+
+
+n Detaillierte Textinformationen (Journaline) für...
+       n Hörbehinderte
+       n Fremdsprachler
+       n Hotline-Entlastung (-112)
+       n Public Screens (Internet-unabhängig)
+       n Ggf. auch nach einem Alarm noch verfügbar
+
+                  © nextUrban          © Ströer  © Fraunhofer IIS
+                  Public Screen  Public Screen      NOXON Radio
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+
+EWF ­ Das barrierefreie Echzeit-Warnsystem für DAB+
+
+§ MoWaS (BBK) liefert CAP-Datei (Textmeldung mit Metadaten).
+§ Automatische Generierung von Audio- und ggf. übersetzten Text-Nachrichten.
+§ Der Alarm wird direkt am Digitalradio-Multiplexer ausgelöst.
+
+    Die Warnmeldung geht somit sofort unmittelbar auf Sendung.
+
+§ ALTERNATIV:
+
+    Der Programmanbieter setzt Inhalte und Alarm manuell selbst um
+    (Programm-Hoheit bleibt erhalten, aber Alarmierung erfolgt verzögert)
+
+   Alarmierung             MoWaS-DAB-Umsetzer
+
+      MoWaS       1. CAP à Audio + mehrsprachige Texte
+Radio Programm-   2. Selektion des/der zur Alarmregion
+
+    Anbieter 1         passenden DAB Multiplexe
+                  3. Auslösen der Alarmierung
+
+Radio Programm-       DAB Multiplex
+    Anbieter N    (DAB ContentServer)
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Das barrierefreie Echzeit-Warnsystem für DAB+
+
+Normaler DAB+     t
+
+Radiobetrieb               Data Service M
+
+                           Data Service 4  Packet and
+                           Data Service 3  Stream data channels
+                           Data Service 2
+                           Data Service 1
+
+                  Audio N                  Programme Associated Data (PAD)
+
+ Main             Audio 3                  Audio
+Service           Audio 2
+Channel           Audio 1
+
+          Fast             Primary Services
+     Information
+                           Ancillary Services
+        Channel            System Service Channel /
+          (FIC)            Multiplex Configuration Information
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Das barrierefreie Echzeit-Warnsystem für DAB+
+
+Aktiver                t
+
+EWF-Alarm                       Data Service M
+
+                                Data Service 4  Packet and
+                                Data Service 3  Stream data channels
+                                Data Service 2
+                                Data Service 1
+
+ Main                  Audio N                      Programme Associated Data (PAD):
+Service                                             EWF-DL + EWF-JOURNALINE
+Channel                EWF
+                       Audio 2                      Audio: EWF-AUDIO
+
+                       Audio 1                      Kapazität für temporären EWF-Dienst:
+                                                    a) Übernahme eines regulären
+               Fast             Primary Services
+          Information           Ancillary Services      Dienstes (hier: Audio 3 à EWF)
+                                                    b) Gewinnung zusätzlicher Kapazität
+            Channel
+               (FIC)                                    per dynamischer Rekonfiguration
+                                                        durch zeitweilige Reduktion der
+ALARM ANNOUNCEMENT                                      Kapazität der regulären Dienste
+
+                                System Service Channel /
+                                Multiplex Configuration Information
+                                ALARM ANNOUNCEMENT
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Das barrierefreie Echzeit-Warnsystem für DAB+
+
+                  Einheitlicher Warndienst für heutige und zukünftige Empfänger:
+                  1. EWF-DAB+ Empfänger (Unterstützung aller EWF-Merkmale)
+
+                       Aufwecken, Audio, Laufschrift, detaillierte mehrsprachige Texte)
+
+                  2. Öffentl. Anzeitetafeln mit EWF-DAB+ Empfangsmodul
+                       Laufschrift , detaillierte mehrsprachige Texte,
+                       ggf. auch Audio als Lautsprecherdurchsage
+
+                  3. Einfache DAB+ Warn-Empfänger (z.B. einige heutige Autoradios)
+                       Aufwecken,
+                       Audio und kurze Laufschrift (dyn.Label)
+
+                  4. Alte/Einfache DAB+ Empfänger ohne explizite Warnfunktion
+                       keine Weckfunktion, manuelles Aufschalten erforderlich,
+                       Audio und kurze Laufschrift
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Entwicklung bis heute
+
+2013              Die EWF Spezifikation ist fertig
+
+2014              Das erste EWF-fähige Radio ist verfügbar (NOXON Journaline mobile)
+
+1.11.2014 Erster bayernweiter Test, ausgelöst von der integrierten Leitstelle Bayreuth im
+               Rahmen einer Katastrophenschutzübung
+
+März 2017 Der bayerische Innenminister Joachim Herrmann will EWF in Bayern einführen
+
+2018              Erstmalige MoWaS-Echtzeitanbindung auf der GPEC Frankfurt
+
+Seit 2019 Stündliche EWF-TestAlarmierungen über DAB+ Testsender in Erlangen
+
+2019              EWF-Implementierung bei Radiotechnikum Wien
+
+2020              Bundesweite EWF-Aussendung durch Deutschlandradio im ersten Bundesmux
+
+2021              Projekt für autarke EWF-Anzeigetafeln in Österreich
+                  (Radiotechnikum, next:Urban, Fornatsch)
+
+Juli 2021 Die aktuellen Flutkatastrophen rücken EWF in den Fokus des Digitalradio
+               Deutschland e.V.
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF ­ Entwicklung bis heute
+
+ Sendetechnik
+ n Viele DAB-Sendenetze sind technisch bereits auf EWF vorbereitet
+
+ Empfänger
+ n NOXON dRadio1 (nur noch vereinzelt erhältlich)
+
+ n TELESTAR
+        n DABman30 stereo (mit verfügbarem Firmware-Update) seit Herbst 2019
+        n Neue TELESTAR Geräte mit vollwertiger EWF-Funktionalität im 3.Quartal
+           2022
+
+ n Viele Autoradios unterstützen Alarm Announcement (Warnkanal-Aufschaltung)
+
+ n Laut Technisat unterstützen neuere Geräte das einfache Alarm Announcement,
+    also die erste Stufe der Warnfunktion
+
+ n eInk Anzeigesäule von next:Urban (Österreich/Wien)
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF - Aktuelle Arbeiten, Projekte und Ausblick
+
+DAB+ Testensemble Kanal 10D
+
+Projektpartner                              Regulierung und Förderung
+                                            Netzbetreiber
+ Bayerische Landeszentrale für neue Medien  Projektteil TPEG Emergency Alerts and Warnings (EAW)
+ Bayern Digital Radio                       Bereitstellung von Sendestandorten
+ Bayerische Medien Technik                  Erstellung der Durchsageaudiofiles
+ Bayerischer Rundfunk                       Systemintegration EWF und Weiterentwicklung
+ Antenne Bayern                             Beistellung von Systemkomponenten
+ Fraunhofer IIS                             Inhalte für Testsendungen
+ Rhode&Schwarz                              Endgerätehersteller
+ Hörfunkanbieter M94,5 und max neo
+ TechniSat, Telestar und weitere
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF - Aktuelle Arbeiten, Projekte und Ausblick
+
+n EWF Arbeitsgruppen des Digitalradio Deutschland e.V.
+       n Verfügbarkeit von EWF-fähigen Radios fördern
+       n EWF Implementierung in den Sendenetzen
+
+n Planungsgespräche zwischen BBK und DAB+ Sendenetzbetreibern
+       n EWF Verfügbarkeit in den Netzen
+       n Härtung (Robustheit) der Netze
+
+n Österreichische EWF-Projekte
+       n EWF in Wien (Radiotechnikum, Helfer Wiens)
+       n Projekt für autarke EWF-Anzeigetafeln in Österreich
+          (Radiotechnikum, next:Urban, Fornatsch)
+
+© Fraunhofer IIS
+Digitalradio für die Warnung der Bevölkerung
+EWF - Aktuelle Arbeiten, Projekte und Ausblick
+
+ Sendetechnik
+ n Viele DAB-Sendenetze sind technisch bereits auf EWF vorbereitet
+ n Auslöse-Software für Integrierte Leitstellen existiert
+ n Anbindung an MoWaS wurde erstmals zur GPEC 2018 in Frankfurt realisiert
+
+ Empfänger
+ n NOXON dRadio1 (nicht mehr käuflich erhältlich, aber noch Bestände vorhanden)
+
+ n TELESTAR DABman30 stereo (mit verfügbarem Firmware-Update) seit Herbst 2019,
+    Neue TELESTAR Modelle mit vollwertiger EWF-Funktionalität im Herbst 2022
+
+ n Viele Autoradios unterstützen Alarm Announcement (Warnkanal-Aufschaltung)
+
+ n Neuere Geräte von Technisat unterstützen das einfache Alarm Announcement,
+    also die erste Stufe der Warnfunktion
+
+ n Netzautarke eInk Anzeigesäule von next:Urban (Österreich/Wien)
+
+© Fraunhofer IIS
+\7a Fraunhofer
+                                         IIS
+\7a Fraunhofer
+                                         IIS
+KATASTROPHEN-WARNMELDUNGEN FÜR ALLE­
+EWF ÜBER DIGITALRADIO DAB+
+
+Lokalrundfunktage Nürnberg 2022
+
+
+Applications
+Fraunhofer Institut für Integrierte Schaltungen IIS
+Erlangen (Deutschland)
+ 
+
+© Fraunhofer IIS
+

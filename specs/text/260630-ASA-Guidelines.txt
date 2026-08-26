@@ -1,0 +1,2748 @@
+Digitalradio Deutschland e. V.
+
+             Guideline s                                ,,ASA"
+Automatic Safety Alert
+
+Begriffserklärungen
+      Warnkette
+
+  ASA -Sendeseite
+
+                      Version 2.0, Juli 2026
+Digitalradio Deutschland e.V., Hans -Rosenthal -Platz,
+
+             10825 Berlin, buero@dabplus.de
+Inhalt
+Einleitung ...............................................................................................................................4
+
+Begriffserklärungen und Vorbemerkungen  ......................................................................... 5
+
+Warnung der Bevölkerung vor Gefahren    ...................................................................... 5
+
+Warnmeldung ................................................................................................................6
+
+Standby -Modus ..............................................................................................................6
+
+Alert bzw. OE -Alert .........................................................................................................6
+
+ASA -Ensemble ................................................................................................................7
+
+Warnender Service .........................................................................................................8
+
+Warnendes Ensemble ....................................................................................................9
+
+Warngebiet (Beschreibung des zu warnenden Gebiets)     ............................................... 9
+
+ASA -Warnstufen ...........................................................................................................11
+
+ASA -Empfänger ............................................................................................................11
+
+ASA -Monitoring -Empfänger und der Pre -Trigger von Alerts .......................................12
+
+Probewarnung .............................................................................................................13
+
+Warnkette ............................................................................................................................14
+
+Arbeitsschritte zu ASA -Meldung ..................................................................................14
+
+Auswählen ....................................................................................................................15
+
+Aufbereiten ..................................................................................................................15
+
+Einsprechen ..................................................................................................................16
+
+Informieren ..................................................................................................................16
+
+Ausspielen ....................................................................................................................17
+
+Geplante Warnkette .....................................................................................................18
+
+Vorbereitung des ASA -Regelbetriebs (Planung, Implementierung, Koordination)  ............ 20
+
+Ausstrahlung der ASA -Warnmeldungen und Betrieb (Netzbetrieb)  .............................. 20
+
+ASA -Signalisierung (wann darf ein Ensemble signalisieren, dass es ASA unterstützt?)
+...................................................................................................................................... 20
+
+Weitere Anforderungen bei einer Unterstützung von ASA  ......................................... 21
+
+Erkennen und Sammeln von Betriebsstörungen          ........................................................ 22
+
+Austausch von OE -Informationen ...............................................................................22
+
+Studio - und Sendebetrieb (On Air) ..................................................................................24
+
+Signalzuführung und Systemtechnik ..............................................................................25
+
+MoWaS -Zuführung .......................................................................................................25
+
+                                                                              2
+Zuführung von Alerts an die DAB+ Multiplexer   .......................................................... 25
+
+Der ASA -Service ............................................................................................................26
+
+DAB+ Berücksichtigung von Empfängern, die kein ASA unterstützen         ........................ 27
+
+Resilienz .......................................................................................................................27
+
+WorldDAB Webinars zum Thema "resilience" .................................................................29
+
+Anhang A: ASA -Einführungsszenario der BDR: Netzabdeckung für OE        -Alerts ..................31
+
+A.1 Beispiel: Coverage -Delta zwischen ,,Bundesweit 1" und BDR -Netzen ......................31
+
+A.2 Exkurs: Situation bei den Regionalnetzen des Bayerischen Rundfunks  .................. 33
+
+A.3 Lösungsmöglichkeiten ...............................................................................................33
+
+Anhang B: ASA -Einführungsszenario der BDR: ASA -Monitoring -Empfänger für OE -Alert
+Distribution .........................................................................................................................35
+
+B.1 Betriebliche Redundanz ............................................................................................35
+
+B.2 Doppeltes Störungsmeldesystem (BDR/MB und perspektivisch BBK)       ..................... 35
+
+B.3 Rückempfang via Luftschnittstelle oder RF  -Input .....................................................35
+
+B.4 Pre -Trigger als Basis für OE -Alerts / Heartbeat als ASA -Lebenszeichen ..................36
+
+B.5 Schematischer Aufbau einer geo - und geräteredundanten Rückempfangs - und
+Verteillösung für OE -Alerts ..............................................................................................37
+
+Anhang C: Funkhaus Ingolstadt: Emergency Warning System (EmWaS)         ........................... 38
+
+Anhang D: Warnkette des ersten bundesweiten Ensembles (,,DR Deutschland", Kanal 5C)
+............................................................................................................................................. 41
+
+Anhang E: Vergleich ASA mit bisherigen Warnmöglichkeiten in DAB+        .............................. 43
+
+Unterschiede zu ASA .......................................................................................................44
+
+ASA Markeneintragung EU, UK, CH: Word -Bild -Marke Automatic Safety Alert .................45
+
+Glossar ................................................................................................................................48
+
+Beteiligte Autoren der Guidelines ......................................................................................49
+
+Revisionen dieses Dokuments ............................................................................................50
+
+                                                                        3
+Einleitung
+
+Ereignisse wie die Hochwasserkatastrophe an Ahr, Erft und Wupper mit 180 Toten oder der
+
+russische Angriffskrieg gegen die Ukraine zeigen, wie entscheidend es ist, die Bevölkerung
+
+frühzeitig zu warnen und umfassend zu informieren. Deutschland setzt dabei au               f einen breiten
+
+Warnmix aus Sirenen, Cell Broadcast, Warn Apps, Stadtinformationssystemen sowie Meldungen
+
+über Hörfunk und Fernsehen.
+
+Der Hörfunk gehört zu den wichtigsten Warnmitteln. Da z.B. Verkehrsmeldungen regelmäßig
+
+ausgestrahlt werden, ist die Bevölkerung daran gewöhnt, über das Radio schnell und umfassend
+
+über Gefahren informiert zu werden. Zudem sind Radioveranstalter gesetzlich                 verpflichtet, bei
+
+Katastrophenfällen oder anderen erheblichen Gefahren für die öffentliche Sicherheit und
+
+Ordnung unverzüglich angemessene Sendezeit für amtliche Verlautbarungen bereitzustellen,
+
+zum Beispiel nach § 11 Absatz 1 MDR Staatsvertrag und § 21  SächsPRG.
+
+Die Überschwemmungen im Ahrtal im Juli 2021 haben gezeigt, dass das bestehende Warnsystem
+
+Lücken aufweist. ,,Als die Katastrophe ihren Höhepunkt erreichte, waren bereits die Telefon              - und
+
+Mobilfunknetze komplett ausgefallen, als auch der behördliche Digitalfunk zusammenbrach"                       ,
+
+stellte der Untersuchungsausschuss des Landtags Rheinland   -Pfalz in seinem Bericht zur
+
+Flutkatastrophe an der Ahr fest (Landtag Rheinland      -Pfalz ­ Drucksache 18/10000, 02.08.2024, Rn .
+
+7635). Die Fluten hatten die meisten Mobilfunkanlagen in den Tälern zerstört. Nicht betroffen
+
+waren hingegen die höher gelegenen Antennenstandorte der Radiosender. Über den Hörfunk
+
+konnten damals nur jene erreicht werden, die ihr Radio eingeschaltet hatten.
+
+Der Digitalradio Deutschland e.V. hat dies       gemeinsam mit dem Weltverband WorldDAB             zum
+
+Anlass genommen, das Warnsystem ,,Automatic Safety Alert" (ASA) zu entwickeln. Es basiert auf
+
+dem DAB+ Warnsystem EWS (Emergency Warning System), das international als ETSI -Norm
+
+standardisiert ist. Hörerinnen und Hörer profitieren von einem System, das sie auch dann
+
+informiert, wenn Mobilfunk - oder Internetverbindungen unterbrochen sind. ASA arbeitet im
+
+Hintergrund automatisch, kann für den Wohnort regional angepasst werden und bietet eine
+
+hohe Verfü gbarkeit. Durch ASA ist es jetzt möglich, Radiogeräte, die sich in einem Gefahrengebiet
+
+befinden, automatisch aus dem Standby -Modus einzuschalten, sobald eine Warnmeldung
+
+verbreitet wird. Bereits eingeschaltete Radiogeräte wechseln für die Dauer der Durchsage
+
+automa tisch auf die Sicherheitsmeldung .
+
+Damit ASA genutzt werden kann, müssen die DAB+          Empfänger entsprechend ausgestattet sein.
+
+Die Chiphersteller haben die ASA -Funktion bereits in ihre Chipsätze integriert und viele
+
+Gerätehersteller damit begonnen, sie in die neuen DAB+      -Empfänger einzubauen.
+
+ASA wurde bereits bei den Warntagen 2024 und 2025 erfolgreich getestet. Erste Sender planen
+den Regelbetrieb ab dem Warntag 2026.
+
+Der Digitalradio Deutschland e. V. hat die Wort     - und Bildmarke ,,ASA ­ Automatic Safety Alert"
+
+entwickelt. Sie ist im europäischen Markenregister EUIPO, dem Amt der Europäischen Union für
+
+geistiges Eigentum, eingetragen und international geschützt. Nur Radi          ogeräte, die zuvor eine
+
+internationale Zertifizierung (DTG Testing, London) erfolgreich durchlaufen haben, dürfen das
+
+ASA -Logo verwenden. Käufer können sich dadurch darauf verlassen, dass sich die Geräte im
+
+Gefahrenfall automatisch einschalten und warnen. Gegen Gerätehersteller, die das ASA              -Logo
+
+verwenden, ohne dass ihre Geräte ze rtifiziert sind, geht der Verein konsequent gerichtlich vor.
+
+                                                                                                                  4
+Weitere Informationen finden sich hier : https://www.dabplus.de/asa/ .
+
+           Auf dieser Seite gibt es auch Videos, die                       die Funktion der ASA -
+
+           Empfänger an bundes - oder landesweiten Warntagen zeigen.
+
+           Diese Guideline vermittelt ein grundlegendes Verständnis von ASA,
+
+           beschreibt die Funktionsweise und stellt die wesentlichen Merkmale
+
+           der Technologie dar. Sie soll die Orientierung erleichtern und die
+
+           Einführung in Deutschland unterstützen. Der Fokus liegt                               auf
+
+           technischen Aspekten, rechtliche Fragestellungen bleiben
+
+           ausgeklammert.
+
+Zunächst erläutert das Dokument die relevanten ASA        -spezifischen Begriffe und führt schrittweise
+
+zu den technischen Details. Der Schwerpunkt liegt auf der ASA      -Sendeseite sowie auf den
+
+erforderlichen Schritten von der Auslösung einer Warnung       bei Bund und Ländern bis zur
+
+Übermittlung der Sicherheitsmeldung durch das Radiogerät . Darüber hinaus werden wichtige
+
+Aspekte des Betriebs der ASA -Warnkette betrachtet, angefangen beim Empfang der Warnungen
+
+über das Modulare Warnsystem (MoWaS) bis hin zur Ausstrahlung über die DAB+                      Sender.
+
+Der Begriff ,,ASA" bezeichnet in diesem Dokument das als ,,EWS" (Emergency Warning System)
+
+standardisierte Verfahren. Der dazugehörige Standard ist ETSI TS 104 089 ,,Digital Audio
+
+Broadcasting (DAB); Emergency Warning System (EWS); Definition and rules of beh                  aviour". Dieser
+
+Standard wurde von WorldDAB ( https://www.worlddab.org ) entwickelt und von ETSI
+
+(https://www.etsi.org/ ) publiziert.
+
+Begriffserklärungen und Vorbemerkungen
+
+Warnung der Bevölkerung vor Gefahren
+
+Bei drohenden Gefahren für die Bürger sind die Behörden zu Warnungen verpflichtet. Die
+
+Zuständigkeit richtet sich dabei nach der Art der Gefahr. Die Radioveranstalter sind gesetzlich
+
+verpflichtet, bei Katastrophenfällen oder anderen erheblichen Gefahren fü        r die öffentliche
+
+Sicherheit und Ordnung unverzüglich angemessene Sendezeit für amtliche Verlautbarungen
+
+einzuräumen (z.B. § 11 Abs. 1 MDR -Staatsvertrag, § 21 SächsPRG).
+
+Im Verteidigungsfall werden Warnungen durch den Bund oder durch die Länder im Auftrag des
+
+Bundes ausgelöst. Bei Gefahren durch freigesetzte gefährliche Stoffe, etwa Rauchgas oder
+
+chemische Stoffe bei Chemieunfällen, bei Überschwemmungen oder beim Ausfall w                    ichtiger
+
+Infrastruktur, zum Beispiel bei Stromausfällen, warnen die Länder beziehungsweise die lokalen
+
+Behörden.
+
+Die Warnung der Bevölkerung erfolgt einheitlich über das Modulare Warnsystem des Bundes,
+kurz MoWaS, sowie über die daran angeschlossenen Warnkanäle. Die zuständige Behörde
+bestimmt den Gefahrenbereich und löst die Warnung für diesen Bereich aus.
+
+Bei Ereignissen, die mehrere Zuständigkeitsbereiche betreffen, müssen sich die beteiligten       lungen mit
+Behörden abstimmen. Das ist insbesondere dann wichtig, wenn in den einzelnen Bereichen
+unterschiedliche Handlungsempfehlungen gelten, zum Beispiel Evakuierungsempfeh
+unterschiedlichen Zielorten.
+
+                                                                                                                  5
+Geht die Gefahr über den Bereich hinaus, für den die auslösende Behörde zuständig ist, kann sie
+
+die Warnung nur innerhalb ihres eigenen Zuständigkeitsbereichs auslösen. Dadurch kann der
+
+Warnbereich kleiner sein als der tatsächliche Gefahrenbereich. Damit a        uch angrenzende
+
+Regionen erreicht werden, müssen sich die zuständigen Behörden überregional abstimmen.
+
+Warnmeldung
+
+Eine über MoWaS verbreitete Warnmeldung enthält ein Gefahrengebiet, Informationen zur Art
+
+der Gefahr sowie eine Handlungsempfehlung. Die Übertragung erfolgt im CAP           -Format, dem
+
+Common Alerting Protocol . Je nach technischen Möglichkeiten der verschiedenen
+
+Warnmultiplikatoren und Warnmittel werden die Warnungen entsprechend angepasst. Im
+
+Hörfunk wird die Warnung beispielsweise akustisch als gesprochene Meldung oder als
+
+automatisch erzeugte Sprachdurchsage  übertragen. In Warn -Apps können zusätzlich grafische
+
+Inhalte dargestellt werden.
+
+Warnmeldungen werden bei Bedarf aktualisiert, etwa wenn sich das Gefahrengebiet verändert,
+die Art der Gefahr genauer bestimmt werden kann oder die Handlungsempfehlungen angepasst
+werden müssen. Ist die Gefahr beendet, erfolgt eine Entwarnung.
+
+Standby -Modus
+
+Ist ein ASA -Empfänger eingeschaltet, prüft er fortlaufend, ob im aktuell angewählten DAB+
+Ensemble Warnmeldungen gesendet werden.
+
+Wird der Empfänger vom Nutzer in den Standby         -Modus beziehungsweise ,,Überwachungs -
+
+Modus" geschaltet, prüft das Gerät jeweils zur vollen Minute, also bei Sekunde null, ob eine
+
+Warnmeldung signalisiert wird, auf die es reagieren soll. Liegt eine entsprechende            Warnmeldung
+
+vor, schaltet sich der Empfänger vollständig ein und gibt die Warnmeldung aus. Für den Standby             -
+
+Betrieb benötigen die Empfänger eine Stromversorgung über Netzanschluss oder Batterie.
+
+Alert bzw. OE -Alert
+
+Ein Alert ist ein DAB+ spezifisches Signal, das anzeigt, dass im jeweiligen DAB+ Ensemble aktuell
+
+eine Warnmeldung versendet wird. Es beschreibt unter anderem das von der Gefahr betroffene
+
+Gebiet, also das Warngebiet, und legt fest, wie ASA     -Empfänger reagi eren sollen. So kann
+
+beispielsweise vorgegeben werden, ob der Empfänger nur dann umschaltet, wenn er bereits
+
+eingeschaltet ist, oder ob er auch aus dem Standby      -Modus aufwachen soll. Der Alert verweist auf
+
+den Warnenden Service , auf den der Empfänger umschalten soll, sofern dieser sich im betroffenen
+
+Gebiet befindet.
+
+Ein OE Alert , also ein Other Ensemble Alert, ist ein weiteres DAB+ spezifisches Signal. Er wird       aben
+genutzt, wenn eine Warnmeldung nicht im aktuell empfangenen DAB+ Ensemble, sondern in
+einem anderen DAB+ Ensemble übertragen wird. Der OE Alert enthält nahezu dieselben Ang
+wie der Alert in dem Ensemble, das die Warnmeldung tatsächlich aussendet. Dazu gehören unter
+anderem das betroffene Gebiet und die gewünschte Reaktion des Empfängers.
+
+Der wesentliche Unterschied besteht darin, dass der OE Alert nicht auf einen        Warnenden Service
+
+im aktuellen Ensemble verweist, sondern auf ein anderes warnendes Ensemble. Befindet sich der
+
+Empfänger im betroffenen Gebiet, soll er auf dieses Ensemble umschalten. Ein OE Alert darf
+
+dabei nur auf Ensembles verweisen, deren Verbreitungsg  ebiet sich mit dem Verbreitungsgebiet
+
+des eigenen Ensembles überschneidet.  Ein Ensemble, das selbst keine Warnmeldungen
+
+verbreitet, kann auf diese Weise auf ein anderes Ensemble verweisen, in dem aktuell eine
+
+Warnmeldung ausgestrahlt wird.
+
+                                                                                                           6
+Denkbar wäre auch ein Warnsystem, das ohne OE Alerts auskommt. Ein Empfänger im                 Standby
+beziehungsweise Überwachungsmodus würde dann automatisch ein Ensemble überwachen, das                    ,
+Warnmeldungen bereitstellt. Sofern am jeweiligen Standort ein geeignetes Ensemble
+empfangbar ist, etwa ein bundesweites Ensemble, und Warnmeldungen zuverlässig überträgt
+könnte ein einzelnes Ensemble für den Standby Betrieb grundsätzlich genügen.
+
+Für eingeschaltete Empfänger sind OE Alerts dagegen essenziell. Sie sorgen dafür, dass ein
+Empfänger auch Warnmeldungen erkennt, die nicht im aktuell gehörten Ensemble, sondern in
+einem anderen Ensemble verbreitet werden. Ein Ensemble, das OE Alerts unterstützt, kann seine
+Hörerinnen und Hörer dadurch im Gefahrenfall auf Warnmeldungen aus anderen Ensembles
+verweisen , ohne selbst Warnmeldungen auszustrahlen. Damit folgt diese Funktion dem
+Grundprinzip von ASA: Empfänger werten Verweise auf Warnmeldungen in anderen Services
+oder Ensembles aus und reagieren darauf.
+
+Relevant ist dies vor allem bei einem Ensemble eines einzelnen Bundeslandes. Ein solches
+
+Ensemble wird in der Regel nur Warnmeldungen zu Gefahren in diesem Bundesland verbreiten.
+
+Sein tatsächliches Verbreitungsgebiet kann jedoch über die Landesgrenze hinau             sreichen.
+
+Dadurch können Hörerinnen und Hörer dieses Ensembles zeitweise oder dauerhaft in einem
+
+anderen Bundesland sein.
+
+Damit sie trotzdem zuverlässig über Gefahren am Standort ihres Empfängers informiert werden,
+
+sollte das Ensemble bei Warnungen außerhalb des eigenen Bundeslandes per OE Alert auf ein
+
+geeignetes anderes Ensemble verweisen. Das kann zum Beispiel ein bundeswe                 ites oder ein
+
+anderes landesweites Ensemble sein. So bleibt sichergestellt, dass Hörerinnen und Hörer
+
+weiterhin jedes empfangbare Ensemble hören können und dennoch relevante Warnmeldungen
+
+für ihren Standort erhalten.
+
+Der OE -Alert zeigt an, welches Ziel -Ensemble aktuell eine Warnmeldung ausstrahlt. Der
+
+Empfänger reagiert auf diesen Hinweis nur, wenn er sich im betroffenen Gebiet befindet und das
+
+angegebene Ziel -Ensemble bereits kennt, zum Beispiel durch einen Scan bei d             er Inbetriebnahme
+
+oder im Standby -Betrieb des Radios.
+
+Kennt der Empfänger das Ziel -Ensemble nicht, sucht er nicht per Scan danach. So wird
+
+verhindert, dass das Gerät auf ein Ensemble umzuschalten versucht, das am aktuellen Standort
+
+möglicherweise gar nicht empfangbar ist. Damit wird vermieden, dass für mehrer            e Sekunden
+
+kein Audio wiedergegeben wird, während das Radio nach einem unbekannten Ziel                 -Ensemble
+
+sucht. Ein solches Verhalten könnte von Nutzerinnen und Nutzern als Fehlfunktion verstanden
+
+werden.
+
+ASA -Ensemble
+
+Ein ASA -fähiges Ensemble ist ein DAB+ Ensemble, das ASA unterstützt. Es kann im Gefahrenfall
+
+entweder selbst Warnmeldungen versenden, also einen Alert ausstrahlen, oder per OE              -Alert auf
+
+ein anderes Ensemble verweisen, das die Warnmeldung verbreitet. Damit           ein Empfänger
+
+erkennen kann, dass ein Ensemble ASA unterstützt, sendet dieses einmal pro Sekunde ein
+
+sogenanntes ASA-Heartbeat -Signal.
+
+ASA Empfänger überwachen im Standby ein ASA fähiges Ensemble. Empfangen sie einen Alert
+oder OE Alert und befinden sie sich im betroffenen Gefahrengebiet, wachen sie vollständig auf
+und schalten auf den vorgesehenen warnenden Service um.
+
+                                                                                                            7
+Damit ASA zuverlässig funktioniert, muss jedes ASA fähige Ensemble Gefahren in seinem
+
+gesamten tatsächlichen Verbreitungsgebiet berücksichtigen. Dazu         sollten auch Bereiche        gehören ,
+
+in denen das Ensemble durch zu erwartende Überreichweiten empfangen werden kann. Für
+
+diese Gebiete muss das Ensemble entweder selbst Alerts ausstrahlen oder per OE Alert auf ein
+
+anderes Ensemble verweisen, das die entsprechende Warnmeldung verbreitet.
+
+Ein Beispiel verdeutlicht dies: Ein bayerisches Ensemble, das im Grenzgebiet zu Baden          -
+
+Württemberg empfangbar ist, soll auch dort relevante Gefahren berücksichtigen. Betrifft die
+
+Gefahr auch Bayern, sendet das Ensemble selbst eine Warnmeldung. Betrifft die                  Gefahr dagegen
+
+nur Baden -Württemberg, verweist das bayerische Ensemble per OE Alert auf die Warnmeldung in
+
+einem geeigneten Ensemble aus Baden -Württemberg.
+
+Kann ein Ensemble vorübergehend nicht sicherstellen, dass Alerts oder OE Alerts zuverlässig
+
+verbreitet werden, darf es kein ASA Heartbeat Signal aussenden. Das gilt zum Beispiel für ein
+
+Ensemble, das ausschließlich per OE Alert auf andere ASA Ensembles ver             weist und die dafür
+
+erforderlichen Informationen über ein eigenes Netzwerk erhält. Ist dieses Netzwerk
+
+vorübergehend nicht zuverlässig verfügbar, darf das Ensemble in dieser Zeit keine ASA
+
+Unterstützung signalisieren.
+
+Warnender Service
+
+Die Warnmeldung wird nicht direkt über den ASA Alert übertragen. Der ASA Alert verweist nur
+
+auf den warnenden Service innerhalb desselben DAB+ Ensembles. Dieser warnende Service ist
+
+der eigentliche Übertragungsweg für die Warnmeldung. Dabei kann es sich entweder um                  einen
+
+eigenen ASA -Kanal handeln, der ausschließlich für Warnmeldungen vorgesehen ist, oder um ein
+
+reguläres Radioprogramm, das für die Warnmeldung vorübergehend unterbrochen wird. Wird
+
+eine Warnmeldung übertragen, wird sie technisch im gesamten Verbreitungsgebiet des
+
+jeweiligen Ensembles übe rmittelt. Dieses Verbreitungsgebiet kann je nach Ensemble ein
+
+einzelnes Bundesland, mehrere Regionen oder ganz Deutschland umfassen.                 Hörerinnen und
+
+Hörer, die diesen Service live angewählt haben, hören die Warnmeldung daher unabhängig
+
+davon, ob sie sich tatsächlich in dem von der Gefahr betroffenen Gebiet befinden.
+
+· Empfänger, die einen anderen Service desselben Ensembles                        ausgewählt haben,
+
+wechseln nur dann zum warnenden Service, wenn sie sich innerhalb des signalisierten
+
+Warngebiets befinden.
+
+· Empfänger, die einen Service eines anderen Ensembles                  ausgewählt haben, wechseln
+
+nur dann zum warnenden Service, wenn das aktuell empfangene Ensemble einen
+
+entsprechenden OE Alert signalisiert. Dieser OE Alert muss auf das Ensemble verweisen,
+
+in dem der warnende Service verbreitet wird. Zusätzlich muss sich                   der Empfänger
+
+innerhalb des signalisierten Warngebiets befinden.
+
+· Empfänger im Standby -Modus überwachen ein Ensemble, das ASA -
+
+Unterstützung signalisiert. Befindet sich der warnende Service im überwachten
+
+Ensemble, wachen sie vollständig auf und wechseln zu diesem Service, wenn sie sich
+
+innerhalb des signalisierten Warngebiets befinden.
+
+Wird die Warnmeldung dagegen in einem anderen Ensemble verbreitet, muss das überwachte
+
+Ensemble per OE Alert auf das Ensemble verweisen, in dem der warnende Service verbreitet
+
+wird. In diesem Fall prüft der Empfänger, ob er sich innerhalb des signalisierte       n Warngebiets
+
+befindet. Nur wenn dies zutrifft, wacht er vollständig auf und wechselt zum warnenden Service
+
+im anderen Ensemble.
+
+                                                                                                               8
+Nach Abspielen der Warnmeldung kehrt der Empfänger in seinen vorherigen Modus zurück,
+schaltet sich also wieder aus oder kehrt zum zuvor gehörten Programm zurück.
+
+Warnendes Ensemble                                                 warnender Service aktiv ist. Dabei
+                                                                   einen warnenden Service.
+Ein warnendes Ensemble ist ein DAB+ Ensemble, in dem ein
+gilt: Ein warnendes Ensemble hat zu jedem Zeitpunkt genau
+
+· Dieser warnende Service kann immer derselbe sein, zum Beispiel ein
+
+Nachrichtenprogramm. Er kann aber auch je nach betroffenem Gebiet oder nach
+
+anderen Kriterien ausgewählt werden. Daher können zu unterschiedlichen Zeitpunkten
+
+auch unterschiedliche warnende Services innerhalb desselben Ensembles aktiv sein. Ein
+
+solches Modell sieht zum Beispiel die ARD aufgrund ihrer föderalen Struktur vor.
+
+· Um Mehrfachwarnungen zu vermeiden, sollte jede Warnmeldung nur über                    einen
+
+warnenden Service übertragen werden. So wird verhindert, dass derselbe Warntext
+
+beispielsweise zu leicht unterschiedlichen Zeiten mehrfach verlesen wird.
+
+· Es ist auch denkbar , dass ein Ensemble nur zu bestimmten Zeiten als                   warnendes
+
+Ensemble fungiert, etwa nur tagsüber. In der übrigen Zeit, beispielsweise nachts, kann es
+
+stattdessen per OE -Alert auf Warnmeldungen in anderen warnenden Ensembles
+
+verweisen.
+
+Warngebiet (Beschreibung des zu warnenden Gebiets)
+
+ASA ermöglicht es, ein Gebiet festzulegen, in dem  ASA Empfänger auf eine Warnmeldung
+
+reagieren sollen. Dafür müssen zwei Voraussetzungen erfüllt sein:
+
+· Erstens legt jeder Alert oder OE Alert das zu warnende Gebiet fest.
+· Zweitens kennt der ASA Empfänger seine Position und kann prüfen, ob sie innerhalb
+
+     dieses Warngebiets liegt.
+
+Das zu warnende Gebiet wird bei ASA mithilfe sphärischer Rechtecke beschrieben. Je nach Größe
+und Form des Gebiets sind unterschiedlich viele Rechtecke erforderlich, um es vollständig
+abzudecken. Diese Rechtecke können unterschiedlich groß sein, wie das folgende Beispiel zeigt.
+
+Da die maximale Anzahl der Rechtecke begrenzt ist und selbst das kleinste Rechteck eine
+
+Kantenlänge von etwa einem Kilometer hat, werden je nach Größe und Form des Warngebiets
+
+zwangsläufig auch Flächen außerhalb des eigentlichen Gefahrenbereichs erfasst. D         iese
+
+                                                                                                       9
+Mitabdeckung wird als Überwarnung bezeichnet.  ASA eignet sich daher nur eingeschränkt für
+
+sehr kleinräumige Ereignisse, bei denen zum Beispiel einzelne Straßenzüge gezielt adressiert
+
+werden sollen. Das Verfahren ist vielmehr vor allem für Gefahrenlagen vorgesehen, die größere
+
+geografische Gebiete umfa ssen.
+
+Damit ein ASA -Radio prüfen kann, ob sein Standort innerhalb des definierten Warngebiets liegt,
+
+muss es seine eigene Position kennen. Derzeit muss diese Position vom Nutzer manuell
+
+konfiguriert werden. Hierzu ist einmalig die Eingabe eines 12  -stelligen Codes erforderlich. Dieser
+
+Code kann über die Website https://asa.radio/ ermittelt werden, wie der folgende Screenshot
+
+zeigt:
+
+Eine korrekte Funktion des ASA -Empfängers ist nur gewährleistet, wenn der Positionscode am
+Empfänger eingegeben und bei einer Änderung des Standorts entsprechend angepasst wird.
+
+                                                                                               Dies ist beispielsweise bei
+                                                                                               einem Umzug oder bei der
+                                                                                               Weitergabe des Empfängers
+                                                                                               durch Verkauf oder
+                                                                                               Verschenken erforderlich.
+
+                                                               Künftige ASA -Empfänger
+                                                               könnten ihre Position auch
+                                                               auf andere Weise bestimmen.
+                                                               Denkbar wäre zum Beispiel
+                                                               eine Positionsbestimmung
+                                                               über eine Smartphone -App,
+                                                               bei der die ermittelte Position
+                                                               anschließend an das ASA -
+                                                               Radio z.B. per Bluetooth
+                                                               übertragen wird.
+
+                                                                                               Als Sonderfall kann ein Alert
+                                                                                               oder OE -Alert auch ohne
+                                                                                               definiertes Warngebiet
+                                                                                               versendet werden. In diesem
+                                                                                               Fall sollen alle ASA -Radios im
+                                                                                               gesamten Verbreitungsgebiet
+des ASA -Ensembles auf den Alert oder OE -Alert reagieren. Das gilt auch für Empfänger ohne
+konfigurierte Position oder mit fehlerhaft konfigurierter Position. Dieser Modus eignet sich
+beispielsweise für Probealarme oder nationale Krisenfälle .
+
+Die folgende Tabelle zeigt, wie der Empfänger abhängig von seiner Konfiguration auf Warnungen
+mit und ohne definiertes Warngebiet reagiert:
+
+                                                                                                                                10
+Empfänger mit korrekt               Warnung mit Warngebiet         Warnung OHNE Warngebiet
+konfigurierter eigener
+Position                            Empfänger reagiert, wenn er    Empfänger reagiert, wenn er
+                                    innerhalb des gewarnten        diese Warnung empfängt;
+Empfänger mit falsch                Gebiets ist.                   unabhängig davon, ob oder
+konfigurierter Position (z.B.                                      welche Position konfiguriert
+inkorrekt wegen Umzug)              Empfänger reagiert, wenn für   wurde.
+                                    die (falsch) konfigurierte
+Empfänger, dem noch nie             Position gewarnt wird, also
+eine Position bekannt               z.B. der alte Wohnort.
+gemacht wurde
+                                    Empfänger reagiert nicht auf
+                                    Warnung en mit Warngebiet .
+
+ASA -Warnstufen
+
+ASA unterscheidet drei Warnstufen.
+
+· Level -1-Warnungen aktivieren Empfänger, die bereits eingeschaltet sind und                   einen Alert
+
+oder OE -Alert empfangen. Zusätzlich werden auch Empfänger                aufgeweckt , die sich im
+
+Standby -Modus befinden. Level -1-Warnungen sind für Gefahrenlagen mit erheblichem
+
+Risiko für Leib und Leben vorgesehen, bei denen es erforderlich sein kann, auch
+
+schlafende Menschen zu warnen, damit sie sich rechtzeitig in Sicherheit bringen können.
+
+Derzeit werden alle ASA -Warnungen als Level -1-Warnungen ausgesendet.
+
+· Level -2-Warnungen aktivieren nur Empfänger, die bereits eingeschaltet sind und den
+
+Alert oder OE -Alert empfangen. Sie könnten daher genutzt werden, wenn keine                       Radios
+
+und damit auch keine Zuhörerinnen und Zuhörer aufgeweckt werden sollen, aber
+
+Personen informiert werden müssen, die bereits Radio hören.
+
+· Test -Warnungen dienen der Überprüfung der Warnkette. Handelsübliche ASA                      -
+
+Empfänger ignorieren Test -Warnungen.
+
+ASA -Empfänger
+
+Für die ASA Funktion ist entscheidend, ob sich der Empfänger im Standby Modus befindet oder
+eingeschaltet ist. Im Standby Modus überwacht der Empfänger automatisch ein Ensemble, das
+ASA Unterstützung signalisiert. Dieses Ensemble muss im Gefahrenfall entweder selbst
+Warnmeldu ngen über Alerts verbreiten oder per OE Alert auf Warnmeldungen in anderen
+Ensembles verweisen.
+
+Der Empfänger überwacht im Standby Modus immer genau ein ASA fähiges Ensemble. Hört eine
+
+Person im normalen Betrieb ein Ensemble ohne ASA Unterstützung     , wechselt der Empfänger im
+
+Standby Modus auf ein geeignetes ASA Ensemble und überwacht dieses. Kann dieses Ensemble
+
+nicht mehr empfangen werden oder signalisiert es keine ASA Unterstützung mehr, muss der
+
+Empfänger automatisch ein anderes ASA fähiges Ensem       ble auswählen.
+
+Ein solcher Wechsel kann zum Beispiel notwendig werden, wenn DAB+         Sendemasten wegen
+
+eines Stromausfalls oder einer gestörten Signalzuführung  ausfallen . Gleiches gilt, wenn bei einem
+
+Ensemble die Zuführung von Alerts oder OE Alerts gestört ist. In diesem Fall darf das Ensemble
+
+ASA vorübergehend nicht mehr signalisieren, und der Empfänger muss auf ein anderes ASA
+
+fähiges Ensemble ausweichen.
+
+                                                                                                           11
+Ist der Empfänger eingeschaltet, wertet er das aktuell angewählte Ensemble aus. ASA                 -
+
+Warnmeldungen kann er nur empfangen, wenn dieses Ensemble Alerts oder OE              -Alerts
+
+signalisiert. Unterstützt das gerade gehörte Ensemble ASA nicht, erhält der Nutzer keine ASA
+
+Warnmeldungen.
+
+In der Phase der schrittweisen Einführung von ASA in Deutschland kann es passieren, dass ein
+
+eingeschalteter Empfänger keine ASA Warnmeldungen erhält, wenn er auf ein Ensemble ohne
+
+ASA Signalisierung eingestellt ist. Im Standby Modus wählt und überwacht derselbe Empfänger
+
+dagegen automatisch ein ASA fähiges Ensemble. Empfängt er dort einen passenden Alert oder
+
+OE Alert, schaltet er sich ein und gibt die Warnmeldung wieder. Damit kann die ASA Funktion                   im
+
+Standby Modus während der Übergangsphase zuverlässiger sein als bei einem eingeschalteten
+
+Radio , d as gerade ein Ensemble ohne ASA Unterstützung empfängt. Für den Gefahrenfall ist
+
+außerdem wichtig, dass ASA Empfänger  auch unabhängig vom Stromnetz betrieben werden
+
+können. Geeignet sind zum Beispiel Batterien, Akkus, eine externe Powerbank oder ein
+
+Kurbelradio.
+
+ASA -Monitoring -Empfänger und der Pre -Trigger von Alerts
+
+Ein ASA Ensemble kündigt einen Alert fünf Sekunden vor dessen Aussendung mit einem
+sogenannten Pre Trigger an. Dieser enthält die wesentlichen Parameter des späteren Alerts
+sowie die Informationen, die für einen möglichen Verweis per OE Alert erforderlich sind. Dazu
+zähle n vor allem das Warngebiet und die Warnstufe. Normale ASA Empfänger werten diesen Pre
+Trigger nicht aus, sondern reagieren erst auf den nachfolgenden Alert.
+
+Anders verhält es sich bei speziellen ASA Monitoring Empfängern. Sie können den Pre Trigger
+
+auslesen und daraus die Informationen ableiten, die für einen OE Alert benötigt werden. Diese
+
+Daten können an die Sendeseite eines anderen Ensembles übertragen und                 dort in die DAB+
+
+Signalisierung übernommen werden. Damit kann ein Ensemble auf Warnmeldungen in anderen
+
+Ensembles verweisen, ohne die dafür erforderlichen Informationen vollständig auf anderem Weg
+
+bereitstellen zu müssen.
+
+Voraussetzung für dieses Verfahren ist, dass die ASA führenden Ensembles entsprechende Pre
+Trigger senden. Diese Pre Trigger enthalten die Informationen, die ein anderes Ensemble
+benötigt, um einen OE Alert zu erzeugen.
+
+Der wesentliche Vorteil besteht darin, dass die beteiligten Netzwerke dafür nicht direkt technisch
+
+gekoppelt werden müssen. Sie müssen also keine gegenseitigen Abfragen bereitstellen oder
+
+verarbeiten. Stattdessen kann ein ASA Monitoring Empfänger die erfor                 derlichen Informationen
+
+on air aus dem Pre Trigger des überwachten Ensembles gewinnen und anschließend an das
+
+verweisende Ensemble weitergeben. Dadurch entfällt der Aufwand, netzübergreifende
+
+Schnittstellen technisch einzurichten, rechtlich zu regeln und sicherheitstechnisch abzusicher                n.
+
+Beispiel: In München überwacht ein ASA -Monitoring -Empfänger auf der Sendeseite das
+
+bundesweite Ensemble mit dem ASA -Service ,,ASA DE". Sobald der Monitoring -Empfänger anhand
+
+des Pre -Triggers erkennt, dass dort ein Alert bevorsteht, leitet er daraus die für   einen OE Alert
+
+erforderlichen Informationen ab. Diese Informationen werden anschließend an die DAB+
+
+Multiplexer eines Ensembles der Bayern Digital Radio übergeben und dort als OE Alert
+
+ausgestrahlt.
+
+Ein ASA Radio, das zu diesem Zeitpunkt ein BDR Ensemble  wiedergibt, empfängt den OE Alert. Es
+
+prüft, ob seine eigene Position innerhalb des angegebenen Warngebiets liegt. Ist das der Fall,
+
+schaltet es auf das bundesweite Ensemble um, in dem der eigentliche Alert ausgestrahlt wird.
+
+                                                                                                                  12
+Wichtig beim Betrieb eines ASA Monitoring Empfängers ist, dass das Verbreitungsgebiet des
+
+Ensembles, das die Alerts ausstrahlt, das Verbreitungsgebiet des verweisenden Ensembles
+
+vollständig überdeckt. Im folgenden Beispiel ist Ensemble A das warnende Ensem             ble, etwa ein
+
+                                                bundesweites Ensemble. Ensemble B ist das
+
+                                                verweisende Ensemble, etwa ein regionales oder
+
+          A                                     lokales Ensemble.
+
+          A       B
+
+Nicht sinnvoll wäre es, wenn sich die Ensembles nur zum Teil überlappen.
+
+                                                         Eine bloße Teilüberlappung der
+
+                                                         Verbreitungsgebiete wäre nicht
+
+                                                         ausreichend. Würde Ensemble B
+
+          A    Ü                                         ausschließlich auf Alerts in Ensemble A
+                                                         verweisen, könnten Hörerinnen und
+
+                                                         Hörer von Ensemble B nur dort
+
+                     B                                   Warnmeldungen erhalten, wo
+                                                         Ensemble A ebenfalls empfangbar i st.
+
+                                                         In diesem Überlappungsbereich Ü
+
+kann ein ASA Radio den OE Alert aus Ensemble B empfangen, auf Ensemble A umschalten und
+
+dort die eigentliche Warnmeldung wiedergeben.
+
+Außerhalb dieses Überlappungsbereichs, aber weiterhin im Verbreitungsgebiet von Ensemble B,
+
+wäre dies nicht möglich. Das ASA Radio könnte zwar unter Umständen einen OE Alert
+
+empfangen, der auf eine Warnmeldung in Ensemble A verweist. Da Ensemble A an diese                   m
+
+Standort jedoch nicht empfangbar ist, könnte das Radio nicht auf Ensemble A umschalten und
+
+die Warnmeldung nicht wiedergeben.
+
+Das ist kritisch, weil Ensemble B sich durch den ASA Heartbeat als ASA fähiges Ensemble
+
+ausweist. Ein ASA Radio im Verbreitungsgebiet von Ensemble B würde daher davon ausgehen,
+
+dass ASA Warnmeldungen verfügbar sind. Außerhalb des Überlappungsbereichs mit Ensemble A
+
+wäre diese Warnfunktion jedoch tatsächlich nicht gewährleistet. Das Radio               würde trotz ASA
+
+Signalisierung keine Warnmeldung en für seine Position erhalten .
+
+Deshalb darf ein Ensemble ASA -Unterstützung nur signalisieren, wenn die Warnfunktion für sein
+
+relevantes Verbreitungsgebiet zuverlässig sichergestellt ist. Verweist es per OE         -Alert auf ein
+
+anderes Ensemble, muss insbesondere gewährleistet sein, dass das Zi               el-Ensemble in dem Gebiet
+
+empfangbar ist, in dem Empfänger auf diesen OE           -Alert reagieren sollen. Außerdem muss der
+
+ASA -Monitoring -Empfänger regelmäßig bestätigen, dass er das überwachte ASA              -Ensemble
+
+empfängt und dass dieses aktuell ebenfalls ASA           -Unterstütz ung signalisiert.
+
+Probe warnung
+
+Eine Probewarnung wird am jährlichen bundesweiten Warntag ausgelöst. Sie wird wie eine
+
+,,scharfe" Warnung signalisiert, zum Beispiel als Level  -1-Warnung, und kann daher auch
+
+Empfänger aus dem Standby -Modus aufwecken. Inhaltlich weist die Warnmeldung die
+
+Zuh örerinnen und Zuhörer jedoch darauf hin, dass es sich lediglich um eine Probewarnung
+
+handelt.
+
+                                                                                                             13
+Eine Probewarnung erfolgt immer mit Angabe eines Warngebiets. Dieses kann das gesamte
+Bundesgebiet oder das Gebiet eines einzelnen Bundeslands umfassen.
+
+Grundsätzlich wären auch Probewarnungen möglich, die nur für Teile des Verbreitungsgebiets
+
+signalisiert werden, also mit einem weiter eingeschränkten Warngebiet. Denkbar wäre
+
+beispielsweise eine Probewarnung ,,reihum" für die einzelnen Regierungsbezirke ein          es
+
+Bundeslands. Darauf würden dann nur Empfänger reagieren, denen ihre Position bekannt ist
+
+und deren Position innerhalb des signalisierten Gebiets liegt.
+
+Warnkette
+
+Bundesweite Warnungen im Zivilschutzfall werden vom BBK ausgelöst. Warnungen bei
+
+Katastrophenlagen, die nur einzelne Länder oder Teile davon betreffen, werden von den
+
+Innenministerien der jeweiligen Länder ausgelöst. Die Warnmeldungen werden über das MoWaS                     -
+
+System erfasst, zentral verarbeitet und anschließend an die Warnmultiplikatoren verteilt.
+
+Programmanbieter können hierzu eine entsprechende Multiplikatoren            -Vereinbarung mit dem
+
+Bundesamt für Bevölkerungsschutz und Katastrophenhilfe (        BBK ) abschließen. Auf dieser
+
+Grundlage erhalten sie Warnmeldungen für ihr jeweiliges Verbreitungsgebiet.
+
+Alle Warnmeldungen sind als CAP -XML -Datei kodiert und enthalten u.a. :
+
+· einen Identifier der einzelnen Warnmeldung
+
+· eine Priorität
+
+· eine Referenz auf Vorgängermeldungen zum selben Ereignis
+
+· einen Hinweis, ob es die erste Meldung, ein Update oder die Entwarnung ist
+
+· das betroffene Gebiet, beschrieben durch ein oder mehrere Polygone                       oder Geocodes für
+
+Gebietskörperschaften (SHN), z. B. bei Meldungen für den Warntag
+
+· sowie eine Text -Beschreibung der Warnung inklusive Handlungsanweisungen für die
+
+Bevölkerung . Es gibt immer ein Standard -Ereignis (beschrieben durch einen ,,EventCode")
+
+und min destens eine Standard -Handlungsempfehlung (beschrieben durch einen
+
+,,InstructionCode").
+
+Für ASA werden derzeit ausschließlich Warnungen der MoWaS          -Priorität 1 genutzt. Diese lösen
+eine ASA -Warnung der Warnstufe ,,Level 1" aus.
+
+Im CAP -File sind standardisierte Event - und Instruction -Codes sowie Freitext enthalten. Auch die
+Ortsbeschreibung erfolgt als Freitext -Eingabe. Die Event - und Instruction -Codes können
+vergleichsweise einfach in Text übertragen werden, auch in verschiedenen Sprachen.
+
+Die vom BBK verwendeten Event  - und Instruction -Codes können mit dem folgenden Link geladen
+werden:
+
+https://www.bbk.bund.de/DE/Warnung -Vorsorge/Warnung -in -
+Deutschland/MoWaS/mowas_node.html
+
+Beim Umsetzen von Codes der Gebietskörperschaften bzw. von Polygonen auf die ASA
+
+spezifische Lokalisationsinformation ist  sicherzustellen, dass mindestens das betroffene Gebiet
+
+gewarnt wird.
+
+Arbeitsschritte zu ASA -Meldung                                                                   + sind
+
+Vom Empfang einer MoWaS Nachricht bis zur Versendung einer Warnmeldung über DAB
+mehrere Schritte nötig.
+
+                                                                                                              14
+1. Auswählen : Eine Einheit muss entscheiden, ob der Empfänger der MoWaS Nachricht
+     diese in einem seiner DAB+ Ensembles versendet muss.
+
+2. Aufbereiten : Eine Einheit muss in diesem Fall die komplette DAB             + spezifische
+     Signalisierung erzeugen.
+
+3. Einsprechen : Die in der MoWaS Nachricht enthaltene     Textnachricht muss als
+
+         Warnmeldung von einem Sprecher eingesprochen oder per Text             -To -Speech synthetisiert
+
+         werden.
+
+4. Informieren : Benachbarte Ensembles müssen die erforderlichen Informationen
+     erhalten, damit sie per OE Alert korrekt auf die Warnmeldung verweisen können. Dazu
+     sollte auch angegeben werden, auf welche MoWaS Nachricht sich die Warnmeldung
+     bezieht, also auf welchen alert.identifier . So lässt sich vermeiden, dass zur selben MoWaS
+     Nachricht mehrfach gewarnt wird.
+
+5. Ausspielen : Zum richtigen Zeitpunkt (z.B. passend zur nächsten Minutengrenze) muss
+
+         nun sowohl das Audio als auch die Alert Information an die betroffenen DAB            + Multiplexer
+
+         zugeführt werden.
+
+Viele dieser Schritte könnten von einer noch zu schaffenden Einheit, dem ,,ASA       -Manager",
+
+übernommen oder auf mehrere Einheiten verteilt werden. Für die einzelnen Schritte sind jedoch
+
+noch verschiedene offene Punkte zu klären.
+
+Auswählen                                                  -Warnmultiplikatoren die
+
+Im ersten Schritt muss entschieden werden, an welche ASA
+Warnmeldung weitergeleitet wird.
+
+Bereits heute erhalten Warnmultiplikatoren nur Warnmeldungen, die ihr jeweiliges Gebiet
+
+betreffen. So würde beispielsweise das Funkhaus Ingolstadt nur Warnmeldungen erhalten, die
+
+für dessen Verbreitungsgebiet relevant sind. Der Warnmultiplikator bestimmt a            nschließend den
+
+geeigneten warnenden Service. Dies kann zum Beispiel vom zu warnenden Gebiet, von der
+
+Uhrzeit oder von anderen Kriterien abhängen.
+
+Einige Rundfunkanstalten oder DAB+ Ensemble Betreiber sind für mehrere DAB+ Ensembles mit
+
+unterschiedlichen, teilweise überlappenden Verbreitungsgebieten zuständig. In solchen Fällen
+
+sollen sie alle Warnmeldungen erhalten, die für diese Gebiete relevant si       nd. Auf dieser Grundlage
+
+können sie selbst entscheiden, in welchem Ensemble oder in welchen Ensembles die
+
+Warnmeldung ausgestrahlt wird und welche warnenden Programme oder Kanäle dafür genutzt
+
+werden.
+
+Aufbereiten
+
+Aus der MoWaS -Nachricht wird die ASA -spezifische Signalisierung erzeugt. Dafür werden weitere
+Informationen benötigt:
+
+· Es muss festgelegt werden, ob Empfänger aufgeweckt werden sollen oder nicht. Diese
+
+         Entscheidung bestimmt, ob es sich um einen Level  -1-Alert handelt, bei dem Empfänger
+
+         aufgeweckt werden, oder um einen Level -2-Alert, bei dem nur bereits eingeschaltete
+
+         Empfän ger umschalten. Derzeit sind nur Level -1-Alerts vorgesehen.
+
+· Es muss erkennbar sein, ob es sich um die erste Meldung zu einem Ereignis, um ein
+     Update oder um eine Entwarnung handelt. Entwarnungen werden bei ASA als Update
+
+                                                                                                           15
+gekennzeichnet. Diese Information wird auch dem Empfänger mitgeteilt. Die
+
+entsprechenden Parameter werden dazu aus dem MoWaS                         -CAP -File extrahiert.
+
+· Pro Ensemble werden die signalisierten Ereignisse g             ruppiert . Dies erfolgt über die ASA
+
+IncidentID . Alle Meldungen zum selben Ereignis, also die initiale Meldung sowie alle
+
+Updates und Wiederholungen, erhalten dieselbe ASA                 IncidentID.
+
+· Ebenso wird das ASA -Warngebiet bestimmt. Dieses könnte bereits von MoWaS mitgeteilt
+     werden.
+
+Einsprechen
+
+Aus der Warnmeldung in Textform muss eine akustische Warnmeldung erzeugt werden. Dafür
+
+kommen grundsätzlich zwei Wege in Betracht: Die Meldung kann entweder von einer Sprecherin
+
+oder einem Sprecher verlesen oder durch ein Text   -to-Speech -System automatisch erzeugt
+
+werden. Dabei ist die ASA -Synchronisierung der Radiogeräte zu beachten.        Dies kann
+
+beispielsweise auf folgende Weise erfolgen:
+
+1. Eine Sprecherin oder ein Sprecher spricht die Meldung vorab ,,off air" ein. Sobald die
+     Meldung vollständig eingesprochen und freigegeben ist, wird sie zum nächstmöglichen
+     Zeitpunkt, also an der nächsten Minutengrenze, ausgespielt und als Alert signalisiert.
+
+2. Eine Sprecherin oder ein Sprecher gibt, zum Beispiel per Knopfdruck, an, dass eine
+     Warnmeldung versendet werden soll. Ein Countdown zeigt anschließend an, wann mit
+     dem Verlesen der Nachricht begonnen werden muss. Zum entsprechenden Zeitpunkt
+     wird die Warnm eldung live verlesen. Die Alert -Signalisierung wird rechtzeitig vorher
+     gestartet. Das Ende der Durchsage wird ebenfalls signalisiert, etwa per Knopfdruck oder
+     über den Regler .
+
+3. Alternativ kann die Warnmeldung durch ein Text      -to-Speech -System erzeugt werden. In
+
+diesem Fall wird die Meldung vorab automatisch synthetisiert und anschließend zum
+
+passenden Zeitpunkt ausgespielt.
+
+Werden Warnmeldungen von Sprecherinnen oder Sprechern eingesprochen, sind voraussichtlich
+
+Anpassungen der Studio -Software sowie eine entsprechende Schulung erforderlich. Dadurch soll
+
+gewährleistet werden, dass Warnmeldungen zuverlässig erstellt und zum ric       htigen Zeitpunkt
+
+ausgespielt werden können. Zudem muss eine Verfügbarkeit rund um die Uhr sichergestellt sein.
+
+Für die Ausstrahlung der Warnmeldung gibt es grundsätzlich zwei Möglichkeiten: Entweder wird
+direkt vom laufenden Programm auf die Warnmeldung umgeschaltet, oder es wird mit
+Übergängen gearbeitet, etwa durch Ausblenden des Programms vor der Warnmeldung und
+Wiedereinblenden danach.
+
+Informieren
+
+Damit andere Ensembles per OE -Alert auf eine Warnmeldung im eigenen Ensemble verweisen
+
+können, müssen sie wissen, wann welcher OE        -Alert zu signalisieren ist.
+
+Der einfachste Fall liegt vor, wenn ein Ensemble ausschließlich auf ein anderes Ensemble
+
+verweist. Dies ist insbesondere dann möglich, wenn das Verbreitungsgebiet des verweisenden
+
+Ensembles vollständig innerhalb des Verbreitungsgebiets des Ziel  -Ensembles l iegt.
+
+Ein Beispiel wäre ein Studentenradio in Frankfurt, das auf Warnmeldungen im Ensemble des
+Hessischen Rundfunks verweist. In diesem Fall könnte das Studentenradio mithilfe eines
+
+                                                                                                        16
+speziellen ASA -Monitoring -Empfängers das hr -Ensemble auswerten. Erkennt dieser Empfänger
+
+anhand der Pre -Trigger -Phase, dass im hr -Ensemble ein Alert signalisiert wird, können die
+
+erforderlichen Informationen gewonnen und in einen OE            -Alert überführt werden. Dieser OE -Alert
+
+verweist dann vom Ensemble des Studentenradios auf das Ensemble des hr. Die Pre                     -Trigger -
+
+Phase des Alerts ist genau für diesen Zweck vorgesehen.
+
+Bei Ensembles, deren Verbreitungsgebiet sich mit vielen anderen Ensembles überschneidet, ist
+
+dagegen ein Austausch der Informationen über eine Netzwerkinfrastruktur sinnvoll. In diesem
+
+Fall kann auch die MoWaS -Identifikation der Warnmeldungen übertragen we                rden. Dadurch lässt
+
+sich erkennen, ob dieselbe Warnmeldung auch im eigenen Ensemble ausgestrahlt wird oder ob
+
+sie in mehreren anderen Ensembles gesendet wird, möglicherweise zu leicht unterschiedlichen
+
+Zeitpunkten. So können Mehrfachwarnungen zur selben Mo           WaS -Nachricht vermieden werden.
+
+Eine solche Netzwerkinfrastruktur muss sicher, also verschlüsselt, sowie redundant und
+
+zuverlässig ausgelegt sein. Das ist besonders wichtig, weil ein Ereignis wie eine Überflutung auch
+
+zu Stromausfällen und Netzwerkausfällen führen kann. Außerdem muss die                  Infrastruktur allen
+
+ASA -Teilnehmern offenstehen, also privaten wie öffentlich -rechtlichen Veranstaltern .
+
+Besonders relevant ist eine solche Infrastruktur für Ensembles mit großem Verbreitungsgebiet,
+die per OE -Alert auf Alerts in vielen lokalen oder regionalen Ensembles verweisen wollen. Dies gilt
+insbesondere für bundesweite Ensembles.
+
+Mögliche Vorgehensweisen:
+
+1. Zentrale Lösung:
+     Jedes Ensemble, das per OE -Alert auf andere Ensembles verweisen möchte, registriert bei
+     einer zentralen Stelle eine Liste der benachbarten Ensembles, auf die es verweisen
+     würde. Im Warnfall meldet jedes Ensemble an diese zentrale Stelle, wann welcher Alert
+     signalisiert wird. Die registrierten Ensembles werden anschließend von der zentralen
+     Stelle informiert.
+
+2. Dezentrale Lösung:
+     Alternativ können individuelle Absprachen zwischen Rundfunkanbietern getroffen
+     werden. In diesem Fall wird bei einem Alert jeweils sichergestellt, dass alle zuvor
+     abgestimmten Ensembles informiert werden.
+
+In beiden Fällen werden voraussichtlich Absprachen zwischen den Anbietern erforderlich sein.
+
+Außerdem können Anpassungen der Netzwerkinfrastruktur notwendig werden. Auch rechtliche
+
+Aspekte müssen berücksichtigt werden. Der Aufbau einer solchen Netzwerkinfr               astruktur kann
+
+daher aus technischen und rechtlichen Gründen eine Vorlaufzeit haben.
+
+Ausspielen
+
+Aufbereitete Alerts oder OE -Alerts müssen den DAB+ Multiplexern zugeführt werden.
+
+Wünschenswert wäre dabei die Nutzung eines standardisierten Protokolls, das von allen
+
+Multiplexern unterstützt wird. Innerhalb des  WorldDAB Technical Committees wird derzeit an
+
+entsprechenden Standardisierungen gearbeitet. Mit konkreten Ergebnissen ist jedoch                  erst
+
+längerfristig zu rechnen.
+
+Dabei muss sichergestellt werden, dass die bereits für DAB+ aufbereiteten Alerts oder OE              -Alerts
+
+zeitlich passend zur Warnmeldung signalisiert werden. Die Alert        -Signalisierung muss mit dem
+
+Ende der Warnmeldung wieder beendet werden können. OE            -Alerts werden dagegen immer nur
+
+für eine vorab festgelegte Dauer von fünf Sekunden ausgesendet.
+
+                                                                                                                17
+Geplante Warnkette
+
+Das folgende Schaubild zeigt in vereinfachter Form den geplanten Aufbau der Warnkette in
+
+Deutschland. Das MoWaS -System würde alle Rundfunkanstalten und Ensemble  -Provider, die von
+
+einem Ereignis betroffen sind, parallel benachrichtigen.     In der ASA Einführungsphase müssen die
+
+jeweiligen Rundfunkanstalten oder Ensemble  -Provider das zu warnende Gebiet noch selbst in ein
+
+ASA -Warngebiet überführen:
+
+Beim Einsatz von ASA -Monitoring -Empfängern überwacht jeder Empfänger ein geeignetes
+
+Ensemble. Wird dort ein Alert signalisiert, erzeugt der ASA  -Monitoring -Empfänger einen
+
+entsprechenden OE -Alert und führt diesen den relevanten DAB+  -Multiplexern zu.
+
+                                                                                                 18
+ASA-Monitoring-Empfänger  OE-Alert
+
+         [Aufbereiten]
+         [Ausspielen]
+
+                                    19
+Vorbereitung des ASA -Regelbetriebs (Planung,
+Implementierung, Koordination)
+
+In den folgenden Unterkapiteln werden der aktuelle Sachstand vom         Juli 2026 sowie der Stand der
+Diskussion zur Einführung von ASA in Deutschland zusammengefasst.
+
+Ausstrahlung der ASA -Warnmeldungen und Betrieb (Netzbetrieb)
+
+ASA -Signalisierung (wann darf ein Ensemble signalisieren, dass es ASA unterstützt                   ?)
+
+Grundsätzlich ist gewünscht, dass möglichst viele Ensembles ASA unterstützen und dies durch
+den ASA Heartbeat signalisieren. Im einfachsten Fall verbreitet ein Ensemble keine eigenen
+Warnmeldungen, sondern verweist per OE Alert auf Warnmeldungen in einem anderen
+Ensemble. So könnte ein Ensemble, das das Stadtgebiet von München versorgt, auf
+Warnmeldungen in einem bayernweiten Ensemble verweisen.
+
+Entscheidend ist dabei, dass das Ensemble, auf das verwiesen wird, möglichst das gesamte             mble
+Verbreitungsgebiet des verweisenden Ensembles abdeckt. Dies ist jedoch nicht immer
+gewährleistet. In der Startphase ist geplant, ASA Warnmeldungen im bundesweiten Ense
+,,ASA DE" zu verbreiten. Andere Ensembles können daher grundsätzlich auf dieses bundesweite
+Ensemble verweisen.
+
+In Bayern gibt es allerdings Gebiete, die vom bundesweiten Ensemble nur unzureichend versorgt
+
+sind. Im Versorgungsgebiet der BDR Ensembles  ist das bundesweite Ensemble auf 95 Prozent der
+
+Fläche verfügbar. Zwar würden alle Empfänger im BDR Versorgungsgebiet ASA Unterstützung
+
+anzeigen. Auf den verbleibenden fünf Prozent der Fläche könnten sie im Gefahrenfall jedoch
+
+nicht auf das bundesweite En semble umschalten und daher keine Warnmeldung wiedergeben.
+
+Betroffen wären etwa 370.000 Einwohner.
+
+Eine technische Möglichkeit, dennoch alle Hörerinnen und Hörer der BDR Ensembles               mit
+
+Warnmeldungen aus dem bundesweiten Ensemble zu erreichen, wäre der Einsatz eines
+
+speziellen ASA Monitoring Empfängers. Dieser könnte nicht nur den Alert im bundesweiten
+
+Ensemble erkennen, sondern auch das Audio der ASA Meldung extrahieren und leicht
+
+zeitversetzt als Alert in ein BDR Ensemble einspeisen. Dafür müsste im BDR Ensemble            ein
+
+warnender Service bestimmt werden, dessen Audio durch die Warnmeldung überschrieben wird.
+
+Dies wäre ohne redaktionellen Aufwand seitens der BDR oder eines Rundfunkanbieters möglich.
+
+Eine detaillierte Beschreibung des geplanten Vorgehens der BDR in Bayern findet sich in              Anhang
+A: ,,ASA-Einführungsszenario der BDR: Netzabdeckung für OE -Alerts".
+
+Der Ansatz besteht darin, zumindest in der Anfangsphase keine perfekte Lösung vorauszusetzen.
+
+ASA -Unterstützung soll auch dann signalisiert werden können, wenn das Ensemble, auf das per
+
+OE -Alert verwiesen wird, nicht im gesamten Versorgungsgebiet des verwe           isenden Ensembles
+
+empfangbar ist.
+
+Eine mögliche ,,perfekte" Lösung bei nur teilweise überlappenden Verbreitungsgebieten, etwa
+zwischen dem bundesweiten Ensemble und einem regionalen Ensemble wie der BDR, wäre:
+
+· Liegt das zu warnende Gebiet innerhalb des Verbreitungsgebiets                     des regionalen
+
+Ensembles, wird die akustische Warnmeldung einschließlich der ASA                    -Signalisierung aus
+
+dem bundesweiten Ensemble in das regionale Ensemble übernommen. Dies könnte
+
+                                                                                                           20
+mithilfe eines speziellen ASA -Monitoring -Empfängers oder über eine Netzwerkanbindung
+erfolgen.
+
+· Liegt das zu warnende Gebiet am Rand oder außerhalb des nominalen
+
+Verbreitungsgebiets des regionalen Ensembles, wird nur ein OE                  -Alert mit Verweis auf
+
+das bundesweite Ensemble signalisiert. Dies dient insbesondere dem Fall, dass das
+
+regionale Ensemble durch Überreichweiten auch außerhalb seines nominalen
+
+Verbreitungsgebiets empfangen wird.
+
+· Liegt das zu warnende Gebiet sehr weit vom Verbreitungsgebiet                des regionalen
+
+Ensembles entfernt, etwa bei einem Alert für Nordrhein          -Westfalen in einem regionalen
+
+Ensemble in Bayern, wird der Alert ignoriert.
+
+Sinnvoller wäre es jedoch, auf ein Ensemble mit einem passenderen Verbreitungsgebiet zu
+verweisen. Im konkreten Beispiel der BDR wäre dies ein Ensemble des BR, sobald der BR
+ebenfalls ASA -Alerts verbreitet.
+
+Bei einem Ereignis kann auch das Ziel -Ensemble betroffen sein, auf das per OE -Alert verwiesen
+wird, etwa durch Stromausfälle oder andere Ausfälle in der Verbreitung. In diesem Fall könnten
+einige ASA -Radios zwar den OE -Alert im verweisenden Ensemble empfan gen, aber nicht auf das
+Ziel -Ensemble umschalten. Die Warnmeldung könnte dann nicht wiedergegeben werden.
+
+Deshalb wäre es in solchen Fällen konsistenter, das Audio der Warnmeldung in das verweisende
+
+Ensemble zu übernehmen, statt nur per OE     -Alert auf ein anderes Ensemble zu verweisen. Ein
+
+ASA -Radio, das die ASA -Signalisierung empfängt, würde dann auch die zugeh           örige Warnmeldung
+
+im selben Ensemble vorfinden.
+
+Weitere Anford er ungen bei einer Unterstützung von ASA
+
+Für die korrekte Funktion von OE Alerts müssen alle beteiligten ASA Ensembles            eine möglichst
+
+übereinstimmende Uhrzeit signalisieren. Der DAB+ Standard ermöglicht es, die Uhrzeit mit einer
+
+Genauigkeit von wenigen Millisekunden anzugeben. Diese Zeitangabe bezieht sich auf einen
+
+eindeutig definierten Punkt im ausgesendeten Signal, näm  lich auf den Beginn des Null Symbols
+
+im DAB+ Transmission Frame, der die Uhrzeit enthält.      Im normalen Betrieb eines DAB+
+
+Ensembles wären Abweichungen von einigen Sekunden gegenüber der tatsächlichen Uhrzeit in
+
+der Regel unproblematisch. Bei ASA ist jedoch eine deutlich genauere Übereinstimmung
+
+erforderlich. Der Grund dafür ist, dass ein ASA Emp       fänger nur bis zu fünf Sekunden Zeit hat, um
+
+auf einen Alert oder OE Alert zu reagieren.
+
+Weichen die Uhrzeiten zweier beteiligter Ensembles um mehrere Sekunden voneinander ab,
+
+kann dies zu Problemen führen. Reagiert ein Empfänger auf einen OE Alert und schaltet auf ein
+
+anderes Ensemble um, bleibt ihm dort unter Umständen nicht mehr genügend Ze                it, um auf den
+
+eigentlichen Alert zu reagieren. Trotz korrekter Signalisierung von OE Alert und Alert könnte die
+
+Warnmeldung dann nicht oder erst zu spät wiedergegeben werden.        Auch beim Einsatz von ASA
+
+Monitoring Empfängern zur Einspeisung von OE Alerts ist daher eine geringe Zeitabweichung
+
+zwischen den beteiligten Ensembles erforderlich. Angestrebt werden sollte eine Genauigkeit von
+
+besser als 100 Millisekunden.
+
+Die Abweichung zwischen der im DAB+ Signal signalisierten Uhrzeit und der tatsächlichen Uhrzeit
+
+kann mit speziellen Messempfängern gemessen und angezeigt werden. Alternativ lässt sie sich
+
+aus der Verzögerung vom DAB+ Multiplexer bis zu den Modulatoren sowi           e aus der Verzögerung
+
+innerhalb der Modulatoren berechnen.
+
+                                                                                                           21
+Erkennen und Sammeln von Betriebsstörungen
+
+Das BBK wünscht sich eine zentrale Stelle, die Informationen zum Zustand der ASA Warnketten
+
+sammelt und berechtigten Personen bereitstellt.     So ließe sich bei einem Stromausfall, bei
+
+Störungen von Zuführungsleitungen oder der Zeitsynchronisation sowie beim Ausfall von
+
+Sendern oder DAB+ Multiplexern erkennen, ob und welche Gebiete kurzzeitig oder längerfristig
+
+nicht mehr über ASA Warnmeldungen e rreichbar sind.
+
+Die DAB+ Ensemble Betreiber überwachen den Zustand ihrer Sendenetze und der dazugehörigen
+
+Komponenten bereits heute. Ergänzend könnten spezielle Empfänger an verschiedenen
+
+Standorten die Empfangsqualität und die vorhandene           ASA Signalisierung erfassen. Auf diese
+
+Weise ließen sich auch absichtliche oder unabsichtliche Störungen des Empfangs erkennen.
+
+Zwischen BBK und Sendernetzbetreibern müsste abgestimmt werden, in welcher Form und über
+welchen Weg diese Informationen dem BBK bereitgestellt werden.
+
+Austausch von OE -Informationen
+
+Wie bereits beschrieben, muss ein ASA -Ensemble, das einen Alert aussendet, andere Ensembles
+
+mit überlappendem Verbreitungsgebiet rechtzeitig über Zeitpunkt und Parameter dieses Alerts
+
+informieren. Nur so können diese Ensembles per OE    -Alert darauf verweisen .
+
+Dafür gibt es zwei naheliegende Möglichkeiten:
+
+1. Versenden des Alerts mit einem Pre -Trigger . Spezielle ASA -Monitoring -Empfänger werten
+
+diesen Pre -Trigger aus und gewinnen daraus die Informationen für einen OE                     -Alert. Dieser
+
+verweist auf das überwachte Ensemble. Diese Lösung bietet sich vor allem an, wenn
+
+lokale oder regionale Ensembles auf Ensemb           les mit größerem, überlappendem
+
+Verbreitungsgebiet verweisen wollen, etwa auf regionale oder bundesweite Ensembles.
+
+Als Beispiel dient ,,Anhang B: ASA -Einführungsszenario der BDR: ASA -Monitoring -Empfänger
+
+für OE -Alert Distribution " mit dem von Bayern Digital Radio geplanten Verweis auf das
+
+bundesweite Ensemble.
+
+2. Zentrales Sammeln und Verteilen aller           Alert -Informationen per IP -Netzwerk . Diese
+
+Möglichkeit ist besonders für Ensembles relevant, die nur ein relativ kleines
+
+Überlappungsgebiet mit anderen Ensembles haben oder die sich teilweise mit vielen
+
+verschiedenen Ensembles überschneiden.              Als Beispiel kann das Ensemble des
+
+Hessischen Rundfunks dienen. Dieses hat überlappende Verbreitungsgebiete mit
+
+Ensembles innerhalb Hessens sowie mit Ensembles der angrenzenden Bundesländer.
+
+Umgekehrt ist das hr -Ensemble auch außerhalb Hessens empfangbar.
+
+Der hr wird voraussichtlich vor allem Warnmeldungen zu Ereignissen in Hessen verbreiten. Das
+
+hr Ensemble kann jedoch auch außerhalb Hessens empfangbar sein. Hörerinnen und Hörer, die
+
+dieses Ensemble beispielsweise in Nordrhein      -Westfalen empfangen, müssen trotzdem über
+
+Gefahren an ihrem tatsächlichen Standort informiert werden.
+
+In solchen Fällen müsste das hr Ensemble per OE Alert auf relevante Alerts eines Ensembles in
+
+Nordrhein -Westfalen verweisen. Dafür muss der hr informiert werden, sobald in einem Ensemble
+
+mit überlappendem Verbreitungsgebiet ein entsprechender Alert signali  siert wird.
+
+                                                                                                     22
+Grundsätzlich könnte der hr in jedem relevanten Überlappungsgebiet einen ASA                    -Monitoring -
+
+Empfänger betreiben und daraus die erforderlichen OE               -Alerts ableiten. Technisch sinnvoller wäre
+
+jedoch ein Austausch der Informationen über ein IP         -Netzwerk.
+
+Ein solcher Austausch hätte einen wichtigen zusätzlichen Vorteil: Zu jedem geplanten Alert
+
+könnte auch mitgeteilt werden, auf welche MoWaS         -Warnmeldung er sich bezieht, also auf den
+
+Parameter ,,alert.identifier". Dadurch ließe sich vergleichsweise        einfach prüfen, ob Alerts
+
+benachbarter Ensembles oder Alerts des hr und eines benachbarten Ensembles dieselbe
+
+MoWaS -Warnmeldung betreffen.
+
+Auf dieser Grundlage könnte der hr entscheiden, ob ein OE                -Alert erforderlich ist. Spielt der hr
+
+dieselbe Warnmeldung bereits selbst per Alert aus, könnte er auf einen entsprechenden OE                         -Alert
+
+verzichten. Informiert der hr dagegen nicht selbst per Alert, sollte er im Regelfall alle relevanten
+
+OE -Alerts auf benachbarte Ensembles signalisieren, auch wenn sich mehrere Alerts auf dieselbe
+
+MoWaS -Warnmeldung beziehen. Das ist sinnvoll, weil sich ein Hörer des hr an einem Standort
+
+befinden kann, an dem nur eines dieser benachbarten Ensembles empfangbar ist.
+
+Werden mehrere OE Alerts übernommen, kann es grundsätzlich zu Mehrfachwarnungen
+
+kommen. Ein Empfänger könnte dieselbe Warnmeldung mehrfach wiedergeben, jeweils einmal
+
+für jedes Ensemble, auf das per OE Alert verwiesen wird und das den Alert aussendet. Werd                        en
+
+die Warnmeldungen in den verschiedenen Ensembles jedoch zeitgleich ausgespielt, gibt der
+
+Empfänger sie nur einmal wieder.
+
+Der technische Austausch ist derzeit wie folgt geplant: Wird für ein Ensemble ein Alert ausgelöst,
+
+wird dies vorab an eine zentrale Stelle gemeldet. Diese verteilt die Information unverändert an
+
+alle registrierten ASA Partner. Die ASA Partner prüfen jeweil            s, ob ein OE Alert auf den
+
+angekündigten Alert für sie relevant ist. Ist dies der Fall, signalisieren sie zum angegebenen
+
+Zeitpunkt einen OE Alert mit Verweis auf diesen Alert.
+
+Das folgende Schaubild zeigt den möglichen Einsatz dieser zentralen Komponente sowie ihre
+Kommunikation mit den beteiligten Systemen:
+
+                                                                                                                 1
+
+  BB                                                           Stu io A                              Ensemble A
+euer e r                                                                                                 Alert
+                                                               Stu io B
+  oli ei                                                                                             Ensemble B
+ n r tu                                                        Stu io                                  OE-Alert
+
+erteilser er                                                             ASA Alert                   Ensemble
+         rnmel ung A - tei                                               ASA OE-Alert
+                                                                                                                  23
+ Mel ung ber ASA Alert in Ensemble A
+In diesem Beispiel signalisiert Ensemble A einen Alert und informiert zugleich die zentrale
+Komponente darüber. Die zentrale Komponente verteilt diese Information an alle registrierten
+Ensembles, unter anderem an Ensemble B und Ensemble C.
+
+Das Verbreitungsgebiet von Ensemble B überlappt teilweise mit dem Verbreitungsgebiet von
+
+Ensemble A. Daher signalisiert Ensemble B einen OE         -Alert mit Verweis auf Ensemble A. Ensemble
+
+C liegt dagegen weit außerhalb des Verbreitungsgebiets von Ensemble A. Da           her signalisiert
+
+Ensemble C keinen OE -Alert mit Verweis auf Ensemble A.
+
+Der Austausch von OE -Alert -Informationen erfordert eine gewisse Vorlaufzeit. Es könnte daher
+
+notwendig sein, Alerts spätestens etwa 20 Sekunden vor einer Minutengrenze anzukündigen,
+
+damit alle beteiligten Komponenten ausreichend Zeit haben, den OE          -Alert pa ssend zur
+
+Minutengrenze zu signalisieren. Die erforderlichen Schritte wären dabei die Zuführung an den
+
+zentralen Verteilknoten, die Weiterverteilung an alle ASA  -Partner, die Prüfung der Relevanz und
+
+gegebenenfalls die Signalisierung des OE  -Alerts.
+
+Ein Ensemble, das OE -Alerts von dieser zentralen Komponente übernimmt, muss die
+
+Erreichbarkeit der Komponente laufend überwachen. Im Fehlerfall darf es keinen ASA              -Heartbeat
+
+mehr signalisieren. Dadurch kann ein Empfänger im Standby          -Modus erkennen, dass er d as zu
+
+überwachende Ensemble wechseln und ein anderes Ensemble finden muss, das zu diesem
+
+Zeitpunkt Alerts oder OE -Alerts ausspielen kann.
+
+Eine solche zentrale Komponente könnte auch für den Austausch aller für den Alert relevanten
+
+Informationen genutzt werden, also auch für die akustische Warnmeldung. Ein lokales oder
+
+regionales Ensemble könnte dann beispielsweise entscheiden, ob es per OE            -Alert auf ein anderes
+
+Ensemble verweist oder die akustische Warnmeldung im eigenen Ensemble ausspielt und als
+
+Alert signalisiert.
+
+Generell gilt jedoch, dass im Gefahrenfall auch Netzwerkverbindungen ausfallen können.
+
+Dadurch könnte die Übernahme von OE       -Alerts oder auch der vollständigen akustischen
+
+Warnmeldung einschließlich Zusatzinformationen von der zentralen Komponente ausfallen.
+
+Eine zentrale Komponente zum Austausch von Alert           -Informationen könnte zusammen mit der
+
+entsprechenden Netzwerkinfrastruktur auch dazu genutzt werden, Betriebszustände zu
+
+sammeln, wie oben beschrieben.
+
+Media Broadcast hat angeboten, diese zentrale Komponente zu betreiben. Die Prüfung der
+technischen Aspekte und der Aufbau dieser Komponente sollen nach dem bundesweiten
+Warntag im September 2026 angegangen werden.
+
+Studio - und Sendebetrieb ( On Air )
+
+Das Funkhaus Ingolstadt verfügt bereits über eine weitgehend vollständige Warnkette vom
+
+Empfang einer MoWaS -Nachricht bis zur Ausspielung der per Text           -to -Speech synthetisierten
+
+akustischen Warnmeldung im DAB+ Service ,,Oldie Welle". Gewarnt wird bei allen Ereignissen, die
+
+das Verbreitungsgebiet dieses Ensembles betreffen. Derzeit erfolgen die Warnungen noch ohne
+
+Angabe eines Warngebiets. Künftig ist jedoch vorgesehen, Warngebiete zu nutzen. Weitere
+
+                                                                                                            24
+Informationen dazu finden sich in ,,Anhang C: Funkhaus Ingolstadt: Emergency Warning System
+(EmWaS)".
+
+Derzeit ist geplant, dass das erste bundesweite Ensemble ,,DR Deutschland" auf Kanal 5C
+
+Warnmeldungen für ganz Deutschland verbreitet. Deutschlandradio würde dafür einen
+
+zusätzlichen DAB+ -Service mit einer Bitrate von 32 kbit/s und dem DAB+     -Protection -Level EEP 2 -A
+
+einrichten. Als Servicelabel ist derzeit ,,ASA  DE" vorgesehen.
+
+Der Ensemble -Betreiber Media Broadcast erhält über einen MoWaS          -Empfänger alle für
+
+Deutschland relevanten MoWaS -Warnungen. Verarbeitet werden ausschließlich Warnmeldungen
+
+der höchsten Warnstufe mit MoWaS -Priorität 1. Aus der über MoWaS erhaltenen CAP               -XML -Da tei
+
+werden die für ASA relevanten Informationen übernommen, insbesondere Warngebiet,
+
+Warnstufe, ,,alert.identifier" und die Warnmeldung in Textform.
+
+Die Warnmeldung in Textform wird anschließend durch ein automatisches Text               -to -Speech -
+
+System in eine akustische Warnmeldung umgesetzt. Zugleich wird das durch Polygone
+
+beschriebene zu warnende Gebiet in ein ASA      -Warngebiet überführt. Auch die übrigen für die
+
+Warnung per ASA erforderlichen Parameter werden dabei bestimmt.
+
+Anschließend werden das synthetisierte Audio und die zugehörigen Metadaten, insbesondere
+ASA -Warnstufe, Warngebiet und ASA -IncidentID, an die redundanten DAB+ Multiplexer
+übergeben. Die Multiplexer spielen die Warnmeldung an der nächstmöglichen Minutengrenze
+aus. Dabei wird das synthetisierte Audio in den von Deutschlandradio bereitgestellten Service
+eingespeist; das reguläre Audio dieses Services wird für die Dauer der Warnmeldung
+vorübergehend übe rschrieben. Parallel zur Ausspielung der akustischen Warnmeldung wird der
+zugehörige ASA -Alert signalisiert.
+
+Damit andere Ensembles in Deutschland möglichst einfach per OE           -Alert auf Warnmeldungen im
+
+bundesweiten Ensemble verweisen können, wird vor dem eigentlichen Alert ein Pre                -Trigger
+
+gesendet, wie oben im Abschnitt ,,ASA -Monitoring -Empfänger" beschrieben. Außerd em ist
+
+vorgesehen, anderen von Media Broadcast betriebenen Multiplexern direkt einen OE               -Alert
+
+zuzuführen, der auf den Alert im bundesweiten Ensemble verweist.
+
+Eine detailliertere Beschreibung der geplanten Warnkette findet sich in ,,Anhang D: Warnkette
+des ersten bundesweiten Ensembles (,,DR Deutschland", Kanal 5C)".
+
+Signalzuführung und Systemtechnik
+
+MoWaS -Zuführung
+
+MoWaS -Warnmeldungen werden an die angeschlossenen Warnmultiplikatoren übermittelt. Ob
+ein Warnmultiplikator an MoWaS angeschlossen wird, entscheidet das BBK auf Anfrage. Die
+technische Umsetzung erfolgt über die mecom Medien -Communikations -Gesellschaft mbH . Dabei
+wird eng abgestimmt, wie die Anbindung an die technischen Systeme des jeweiligen
+Warnmultiplikators erfolgt. Technisch kann die Anbindung über Satellit, terrestrisch oder
+redundant ausgeführt werden.
+
+Zuführung von Alerts an die DAB + Multiplexer
+
+Für die Zuführung von Alerts und OE -Alerts an die DAB+ Multiplexer gibt es derzeit noch kein
+einheitliches Protokoll. Die Standardisierung eines solchen Protokolls wird in einer Arbeitsgruppe
+innerhalb von WorldDAB bearbeitet. Bis ein standardisiertes Protokoll verfügbar ist, muss das
+proprietäre Protokoll des jeweils ei ngesetzten DAB+ Multiplexers genutzt werden.
+
+                                                                                                         25
+Das betrifft sowohl die Zuführung von Alerts als auch die Zuführung von OE            -Alerts, also
+                                                                            -Monitoring -Empfänger an
+beispielsweise auch die Übertragung eines OE  -Alerts von einem ASA
+
+einen DAB+ -Multiplexer.
+
+Der ASA -Service                                      -Ensembles übertragen werden. Dafür
+
+Die akustische Warnmeldung muss innerhalb des DAB+
+gibt es mehrere Möglichkeiten.
+
+· Eine Möglichkeit besteht darin, die Warnmeldung in einen bestehenden DAB+ Service
+
+einzuspeisen, beispielsweise in einen Nachrichtenkanal. Das laufende Programm dieses
+
+Services wird für die Dauer der Warnmeldung unterbrochen und durch die Warnmeldung
+
+ersetz t. In diesem Fall muss festgelegt werden, welcher Service als        warnender Service
+
+genutzt wird. Dieser kann dauerhaft derselbe sein oder je nach betroffenem Gebiet oder
+
+anderen Kriterien ausgewählt werden.
+
+· Alternativ könnte ein eigener ASA -DAB+ Service eingerichtet werden, etwa mit einem
+
+sprechenden Namen wie ASA DE. Dieser Service könnte außerhalb aktueller Warnlagen
+
+allgemeine Informationen zu ASA oder zum Bevölkerungsschutz übertragen und damit
+
+auch einen Eindruck von der verwendeten Lautstärke vermitteln. Ein solcher dedizierter
+
+Service könnte beispielsweise eine Bitrate von mindestens 16 kbit/s nutzen.
+
+Dieser dauerhafte ASA -Service könnte außerdem alle aktuell gültigen Warnmeldungen in einer
+Schleife wiederholen, ohne diese Wiederholungen per Alert zu signalisieren. So könnten auch
+DAB+ -Empfänger ohne ASA -Unterstützung genutzt werden. Hörerinnen und Hörer könnten den
+Service etwa be i Sirenenlärm oder starken Niederschlägen manuell anwählen, um zu erfahren,
+ob eine Gefahr droht. Auch ASA -Nutzer könnten Warnmeldungen später erneut anhören. Liegen
+keine aktuellen Warnmeldungen vor, sollte dies ausdrücklich angesagt werden.
+
+Grundsätzlich wäre auch ein temporärer ASA -Service möglich, der kurz vor der Warnmeldung
+
+per DAB+ -Ensemble -Rekonfiguration angelegt und nach der Warnmeldung wieder entfernt wird.
+
+Die dafür benötigte Bitrate müsste währenddessen von anderen Services bereitgestellt werden.
+
+Eine solche Rekonfiguration würde die Ausspielung jedoch komplexer machen und könnte je
+
+nach Empfänger zu Problemen führen. Für heutige DAB+  -Empfänger ohne ASA wäre ein
+
+temporärer Service praktisch kaum nutzbar, da der Nutzer wissen müsste, wann dieser Service
+
+aktiv ist, und ihn genau in d iesem Zeitraum manuell anwählen müsste.
+
+Möglich wäre auch, durch eine DAB+ -Rekonfiguration die Bitrate des warnenden Services
+während der Warnmeldung vorübergehend zu erhöhen.
+
+Nach dem ASA -Standard muss ein Empfänger spätestens fünf Sekunden nach Beginn der
+Warnmeldung das entsprechende Audio wiedergeben.
+
+· Die Warnmeldung muss daher so gestaltet sein, dass auch Hörerinnen und Hörer, deren
+     Radio erst nach fünf Sekunden umschaltet, noch alle relevanten Informationen erhalten.
+     Denkbar wäre ein mindestens fünf Sekunden langer Jingle, gefolgt von einer Einleitung
+     wie ,,Dies ist eine amtliche Warnung von ..." und anschließend der eigentlichen
+     Warnmeldung.
+
+· Bei der Erstellung der akustischen Warnmeldung muss berücksichtigt werden, an welcher
+     Stelle der Audiokette das laufende Programm ersetzt wird, etwa vor oder nach dem
+     üblichen Audio -Processing. So soll eine angemessene Lautstärke erreicht werden. Durch
+     das Umschalten auf den warnenden Service kann sich die Lautstärke gegenüber dem
+     zuvor gehörten Programm dennoch deutlich verändern.
+
+                                                                                                       26
+· Zusätzlich zur akustischen Warnmeldung könnten Multimediadaten übertragen werden.
+     Derzeit ist dies jedoch nicht vorgesehen. Denkbar wären allenfalls Dynamic Labels oder
+     eine Slideshow mit einem Hinweis wie ,,Amtliche Gefahrenwarnung". Weitergehende
+     Informat ionen sollten während der Warnmeldung nicht übertragen werden, um nicht von
+     der akustischen Warnmeldung abzulenken.
+
+Multimediadaten könnten auch nach der Warnmeldung gesendet werden, etwa Details zu
+
+Handlungsanweisungen oder Anlaufstellen im Notfall . Da ein ASA -Empfänger nach der
+
+Warnmeldung jedoch wieder auf das bisherige Programm oder in den Standby            -Modus
+
+zurückschaltet, müsste der Nutzer den entsprechenden DAB+         Service manuell auswählen. Bei
+
+einem dedizierten ASA -Service wäre das naheliegender. Wird die Warnmeldung dagegen in einen
+
+bestehenden DAB+ Service eingespeist, ist für Hörerinnen und Hörer nicht unbedingt erkennbar,
+
+welcher Service später zusätzliche Informationen bereitstellt.
+
+DAB+ Berücksichtigung von Empfängern, die kein ASA unterstützen
+
+ASA wird von der Mehrzahl der heute im Markt befindlichen DAB+    -Empfänger nicht unterstützt ,
+
+da ASA nicht abwärtskompatibel ist. Die Radios können eine akustische Warnmeldung zwar
+
+grundsätzlich wiedergeben, jedoch nur, wenn der betreffende DAB+          Service zuvor manuell
+
+ausgewählt wurde.
+
+Vor diesem Hintergrund könnten insbesondere dedizierte ASA        -Services, die ausschließlich der
+
+Verbreitung von Warnmeldungen dienen, bereits über ihr Service    -Label eindeutig als
+
+Warnservices kenntlich gemacht und entsprechend kommuniziert werden. Hörerinnen u                nd
+
+Hörer, deren DAB+ Empfänger ASA nicht unterstützt, könnten diese Services in Krisensituationen
+
+gezielt manuell auswählen.
+
+Die bisherigen Warnmöglichkeiten von DAB+ werden in Anhang E      ,,Vergleich ASA mit bisherigen
+
+Warnmöglichkeiten in DAB+" beschrieben . Dazu gehören auch die bisherigen DAB+
+
+Announcements.
+
+Technisch wäre es zwar denkbar, bestehende DAB+ Empfänger ohne ASA Unterstützung
+während einer ASA Warnmeldung mithilfe solcher Announcements zum Umschalten auf den
+warnenden Service aufzufordern. Derzeit ist jedoch nicht vorgesehen, parallel zu einer ASA
+Warnmeldung zusätzlich DAB+ Announcements zu signalisieren. ASA löst diese bisherige
+Signalisierung ab.
+
+Resilienz
+
+1. Resilienz der ASA -Warnkette
+
+Ein Warnsystem wie ASA muss berücksichtigen, dass eine Gefahrenlage auch die Warnkette          tungen
+selbst beeinträchtigen kann. Eine Überschwemmung kann beispielsweise zu Stromausfällen an
+Senderstandorten oder zu unterbrochenen beziehungsweise gestörten Zuführungslei
+führen. Auch unabhängig von ASA ist es für einen Sendernetzbetreiber sinnvoll, sein Sendernetz
+resilient und mit geeigneten Redundanzen aufzubauen. Dabei muss jedoch immer auch die
+Kostenfrage berücksichtigt werden.
+
+2. Redundanzen und Netzersatz
+
+Zu beachtende Aspekte:
+
+· Redundante Komponenten, etwa Netzwerkkomponenten, DAB+                  -Multiplexer, Sender und
+     ASA -Komponenten.
+
+                                                                                                        27
+· Netzersatzversorgung für alle relevanten Komponenten, darunter Studio, MoWaS                   -
+
+Anbindung, ASA -Komponenten, DAB+ -Multiplexer, Netzwerkkomponenten,
+
+Zuführungsleitungen und Sender. Bei Netzersatzanlagen ist häufig eine
+
+Überbrückungszeit von 72 Stunden vorgesehe                 n. Innerhalb dieser Zeit muss entweder die
+
+reguläre Stromversorgung wiederhergestellt sein oder Kraftstoff nachgeliefert werden.
+
+Der öffentlich -rechtliche Rundfunk ist bei einem Stromausfall weder finanziell noch
+
+logistisch in der Lage, all seine Programme über Netzersatzanlagen für 72 Stunden
+
+aufrechtzuerhalten. Stattdessen konzentrieren sich die Anstalten darauf, ein zentrales,
+
+stark reduziertes Notprogramm über wenige gesicherte Hauptsender auszustrahlen, um
+
+ihren gesetzlichen Informationsauftrag im Krisenfall zu erfüllen. Private Sender
+
+unterliegen hingegen nicht diesem strengen zivilen Versorgungsauftrag.
+
+· Nicht jeder Sender verfügt damit über eine Netzersatzversorgung. Fallen solche Sender
+     aus, kann der Empfang in einzelnen Gebieten eingeschränkt sein oder vollständig
+     ausfallen.
+
+3. Zuführungen und technische Anbindung
+
+· Redundante Zuführungen vom Studio und den ASA            -Komponenten zu den redundanten
+     DAB+ Multiplexern.
+
+· Redundante Zuführungen von den DAB+             Multiplexern zu den DAB+ -Sendern. Die
+
+Zuführung kann beispielsweise über Satellit                , Glasfaser oder Richtfunk erfolgen. In vielen
+
+Fällen wäre Richtfunk wünschenswert, ist jedoch mit höherem Aufwand und höheren
+
+Kosten verbunden.
+
+· DAB+ Sender benötigen neben Strom und Eingangssignal auch eine korrekte
+
+Synchronisation sowie eine Anbindung an Monitoring         - und Kontrollnetzwerke.
+
+· MoWaS kann per Satellit und/oder über das Internet zugeführt werden, idealerweise
+     redundant.
+
+4. ASA -Komponenten und Text -to -Speech
+
+Bei ASA -Komponenten ist insbesondere Text -to -Speech zu beachten. Wird die akustische
+Warnmeldung über einen Cloud -Dienst synthetisiert, hängt dieser davon ab, dass
+Internetverbindung und Cloud -Anbieter auch im Gefahrenfall verfügbar bleiben, etwa bei einem
+weiträumigen Stromausfall. Ein lokal verfügbarer Text -to -Speech -Dienst wäre daher Priorität und
+einer Cloud -Lösung jederzeit vorzuziehen.
+
+5. Personal, Ersatzteile und mobile Ersatzsender
+
+Zusätzlich ist es sinnvoll, geschultes Personal vorzuhalten oder geeignete Servicepartner
+
+einzubinden, damit Komponenten im Fehlerfall schnell repariert oder ausgetauscht werden
+
+können. Ebenso kann es sinnvoll sein, Ersatzteile oder Ersatzgeräte vorzuhalte             n, um kurzfristige
+
+Lieferengpässe abzufedern. Beim Ausfall eines Senders wären autarke mobile Ersatzsender
+
+hilfreich, einschließlich Netzersatzversorgung sowie GNSS  - und Zuführungskomponenten.
+
+6. Zeitsynchronisation im DAB+  Sendernetz
+
+Für den Betrieb eines DAB+ Sendernetzes ist eine präzise Zeitsynchronisation unverzichtbar. Sie
+wird derzeit meist über GPS -Empfänger realisiert. Eine zusätzliche Unterstützung weiterer
+Satellitensysteme, insbesondere Galileo, wäre daher ein sinnvoller Beitrag zur Robustheit des
+Net zes.
+
+                                                                                                               28
+An großen Sendestandorten erfolgt die Synchronisation üblicherweise über zentrale Taktquellen,
+die alle Geräte am Standort versorgen. Kleinere Standorte nutzen dagegen häufig den im Sender
+integrierten GPS - oder GNSS -Empfänger. Da moderne Sender oft bereit s mehrere
+Satellitensysteme unterstützen, dürfte der Aufpreis für GPS plus Galileo gegenüber einer reinen
+GPS -Lösung in vielen Fällen vertretbar sein.
+
+Gleichwohl bleibt GNSS eine verwundbare Komponente. Ein Jammer kann mehrere
+
+Satellitensysteme gleichzeitig stören; auch eine defekte oder sabotierte Empfangsantenne kann
+
+die Synchronisation beeinträchtigen. Gegen Spoofing bieten einige GNSS             -Empfänger,
+
+beis pielsweise von Meinberg, Erkennungsfunktionen an, allerdings nur mit zusätzlicher
+
+Ausstattung.
+
+Ohne Satellitensynchronisation halten die in GNSS     -Empfängern üblichen Quarze die
+
+erforderliche Genauigkeit meist noch für einige Stunden. Eine Überbrückung von 72 Stunden ist
+
+damit jedoch nicht zuverlässig sichergestellt. Wo die Netzanbindung es erlaubt, k            önnte
+
+ergänzend ein zentraler Takt über PTP, also Precision Time Protocol, bereitgestellt werden.
+
+7. Auswirkungen auf den SFN -Betrieb
+
+Ist eine präzise Synchronisation der Sender nicht mehr möglich, kann der SFN              -Betrieb, also der
+
+Betrieb im Single Frequency Network, nicht mehr zuverlässig funktionieren. In der Folge kann es
+
+zu Interferenzen und damit zu Empfangsstörungen im Verbreitungsgebiet des Ensembles
+
+kommen. Messempfänger im Überlappungsgebiet von Sendern könnten solche Störungen
+
+erkennen. In bestimmten Situationen kann es besser sein, Sender mit gestörter Taktversorgung
+
+abzuschalten. Andernfalls könnten sie den SFN        -Betrieb großflächig stören. Ein Abschalten kann
+
+jedoch dazu führen, dass in einzelnen Bereichen des Verbreitungsgebiets kein Em              pfang oder kein
+
+Indoor -Empfang mehr möglich ist.
+
+8. Cybersicherheit
+
+In diesem Zusammenhang können auch die Cybersecurity         -Regelungen der EU, insbesondere die
+
+NIS2 -Richtlinie, von Bedeutung sein und gegebenenfalls Auswirkungen auf die
+
+Resilienzanforderungen haben.
+
+WorldDAB Webinars zum Thema "resilience"
+
+DAB+ network resilience: timing and synchronisation
+
+The resilience of Digital Audio Broadcasting (DAB) networks is emerging as a critical issue as this
+technology progressively replaces legacy analogue transmission systems, in particular FM
+
+broadcasting. Single Frequency Networks (SFNs) based on DAB+ offer            significant advantages,
+
+including wide -area coverage, reduced energy consumption, lower CO emissions, and
+
+substantial decreases in transmission costs. These benefits, however, are contingent upon
+
+stringent synchronisation of the modulated signals to preve  nt unintended self -interference.
+
+The time references required for transmitter synchronisation are susceptible to degradation due
+
+to drift, intentional jamming, unintentional interference, or other impairments. Consequently,
+
+both network operators and equipment manufacturers are implementi                  ng diverse mitigation
+
+strategies to enhance robustness, reduce susceptibility to disturbances, and ensure high
+
+availability of DAB+ networks, even in scenarios where conventional time reference sources
+
+cannot be considered fully reliable.
+
+https://www.worlddab.org/events/detail/739
+
+                                                                                                              29
+DAB+ resilience and implementation
+
+This session will explore the technical and operational factors that underpin a resilient broadcast
+transmission network. Topics include transmitter infrastructure and site reliability, energy supply
+
+and backup solutions, and redundancy within antenna syst  ems. It will also examine signal
+
+delivery to the transmitter, including signal feeding and distribution, as well as the stability and
+
+resilience of the headend, the core system responsible for signal creation and distribution to
+transmission sites.
+
+https://www.worlddab.org/events/detail/752
+
+                                                                                                      30
+Anhang A: ASA -Einführungsszenario der BDR:
+Netzabdeckung für OE -Alerts
+
+Im Vorfeld der bundesweiten Einführung von ASA (Automatic Safety Alert) ist zu klären, wie mit
+Fällen umzugehen ist, in denen OE -Alerts auf ein anderes, nicht deckungsgleich versorgtes DAB+
+Ensemble verweisen. Diese Frage ist insbesondere für regionale Netzbetreiber relevant.
+
+Das Szenario betrifft DAB+ Ensembles ohne eigenen dedizierten ASA -Akteur, also ohne
+Programmanbieter, der selbst ASA -Warnmeldungen aussendet. Solche Ensembles könnten per
+OE -Alert auf einen warnenden Service in einem anderen Ensemble verweisen. Das ist vor allem
+dann naheliegend, we nn ASA -Warnmeldungen zentral in einem bundesweiten Ensemble
+verbreitet werden und regionale oder lokale Ensembles lediglich die automatische Umschaltung
+dorthin auslösen.
+
+Dabei kann jedoch eine Versorgungslücke entstehen. Ein regionales Ensemble kann an einem Ort
+
+zuverlässig empfangbar sein, sodass der OE  -Alert den Empfänger erreicht. Das referenzierte Ziel        -
+
+Ensemble mit dem warnenden Service kann dort zugleich nicht oder nu            r unzureichend verfügbar
+
+sein. In diesem Fall würde die automatische Umschaltung eines ASA         -fähigen Empfangsgeräts
+
+ausgelöst, der eigentliche Warnservice wäre jedoch nicht erreichbar.
+
+Für die Bewertung dieses Use Cases müssen solche Konstellationen systematisch identifiziert
+
+und quantifiziert werden. Entscheidend sind dabei die Lage der betroffenen Gebiete, die
+
+potenziell betroffene Bevölkerung und die Unterscheidung zwischen Stadt        - und Flächennetzen.
+
+Diese Differenzierung ist wichtig, weil beide Netztypen unterschiedliche
+
+Versorgungscharakteristika und damit auch unterschiedliche Risiken aufweisen.
+
+A.1 Beispiel: Coverage -Delta zwischen ,,Bundesweit 1" und BDR -Netzen
+
+                                                                          Abbildung 1: Indoor -Coverage 5C Netzes
+                                                                          in Bayern (Quelle: BLM)
+
+                                                                          Der Start von ASA im
+                                                                          bundesweiten Ensemble 5C hat
+                                                                          den großen Vorteil, dass ASA -
+                                                                          Alerts grundsätzlich im gesamten
+                                                                          Bundesgebiet empfangen werden
+                                                                          können und nachgereihte DAB+
+                                                                          Ensembles per OE -Alert auf dieses
+                                                                          bundesweite Ensemble verweisen
+                                                                          können. Obwohl der 5C,
+                                                                          insbesondere für ein
+                                                                          bundesweites DAB+ Netz, als sehr
+                                                                          gut ausgebaut gelten kann, sind
+                                                                          regionale und lokale DAB+ -Netze,
+                                                                          die z. T. auf Basis eines öffentlich -
+                                                                          rechtlichen Versorgungsauftrags
+                                                                          geplant werden, auch dort
+
+                                                                                                         31
+versorgungsstark, wo sich ein Ausbau des 5C aus wirtschaftlichen Gründen nicht lohnen würde.
+
+                                                                                                                  Abbildung 2: Indoor -Coverage der
+                                                                                                                  lokalen und regionalen DAB+
+                                                                                                                  Ensembles der BDR (Quelle: BLM)
+
+                                                                                                                  Abbildung 3: Nicht vom 5C versorgte
+                                                                                                                  Regionen mit BDR -Versorgung
+                                                                                                                  (Quelle: BLM)
+
+                                                                                            Abbildung 3 zeigt die Gebiete in
+                                                                                            Bayern, in denen DAB+
+                                                                                            Ensembles der BDR indoor
+                                                                                            empfangen werden können,
+                                                                                            aber kein Empfang des 5C
+                                                                                            möglich ist. D.h. dass im Falle
+                                                                                            einer ASA -Warnung in
+                                                                                            ,,Bundesweit 1" und dem
+                                                                                            Einspeisen des OE -Alerts in die
+                                                                                            BDR -Ensembles, ASA -Radios in
+                                                                                            den rot gekennzeichneten
+                                                                                            Regionen nicht von einem BDR
+                                                                                            Ensemble auf den 5C
+                                                                                            umschalten können.
+
+Die Verschneidung der Bevölkerungsdaten zeigt, dass von dieser Situation ca. 375.000 Einwohner
+in den Regierungsbezirken Oberbayern, Schwaben und Mittelfranken sowie in der Stadt
+Nürnberg betroffen sind.
+
+                                                                                                                         32
+A.2 Exkurs: Situation bei den Regionalnetzen des Bayerischen Rundfunks
+
+Der BR verfügt über bayernweit gut ausgebaute Regionalnetze. Für den Fall, das sich der BR dazu
+
+entscheidet, nicht selbst als ASA -Akteur aufzutreten und stattdessen (wie es derzeit die BDR für
+
+ihre Ensembles plant) vorsieht, von den Regionalensembles per O     E-Alert auf die Alerts des
+
+bundesweiten Ensembles zu verweisen, zeigt sich eine vergleichbare Problematik.
+
+                                                                                 Abbildung 4: Nicht vom
+                                                                                 5C versorgte Regionen
+                                                                                 mit BR -Versorgung
+                                                                                 (Quelle: BLM)
+
+                                                                                 Es gibt in Bayern eine
+                                                                                 nicht unerhebliche
+                                                                                 Zahl von Einwohnern,
+                                                                                 die zwar die BR -
+                                                                                 Regionalensembles,
+                                                                                 nicht aber das
+                                                                                 bundesweite
+                                                                                 Ensemble empfangen
+                                                                                 können.
+
+A.3 Lösungsmöglichkeiten
+
+a) Dedizierten ASA -Akteur einführen
+
+Besteht vor Ort eine Unterversorgung, weil das Ensemble mit den Warnmeldungen dort nicht
+
+ausreichend empfangbar ist, kann die Versorgung über ein besser ausgebautes Regionalnetz
+
+verbessert werden. Dazu wird in diesem Regionalnetz ein unabhängiger ASA         -Akteu r eingeführt.
+
+Ein entsprechend versierter Programmanbieter kann mit dem BBK eine
+
+Multiplikatorenvereinbarung schließen, die es ihm erlaubt, MoWaS -Meldungen für das ASA -
+
+System zu erhalten. Diese MoWaS -Meldungen müssen anschließend automatisiert in ASA                -
+
+Warnmeldungen umgesetzt werden. Sowohl der jeweilige DAB+        Netzbetreiber als auch das
+
+Fraunhofer IIS können interessierte Anbieter hierbei beraten und unterstützen.
+
+b) Auf Ensemble mit besser passender Versorgung verweisen
+
+Unter Umständen ist es möglich, ein in Bezug auf die Versorgungsgleichheit passenderes
+
+Ensemble zu finden und den betreffenden Betreiber dafür zu gewinnen, ASA         -Warnungen in
+
+diesem Ensemble zu versenden . In Bayern könnte bspw. der Bayerische Rundfunk in seinem gut
+
+ausgebauten landesweiten Ensemble 11D ASA  -Warnmeldungen für ganz Bayern ausstrahlen und
+
+                                                                                                         33
+alle anderen bayerischen Ensembles könnten dann auf dieses Ensemble des Bayerischen
+Rundfunks verweisen.
+
+c) Übernahme der gesprochenen ASA Warnmeldung und Versenden als Warnmeldung im
+lokalen, bzw. regionalen Ensemble
+
+Perspektivisch könnte das beschriebene Problem dadurch gelöst werden, dass neben dem ASA               -
+
+Alert auch die zugehörige gesprochene Warnmeldung an nachgereihte Ensembles weitergegeben
+
+wird. Diese Ensembles würden die Warnung dann nicht nur als Verweis auf ein a              nderes
+
+Ensemble signalisieren, sondern selbst einen ASA       -Alert ausstrahlen und das Warn -Audio
+
+innerhalb des eigenen Ensembles bereitstellen.
+
+Löst beispielsweise Deutschlandradio eine ASA     -Warnung aus, könnten sowohl der ASA -Alert als
+
+auch die gesprochene Warnmeldung von Deutschlandradio an weitere Multiplexer
+
+weitergegeben werden. Dies könnte über einen ASA       -Monitoring -Empfänger erfolgen oder, so fern
+
+technisch möglich, direkt aus dem DR -Multiplexer heraus. Die empfangenden Multiplexer
+
+würden anschließend das Audio eines ihrer Services für die Dauer der Warnmeldung durch das
+
+ASA -Warn -Audio ersetzen. ASA -Radios innerhalb des Warngebiets könnten dann auf diese
+
+Warnmeldung umschalten, ohne das aktuell empfangene Ensemble verlassen zu müsse                    n.
+
+Damit würde kein OE -Alert versendet, der lediglich auf ein anderes, möglicherweise vor Ort
+
+schlechter empfangbares Ensemble verweist. Stattdessen blieben die ASA           -Radios auf dem
+
+Ensemble, das sie zuverlässig empfangen können, und erhielten die Warnmeldung d               irekt
+
+innerhalb dieses Ensembles.
+
+Diese Lösung steht derzeit noch nicht als reguläre technische Funktion zur Verfügung. Als
+
+perspektivischer Ansatz könnte sie das Problem von OE         -Alerts zwischen Ensembles mit
+
+unterschiedlicher Versorgung jedoch zuverlässig entschärfen.
+
+                                                                                                       34
+Anhang B: ASA -Einführungsszenario der BDR: ASA -
+Monitoring -Empfänger für OE -Alert Distribution
+
+Es ist davon auszugehen, dass zu Beginn der ASA      -Einführung noch kein IP -basiertes Verteilnetz
+
+für die Weitergabe von ASA -Alerts an nachgereihte Multiplexer zur Verfügung steht. Wie im
+
+Standard vorgesehen, können ASA -Alerts daher zunächst aus dem ausgestrahlten DAB+                     Signal
+
+über die Luftschnittstelle rückgewonnen werden. Auf dieser Grundlage werden daraus
+
+abgeleitete OE -Alerts erzeugt und an die nachgereihten Multiplexer verteilt. Bei der Entwicklung
+
+der hierfür erforderlichen Rückempfänger, im Folgenden als ,,ASA   -Monit oring -Empfänger"
+
+bezeichnet, sowie bei deren betrieblicher Integration sind einige Punkte zu beachten.
+
+B.1 Betriebliche Redundanz
+
+Der Rückempfang wird in heißer Redundanz, also mit zwei gleichzeitig laufenden ASA             -Monitoring -
+
+Empfängern betrieben. Beide Geräte geben empfangen ASA            -Alerts und geben die daraus
+
+abgeleiteten OE -Alerts unabhängig voneinander und nahezu gleichzeitig an die na             chgereihten
+
+DAB+ Multiplexer weiter.
+
+Um die Implementierung dieser ASA -Monitoring -Empfänger zu erleichtern, wird auf eine
+
+gegenseitige Überwachung des Betriebszustands der Geräte verzichtet. Stattdessen geben beide
+
+Empfänger unabhängig voneinander empfangene ASA            -Alerts als davon abgeleitete O E-Alerts an
+
+die nachgereihten DAB+ Multiplexer weiter. Wenn ein Multiplexer einen ASA              -Alert erhält,
+
+ignoriert er den unmittelbar nachkommenden identischen Alert des zweiten ASA             -Monitoring -
+
+Empfängers.
+
+B.2 Doppeltes Störungsmeldesystem (BDR/MB und perspektivisch BBK)
+
+Die BDR nutzt zur Überwachung ihrer Zentraltechnik standardmäßig ein Polling             -System. Ein
+
+Gerät gilt als funktionstüchtig, wenn es in regelmäßigen Abständen zur Abgabe einer
+
+Statusmeldung angefragt wird und sich als funktionstüchtig meldet. So wird vermiede             n, dass
+
+einmalig ausgelöste Traps unter Umständen ihr Ziel nicht erreichen und ein Defekt unbemerkt
+
+bleibt. Die ASA -Monitoring -Empfänger werden nach dem gleichen Prinzip in das
+
+Störungsmanagement der BDR integriert.
+
+Derzeit ist der Betrieb und die Überwachung der ASA        -Technik allein durch die BDR geplant. Wird
+
+der Betrieb dieser Infrastruktur als hochkritisch bewertet (auch bei vorhandener
+
+Geräteredundanz) ist es denkbar, den Betrieb und die Überwachung in das Netzmana                   gement der
+
+Media Broadcast einzugliedern.
+
+Perspektivisch ist zu bedenken, dass eine bundesweit agierende Koordinierungsstelle für
+
+Bevölkerungswarnung (wie das BBK) auch über den Betriebszustand der Warnkette informiert
+
+werden kann/sollte. Zu diesem Zweck sollte es möglich sein, Warnmeldungen (in F              orm von Traps
+
+oder E -Mails) an das BBK zu übermitteln. Sofern das BBK dazu Vorgaben oder Vorschläge macht,
+
+wird diese Option geprüft.
+
+B .3 Rückempfang via Luftschnittstelle oder RF             -Input
+
+Idealerweise sollten die ASA -Monitoring -Empfänger in einem LAN mit den nachgereihten                 DAB+
+
+Multiplexern stehen, um möglichst wenig Vermittlungstechnik zwischen den Geräten zu haben.
+
+Wenn möglich kann statt des Rückempfangs aus der Luft auch das RF             -Signal des Messausgangs
+
+eines 5C -Senders als Signalquelle genutzt werden. In diesem Fall ist dem AS           A-Monitoring -
+
+Empfänger üblicherweise ein Dämpfungsglied vorzuschalten.
+
+                                                                                                               35
+Zusätzlich zur Verteilung von ASA -Alerts im LAN können auch VPN -Strecken zum Aufbau einer
+Georedundanz genutzt werden - dazu mehr im Schaubild unter 2.5.
+
+B .4 Pre -Trigger als Basis für OE -Alerts / Heartbeat als ASA -Lebenszeichen
+
+Der Pre -Trigger des ASA -Alerts wird im ASA -Monitoring -Empfänger in einen OE -Alert
+
+umgeschrieben. Die Ziel -Subchannel -ID des Alerts (welches Audio soll innerhalb des Ensembles
+
+angesprungen werden?) wird im OE -Alert durch die Ensemble -ID (auf welches Ensemble muss
+
+umgeschaltet werden?) ersetzt. Dieser aus dem Pre       -Trigger generierte OE -Alert wird an den OE -
+
+Multiplexer weit ergeleitet, der ihn aussendet. Ein ASA -Empfänger, der ein Lokal - oder
+
+Regionalensemble empfängt, erkennt im Warnfall den OE        -Alert und schaltet dann auf das
+
+referenzierte ASA -Ensemble um.
+
+Gemäß ETSI TS 104 089 ist das Absetzen eines Pre    -Triggers vor einem ASA -Alert nicht
+
+vorgeschrieben. Der Pre -Trigger ist aber für die rechtzeitige Distribution von OE  -Alerts zwingend
+
+nötig. Es muss für jeden ASA -Akteur als ,,Best Practice" gelten, allen ASA -Warnungen Pre -Trigger
+
+vorauszuschicken.
+
+Es gibt Multiplexer , die ausschließlich von ASA -Monitoring -Empfängern mit OE -Alerts versorgt
+
+werden. Damit diese Multiplexer erkennen können, ob die ASA  -Monitoring -Empfänger ein
+
+gültiges ASA -Ensemble empfangen, muss der ASA -Monitoring -Empfänger, solange sein
+
+überwachtes Ense mble den ASA -Heartbeat versendet, allen Multiplexern regelmäßig ein
+
+Heartbeat -Signal schicken. Erhält ein Multiplexer über einen längeren Zeitraum kein solches
+
+Heartbeat -Signal von einem der ASA -Monitoring -Empfänger, muss er den Ausfall des ASA -
+
+Zuführungssystems als Störung melden und darf kein ASA       -Heartbeat -Signal mehr versenden. Das
+
+Ensemble zeigt damit an, dass temporär keine ASA        -Warnmeldungen und keine OE -Alerts in
+
+di esem Ensemble möglich sind. ASA -Empfänger im Standby -Modus reagieren auf den fehlenden
+
+ASA -Heartbeat und versuchen dann, ein anderes EWS      -Ensemble zu überwachen.
+
+Es gilt also für den ASA -Monitoring -Empfänger:
+
+· Empfange FIG 0/15 (ASA Informationen)
+
+· Prüfe ob ,,Pre -Trigger"
+
+                   · Wenn ja: FIG0/15 Alert wird in OE -Alert umgeschrieben (statt auf einen
+
+                   Subchannel wird auf die EnsembleId des vom ASA                   -Monitoring -
+
+                   Empfängers überwachten Ensembles verwiesen)
+
+                   · Schicke OE -Alerts an alle nachgereihten Multiplexer
+
+· Schicke ein Heartbeat -Signal an alle nachgereihte Multiplexer
+
+                                                                                                      36
+B.5 Schematischer Aufbau einer geo - und geräteredundanten Rückempfangs -
+und Verteillösung für OE -Alerts
+
+                                         OE-Alert     Muxer Ensemble A
+                                                             Betrieb
+        re-Trigger   ASA-Monitoring-
+Standort 1              Empfänger                     Muxer Ensemble A
+                                                          Re un n
+                        OE-Alert
+
+                                      N
+
+                     OE-Alert                         Muxer Ensemble B
+                                                             Betrieb
+re-Trigger           ASA-Monitoring-        OE-Alert
+                       Empfänger 1                    Muxer Ensemble B
+                                                          Re un n
+re-Trigger           ASA-Monitoring-
+                       Empfänger 2                    Muxer Ensemble
+                                                             Betrieb
+                     OE-Alert
+                                                      Muxer Ensemble
+                                                           Re un n
+
+                                                                 ...
+                                                           eitere Muxer
+
+Standort 2
+
+                                         N
+
+                      OE-Alert                        Muxer Ensemble N
+                                                             Betrieb
+                     ASA-Monitoring-
+                        Empfänger                     Muxer Ensemble N
+                                                          Re un n
+         re-Trigger                      OE-Alert
+Standort 3
+
+                                                                           37
+Anhang C: Funkhaus Ingolstadt: Emergency Warning System
+(EmWaS)
+
+Das Funkhaus Regensburg hat für die automatisierte Ausstrahlung von Warnmeldungen ein
+
+System namens EmWaS entwickelt. Es analysiert die MoWaS  -Meldungen des BBK vollautomatisch
+
+und erzeugt daraus per Text -to -Speech eine gesprochene Warnmeldung, die       unmittelbar und zu
+
+jeder Tages - und Nachtzeit On Air ausgestrahlt werden kann. Dieses System ist im Funkhaus
+
+Regensburg seit Herbst 2025 erfolgreich im Einsatz.
+
+Für das Funkhaus Ingolstadt wurde das System entsprechend den ASA       -Vorgaben
+
+weiterentwickelt. Beim letzten bundesweiten Warntag konnte es erstmals mit ASA              -Funktionen,
+
+insbesondere dem ,,Aufwecken" geeigneter Empfänger, getestet werden. Die Warnung wurde
+
+dabe i ohne Einschränkung auf ein konkretes Warngebiet ausgespielt.
+
+Damit steht mit der EmWaS -Box eine skalierbare Lösung für DAB+         Ensembles zur Verfügung, mit
+
+der Warnmeldungen der höchsten Warnstufe des BBK im CAP              -Format vollautomatisch
+
+ausgespielt werden können. Das System kommt bei einem Programmanbieter zum Einsatz, der
+
+innerhalb eines DAB+ Ensembles als warnender Service festgelegt wird. Im lokalen Multiplex
+
+Ingolstadt 6A übernimmt diese Rolle der Sender Oldie Welle Ingolstadt.
+
+Bei der Ausspielung einer Warnmeldung wird das laufende Programm von Oldie Welle Ingolstadt
+
+unterbrochen und durch die Warnmeldung ersetzt. Zugleich wird dem DAB ContentServer
+
+beziehungsweise dem DAB+ Multiplexer signalisiert, dass eine Warnmeldung im ASA               -Format
+
+ausgespielt wird. Dadurch können ASA -Radios , die dieses Ensemble empfangen, innerhalb des
+
+angegebenen Warngebiets auf den warnenden Service umschalten.
+
+Zu Kontroll - und Dokumentationszwecken werden sowohl der Text als auch das Audio der
+Warnmeldung per E -Mail an einen entsprechenden Verteiler gesendet.
+
+Blockschaltbild: EmWaS -Box Links Studio On -Air ­ Rechts EmWaS On -Air
+
+                                                                                                                         38
+Umgesetzte Erweiterungen der Software EmWaS um ASA       -Features
+
+Die Software EmWaS wurde bereits um die folgenden ASA    -Features für den ContentServer (CS)
+de s Fraunhofer IIS erweitert:
+
+ Trigger für CS zum Start eines ASA Alerts.
+
+ angepasste Produktion der Warnmeldung mit einem Audio    -Element von 5 Sekunden zu Beginn
+der Warnmeldung, um ein vollständiges Aufwachen der ASA  -Empfänger zu ermöglichen.
+
+ angepasste Ausspielung der Warnmeldung zum vom CS bestätigten Startzeitpunktes (XX:XX:00
+Uhr) mit Berücksichtigung de r Encoding - und Zuführungszeiten.
+
+ Trigger für CS zum Ende eines ASA Alerts unter Berücksichtigung der Länge der Warnmeldung.
+
+Blockschaltbild: Links EmWaS (ohne ASA) ­ Rechts EmWaS mit ASA -Features (blau)
+
+                                                                                                                         39
+Geplante Erweiterungen der Software EmWaS um ASA              -Features
+
+Die Software EmWaS wird noch um folgende Features erweitert:
+
+ Integration einer Konvertierung von Polygon  -Zügen aus der CAP -Meldung in die
+entsprechenden ASA -Kacheln.
+
+ Härtung gegen Hard - und Software -Ausfälle (separate Hardware überwacht die Hard  - und
+Software des ausspielenden EmWaS).
+
+ Härtung des Empfangsweges der MoWaS          -Meldungen durch eine SAT -Zuspielung (zusätzlich zur
+Zuspielung über sftp).
+
+                                                                                                     40
+Anhang D : Warnkette des ersten bundesweiten Ensembles
+(,,DR Deutschland", Kanal 5C)
+
+                                                                                                                                                                                                                                      1
+
+                                ge entren on
+                           Bun un än ern
+
+                                 t strop en-
+                             s ut be r en
+
+                                     u
+
+                                             Er eugung er u     S nt etisieren        Au iopro essing     Au io-
+                                             spre en en         er rnmel ung           un o ierung            tei
+                                             rnmel ung          Text-to-Spee
+                                             Text                                                    5     ASA-
+                                                             3                4                            rngebiet
+                                                                                                         St ge
+  ST i       Eing ng einer     r fen er       Er eugung es                                              n i ent
+   nternet      Mel ung      rioritätsstufe  ASA rngebiets                                              Aussen e-
+S t-Empf ng       A ile                                                                                   eitpun t
+                                          2              eln
+                          1
+                                                            6
+
+                                               Er eugung es ASA r meters st ge
+                                                   e el erste rnung o er p te
+                                                      un er ASA n i ent ii
+
+                                                                                   7
+
+                                             Aussen e eit-
+                                                pun t er
+                                                 rnmel ung
+
+                                               festlegen 8
+
+1. Das Modul 1 überwacht den Eingang für neue Warnmeldungen in Form von CAP Dateien.
+     Wenn eine neue Datei empfangen wurde, wird die Verarbeitung gestartet.
+
+2. Das Modul 2 prüft den Level der Warnmeldung. Nach aktueller Festlegung werden nur
+     Warnungen mit Level 1 ausgesendet. Warnungen mit anderem Level werden nicht
+     weiterverarbeitet. Das von der Warnung betroffene Gebiet muss im Versorgungsbereich
+     des ersten, bu ndesweiten Ensembles liegen. Wenn diese Bedingungen erfüllt sind,
+
+                                                                                                                    41
+werden die Informationen im CAP File von den nachfolgenden Modulen
+
+weiterverarbeitet.
+
+3. Die Funktion ,,Einsprechen" wird von den Modulen 3, 4 und 5 übernommen. Zunächst
+
+wird der relevante Warntext aus dem CAP File extrahiert. Anschließend wandelt eine
+
+Text -to -Speech -Engine den Text in ein Audiosignal um, das anschließend encodiert wird.
+
+Das Ergebnis ist eine Audiodatei mit de r gesprochenen Warnmeldung.
+
+4. Die im CAP File enthaltenen Informationen zum betroffenen Gebiet werden                  vom Modul 6
+
+in das ASA -spezifische Format für das Warngebiet (Kacheln) umgerechnet.
+
+5. Modul 7 extrahiert den Level der Warnung und die Art der Nachricht (Erstmeldung,
+
+Update oder Entwarnung). Darüber hinaus wird eine ASA         -spezifische ,,Incident ID"
+
+zugewiesen.
+
+6. Zuletzt wird durch das Modul 8 der Zeitpunkt der Aussendung festgelegt. Dabei ist die
+
+Verarbeitungszeit im Multiplexer und Vorlaufzeit für den Pre  -Trigger zu berücksichtigen.
+
+Alle hierfür erforderlichen Informationen müssen den beiden redundant ausgelegten
+
+Multiplexern automatisiert und über eine noch festzulegende Schnittstelle bereitgestellt werden,
+
+damit die Aussendung der Warnmeldung gestartet werden kann. Zusätzlich ist vorgesehen, die
+
+für eine OE -Signalisierung erforderlichen Informationen an weitere Multiplexer z    u übermitteln.
+
+                                                                                                     42
+Anhang E: Vergleich ASA mit bisherigen Warnmöglichkeiten
+in DAB +
+
+Bereits vor der Standardisierung von ASA wurden Warnmeldungen über DAB+ verbreitet.
+Teilweise erfolgte dies als gesprochene Meldung im regulären Rundfunkprogramm, also ohne
+besondere Kennzeichnung für den Empfänger. Teilweise wurden Warnmeldungen aber auch
+technisch gekennzeichnet, zum Beispiel als Verkehrsmeldung, also Traffic Announcement, oder
+als allgemeine Warnmeldung, also Alarm Announcement.
+
+Eine solche Kennzeichnung ermöglicht es dem Empfänger zu erkennen, wann im
+Rundfunkprogramm eine Warnmeldung übertragen wird, etwa ein Hinweis auf einen
+Geisterfahrer oder eine Überschwemmung. Der Empfänger kann dann beispielsweise die
+Lautstärke anpassen oder von einem anderen Medium auf die Warnmeldung in DAB+
+umschalten.
+
+Im Folgenden werden einige Eigenschaften dieser bisherigen Warnmöglichkeiten beschrieben.
+
+Alarm Announcements
+
+Viele Autoradios unterstützen Alarm Announcements    . Dabei handelt es sich um eine Funktion,
+
+die als Vorläufer von ASA betrachtet werden kann, jedoch unter anderem kein Warngebiet
+
+unterstützt. Mit der Markteinführung von ASA wird Alarm Announcement ausgephast.
+
+Wird in einem Ensemble ein Alarm Announcement       ausgelöst, können alle Empfänger, die dieses
+
+Ensemble aktuell empfangen, im gesamten Verbreitungsgebiet des Ensembles zum Umschalten
+
+auf einen bestimmten DAB+ -Service innerhalb dieses Ensembles aufgefordert werden. Das
+
+entspricht ungefähr der erwarteten R eaktion von ASA -Empfängern, wenn eine Warnmeldung als
+
+Alert ohne Warngebiet versendet wird.
+
+Da nahezu alle entsprechend ausgestatteten Autoradios im Verbreitungsgebiet auf ein Alarm
+
+Announcement reagieren und auf den angegebenen DAB+  -Service umschalten können, wäre die
+
+Nutzung von Alarm Announcements nur bei Gefahren vertretbar, die das gesamte
+
+Verbreitungsgebiet betreffen. Bei einem bundesweiten Ensemble wäre dies beispielsweise eine
+
+Gefahr, die die gesamte Bundesrepublik betrifft.
+
+Die Reaktion auf Alarm Announcements ist, sofern sie unterstützt wird, normalerweise nicht
+
+abschaltbar. Allerdings werden Alarm Announcements   üblicherweise vor allem von DAB+ -
+
+Autoradios unterstützt und nur selten von Heimempfängern. Damit ließe sich dennoch eine sehr
+
+große Zahl bestehender Autoradios erreichen.
+
+Traffic Announcements
+
+Grundsätzlich könnten viele Autoradios auch über Traffic Announcements zum Umschalten auf
+
+eine Warnmeldung innerhalb des aktuell gehörten Ensembles veranlasst werden. Dies wäre auch
+
+bei nicht verkehrsbezogenen Warnmeldungen möglich, sofern die Reaktion auf              Traffic
+
+Announcements nicht deaktiviert wurde.
+
+Da auch Traffic Announcements kein Warngebiet unterstützen, würde es dabei in der Regel zu    nd, etwa bei
+einer deutlichen Überwarnung kommen. Dies könnte jedoch akzeptabel sein, weil auch
+klassische Verkehrsmeldungen nicht immer für alle Hörerinnen und Hörer relevant si
+einer Geisterfahrermeldung auf einer weit entfernten Autobahn. Nutzerinnen und Nutzer von
+
+                                                                                                  43
+Autoradios kennen dieses Verhalten in der Regel und nehmen es entsprechend hin. Hinzu
+
+kommt, dass Warnmeldungen ohnehin nur vergleichsweise        selten versendet werden sollten.
+
+Wichtig ist dabei jedoch, dass für Warnmeldungen über Traffic Announcements nur auf DAB+       -
+
+Services verwiesen werden kann, die Verkehrsmeldungen senden und diese als Traffic
+
+Announcements signalisieren.
+
+Unterschiede zu ASA
+
+Weder bei Alarm Announcements noch bei Traffic Announcements lässt sich die Reaktion des
+Empfängers anhand eines bestimmten Warngebiets beschränken. In den meisten Fällen würde
+eine solche Signalisierung daher zu einer deutlichen Überwarnung führen.
+
+Hinzu kommt, dass Verweise auf Warnmeldungen in anderen Ensembles in der Praxis nicht
+
+verlässlich nutzbar sind. Zwar sind entsprechende Other     -Ensemble -Mechanismen im DAB -
+
+Standard grundsätzlich vorgesehen ; sie werden von Empfängern jedoch üblicherweise nicht oder
+
+nur eingeschränkt unterstützt. Wenn ASA -Warnmeldungen zusätzlich über klassische
+
+Announcements signalisiert werden sollen, um auch nicht ASA         -fähige Empfänger zum
+
+Umschalten auf die Warnmeldung zu veranlassen, müsste die gesprochene Warnmeldung
+
+deshalb im jeweiligen Ensemble selbst ausgestrahlt werden.
+
+Wie oben erwähnt, werden Announcements in der Praxis vor allem von Autoradios unterstützt.
+Heimempfänger würden daher gar nicht oder nur in sehr geringer Zahl auf eine per
+Announcement signalisierte Warnmeldung umschalten.
+
+Im Unterschied zu ASA bieten klassische Announcements        keine definierte Funktion zum
+
+Aufwecken aus dem Standby -Modus. Radios ohne ASA -Funktion können daher über
+
+Announcements nicht gezielt für eine Warnmeldung aktiviert werden.
+
+                                                                                                  44
+ASA Markeneintragung EU, UK, CH: Word                                 -Bild -Marke
+Automatic Safety Alert
+
+Die Wort -B ild -Marke ,,ASA Automatic Safety Alert" ist als Unionsmarke beim Amt der
+
+Europäischen Union für geistiges Eigentum (EUIPO) eingetragen (Anmeldung 4. Oktober 2023,
+
+Eintragung 3. Juni 2024, Registernummer 018933337; Schutz bis 4. Oktober 2033, verlängerbar).
+
+Als U nionsmarke entfaltet sie einheitliche Wirkung in der gesamten Europäischen Union. Auf
+
+dieser Basismarke aufbauend wurde der Schutz im Wege der internationalen Registrierung nach
+
+dem Madrider Protokoll auf das Vereinigte Königreich und die Schweiz erstreckt         (Internationale
+
+Registrierung Nr. 1 798 107 der WIPO, Registrierungsdatum 12. Oktober 2023, Notifizierung 4. Juli
+
+2024, Schutz ebenfalls bis 12. Oktober 2033). Die Marke ist damit EU           -weit sowie im Vereinigten
+
+Königreich und in der Schweiz geschützt.
+
+                                  Markeninhaber ist in beiden Registrierungen der Digitalradio
+                                  Deutschland e.V. mit Sitz in Berlin, vertreten durch die Kölner
+                                  Kanzlei WBS.LEGAL (Wilde Beuger Solmecke). Der Schutz
+                                  erstreckt sich auf die Nizza -Klassen 9, 35, 37, 38, 41 und 45 und
+                                  umfasst unt er anderem Empfangs - und Alarmgeräte,
+                                  Installations - und Wartungsdienstleistungen für Alarmanlagen,
+                                  Rundfunk - und Telekommunikationsdienstleistungen, die
+                                  Produktion und Verbreitung von Rundfunkprogrammen sowie
+                                  Sicherheits - und Überwachungsdienstleistungen.
+
+                                  Als Markeninhaber beobachtet Digitalradio Deutschland e.V. den
+
+                                  Markt in allen drei Schutzterritorien fortlaufend auf mögliche
+
+Verletzungen und setzt seine Rechte aktiv durch. Bei einer unbefugten Nutzung der Bezeichnung
+
+ASA, zum Beispiel durch Hersteller, die eine ASA  -Funktion bewerben, ohne ihre Geräte
+
+zertifizieren zu lassen, nimmt er Dritte förmlich in Anspruch und macht die s          ich aus der
+
+Unionsmarkenverordnung beziehungsweise dem jeweiligen nationalen Markenrecht in
+
+Großbritannien und der Schweiz ergeben    den Unterlassungs -, Auskunfts - und gegebenenfalls
+
+Schadensersatzansprüche geltend.
+
+                                                                                                           45
+46
+47
+Glossar     Automatic Safety Alert; https://www.dabplus.de/asa/
+
+ ASA        Bundesamt für Bevölkerungsschutz und Katastrophenhilfe;
+ BBK        https://www.bbk.bund.de
+
+ DAB+       Digital Audio Broadcasting; https://www.dabplus.de/
+ MoWaS
+            Modulare Warnsystem; https://www.bbk.bund.de/DE/Warnung -
+ OE -Alert  Vorsorge/Warnung -in -Deutschland/MoWaS/mowas_node.html
+ SHN
+            Other Ensemble Alert; verweist auf ein Alert in einem anderen Ensemble
+
+            Europaweit eindeutiger Identifikator für Verwaltungseinheiten, der deren
+            Einordnung in die Verwaltungshierarchie abbildet.
+
+                                                                                      48
+Beteiligte Autoren der Guideline s
+
+FIRMA                                  Vorname    Name
+                                                  Lessnau
+AVT                                    Christoph  Peters
+                                                  Drexel
+AVT                                    Wolfgang   Göttlinger
+                                                  Reichert
+Bayerischer Rundfunk                   Gregor     Jahn
+                                                  Ehl
+Bayerischer Rundfunk                   Veronika   Knöchel
+                                                  Zorger
+Bayerischer Rundfunk                   Michael    Korte
+                                                  Prosch
+Bayern Digitalradio                    Alexander  Hoffend
+                                                  Jonas
+BBK                                    Frank      Pester
+                                                  Schulze
+Deutschlandradio                       Uwe        Schäfer
+                                                  Werner
+Digitalradio Büro Deutschland          Carsten    Wilkens
+                                                  Zwolanowski
+Fraunhofer IIS                         Olaf       Schulz -Caspari
+                                                  Bresch
+Fraunhofer IIS                         Markus     Hartmann
+                                                  Bauer
+Funkhaus Regensburg                    Harald     Santjer
+                                                  Elster
+Hessischer Rundfunk                    Jens       Ahrens
+                                                  Allmann
+MDR                                    Jan        Richter
+
+MDR                                    Niels
+
+Media Broadcast                        Andreas
+
+Media Broadcast                        Christian
+
+mecom                                  Inga
+
+mecom                                  Martin
+
+NDR                                    Andreas
+
+On Air Support                         Markus
+
+On Air Support                         Tobias
+
+RA                                     Helmut G.
+
+Regiocast                              Enno
+
+SWR                                    Maik
+
+VAUNET                                 Heiko
+
+VAUNET                                 Morten
+
+Verein Digitalradio Mitteldeutschland  Michael
+
+                                                                   49
+Revisionen dieses Dokuments                                          Markus Prosch, Fraunhofer IIS
+
+ 1.0.0 2026 -03 -19 Erste Version
+
+1.0.1 2026 -23 -26 Überarbeitung in Untergruppen                     Markus Prosch, Fraunhofer IIS
+
+1.0.2  2026 -04 -13  Zus. Ergänzungen (neue Unterkapitel             Markus Prosch, Fraunhofer IIS
+                     ,,Weitere Anforderungen bei einer
+                     Unterstützung von ASA" und ,,Die Bedeutung
+                     der OE -Alerts" ); Umformulierung eines Satzes
+                     bzgl. TA Unterstützung.
+
+1.0.3  2026 -04 -14  Überarbeitung in Untergruppe ,,Guidelines";     Markus Prosch, Fraunhofer IIS
+                     in gelb sind die Änderungen markiert bzw.
+                     noch zu überarbeitende Passage n. Es wurde
+                     im gesamten Text ,,Katastrophe" durch
+                     ,,Gefahr" und ,,Lokalisationsinformation"
+                     durch ,,Warngebiet" ersetzt.
+
+1.0.4 2026 -04 -30 Überarbeitung in Untergruppen und Einfügen        Markus Prosch, Fraunhofer IIS
+                           der Beiträge einzelner Mitglieder         Alexander Jahn, Harald
+                                                                     Hoffend, Andreas Schäfer
+
+1.0.5  2026 -05 -06  Überarbeitung in Untergruppe ,,Guidelines";     Markus Prosch, Fraunhofer IIS
+                     Ersetzen von ,,DAB" durch ,,DAB+" ; Einfügen
+                     Beitrag Andreas Schäfer zu zentraler OE
+                     Komponente ; Einfügen eines Glossars
+
+2.0 Juli 2026        Lektorierte Fassung des Digitalradio            Mitglieder Arbeitsgruppe ,,ASA
+                     Deutschland e.V. zur Weiterverteilung in        AG Netze" des Digitalradio
+                     Deutschland; englische Fassung in               Deutschland e.V.
+                     Vorbereitung
+
+                                                                                                     50
+

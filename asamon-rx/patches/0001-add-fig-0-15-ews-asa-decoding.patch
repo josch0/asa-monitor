@@ -1,0 +1,270 @@
+From 296e5d306008080ad1de735d1ed212b8efae10e5 Mon Sep 17 00:00:00 2001
+From: asa-monitor <root@josch0.dev>
+Date: Wed, 26 Aug 2026 18:21:11 +0200
+Subject: [PATCH] Add FIG 0/15 (EWS/ASA) decoding
+
+FIG 0/15 carries the Emergency Warning System information defined in
+ETSI TS 104 089 (annex E): which subchannel carries an alert message,
+which stage the alert is at, and the area it applies to. Until now the
+extension fell through the default branch of process_FIG0() and the
+information was dropped.
+
+This adds the parser and a new onAsaAlert() callback:
+
+  * radio-controller.h: asa_alert_t plus the callback. Deliberately not
+    pure virtual, so existing implementers of RadioControllerInterface
+    stay unaffected -- onInputFailure() and onRestartService() are
+    non-pure for the same reason.
+  * fib-processor.h/.cpp: FIG0Extension15() and its case label.
+
+The parser unpacks the bit layout but does not interpret it: alert sets,
+phase progression and the geometry behind the location codes are left to
+the application. Malformed FIGs are reported with parseError set rather
+than dropped -- an unexpected value on the air is an observation worth
+having.
+
+The heartbeat form matters as much as the alerts: it is what an ensemble
+sends while nothing is happening, and it is the only signal that says
+the ensemble takes part in the EWS at all. It is identified by the
+length field of the FIG type 0 header being equal to 1.
+---
+ src/backend/fib-processor.cpp  | 128 +++++++++++++++++++++++++++++++++
+ src/backend/fib-processor.h    |   1 +
+ src/backend/radio-controller.h |  56 +++++++++++++++
+ 3 files changed, 185 insertions(+)
+
+diff --git a/src/backend/fib-processor.cpp b/src/backend/fib-processor.cpp
+index 3cd18724..95658a1e 100644
+--- a/src/backend/fib-processor.cpp
++++ b/src/backend/fib-processor.cpp
+@@ -95,6 +95,7 @@ void FIBProcessor::process_FIG0 (uint8_t *d)
+         case 9: FIG0Extension9 (d); break;
+         case 10: FIG0Extension10 (d); break;
+         case 14: FIG0Extension14 (d); break;
++        case 15: FIG0Extension15 (d); break;
+         case 13: FIG0Extension13 (d); break;
+         case 17: FIG0Extension17 (d); break;
+         case 18: FIG0Extension18 (d); break;
+@@ -627,6 +628,133 @@ void FIBProcessor::FIG0Extension14 (uint8_t *d)
+     }
+ }
+ 
++//  FIG0/15 carries the Emergency Warning System information defined in
++//  ETSI TS 104 089, annex E. The bit layout is unpacked here; interpreting it
++//  -- alert sets, phase progression, the geometry behind the location codes --
++//  is left to the application through the onAsaAlert() callback.
++void FIBProcessor::FIG0Extension15 (uint8_t *d)
++{
++    asa_alert_t alert;
++
++    //  The length field counts the bytes that follow the FIG header, so the
++    //  whole FIG occupies length + 1 bytes. That is the same arithmetic
++    //  processFIB() uses to walk from one FIG to the next.
++    const int16_t length = getBits_5 (d, 3);
++    int16_t figBytes = length + 1;
++
++    alert.cn               = getBits_1 (d, 8) != 0;
++    alert.oe               = getBits_1 (d, 9) != 0;
++    alert.secondHalfMinute = getBits_1 (d, 10) != 0;
++
++    //  The heartbeat form has an empty type 0 field and is identified by the
++    //  length field of the FIG type 0 header being equal to 1. It is the form
++    //  an ensemble sends while no alert is active, so it is what tells us the
++    //  ensemble takes part in the EWS at all.
++    alert.heartbeat = (length == 1);
++
++    //  A FIB carries 30 bytes of FIG data; reading beyond that would run into
++    //  the next FIB.
++    if (figBytes > 30) {
++        figBytes = 30;
++        alert.parseError = true;
++    }
++    alert.raw.resize (figBytes);
++    for (int16_t i = 0; i < figBytes; i++) {
++        alert.raw[i] = (uint8_t)getBits (d, i * 8, 8);
++    }
++
++    const int16_t fieldEnd = figBytes * 8;
++    int16_t offset = 16;   //  start of the type 0 field
++
++    if (!alert.heartbeat) {
++        if (alert.oe) {
++            //  Only Trigger phase signalling is provided for alerts in other
++            //  ensembles (clause 6.5.1), so the Id field is the 16 bit EId of
++            //  the ensemble carrying the alert, and the Status field always
++            //  follows it.
++            if (offset + 16 <= fieldEnd) {
++                alert.otherEId = (uint16_t)getBits (d, offset, 16);
++                offset += 16;
++            }
++            else {
++                alert.parseError = true;
++            }
++        }
++        else {
++            if (offset + 8 <= fieldEnd) {
++                alert.phase   = (uint8_t)getBits_2 (d, offset);
++                alert.subChId = (uint8_t)getBits_6 (d, offset + 2);
++                offset += 8;
++
++                //  Rfa and Sec are only present in the Pre-trigger phase.
++                //  Sec == 63 is the special value: start at second 0 with a
++                //  five second Trigger phase.
++                if (alert.phase == 0) {
++                    if (offset + 8 <= fieldEnd) {
++                        alert.hasSec = true;
++                        alert.sec = (uint8_t)getBits_6 (d, offset + 2);
++                        offset += 8;
++                    }
++                    else {
++                        alert.parseError = true;
++                    }
++                }
++            }
++            else {
++                alert.parseError = true;
++            }
++        }
++
++        //  The Status field is present for Pre-trigger and Trigger only
++        //  (clause 6.4.3); OE signalling is always Trigger.
++        const bool statusExpected =
++            alert.oe || alert.phase == 0 || alert.phase == 1;
++
++        if (statusExpected && !alert.parseError) {
++            if (offset + 8 <= fieldEnd) {
++                alert.hasStatus = true;
++                alert.last  = getBits_1 (d, offset) != 0;
++                alert.stage = (uint8_t)getBits_3 (d, offset + 1);
++                alert.iid   = (uint8_t)getBits_4 (d, offset + 4);
++                offset += 8;
++            }
++            else {
++                alert.parseError = true;
++            }
++        }
++
++        //  Location codes fill the rest of the FIG, as delimited by the length
++        //  field. NFF occupies the first two bits: it is not part of the
++        //  location code itself, so it is reported separately, but it stays in
++        //  the raw bytes handed on.
++        if (!alert.parseError && offset + 8 <= fieldEnd) {
++            //  Location codes are only allowed in Pre-trigger and Trigger
++            //  phase (clause 6.4.4). Bytes after a Sustain or End Id field are
++            //  a violation -- reported, and still handed on.
++            if (!statusExpected) {
++                alert.parseError = true;
++            }
++
++            alert.hasNff = true;
++            alert.nff = (uint8_t)getBits_2 (d, offset);
++
++            const int16_t locationBytes = (int16_t)((fieldEnd - offset) / 8);
++            //  At most 25 bytes of location codes per FIG 0/15 instance.
++            if (locationBytes > 25) {
++                alert.parseError = true;
++            }
++            alert.locationCodes.resize (locationBytes);
++            for (int16_t i = 0; i < locationBytes; i++) {
++                alert.locationCodes[i] = (uint8_t)getBits (d, offset + i * 8, 8);
++            }
++        }
++    }
++
++    //  Reported even when parseError is set: an unexpected value is an
++    //  observation worth reporting, not something to discard.
++    myRadioInterface.onAsaAlert (alert);
++}
++
+ void FIBProcessor::FIG0Extension17(uint8_t *d)
+ {
+     int16_t length  = getBits_5 (d, 3);
+diff --git a/src/backend/fib-processor.h b/src/backend/fib-processor.h
+index 921b01ca..6c6df783 100644
+--- a/src/backend/fib-processor.h
++++ b/src/backend/fib-processor.h
+@@ -99,6 +99,7 @@ class FIBProcessor {
+         void FIG0Extension10(uint8_t *);
+         void FIG0Extension13(uint8_t *);
+         void FIG0Extension14(uint8_t *);
++        void FIG0Extension15(uint8_t *);
+         void FIG0Extension16(uint8_t *);
+         void FIG0Extension17(uint8_t *);
+         void FIG0Extension18(uint8_t *);
+diff --git a/src/backend/radio-controller.h b/src/backend/radio-controller.h
+index 22be22dd..484e154e 100644
+--- a/src/backend/radio-controller.h
++++ b/src/backend/radio-controller.h
+@@ -75,6 +75,50 @@ struct mot_file_t {
+ 
+ enum class message_level_t { Information, Error };
+ 
++/* Version of the asa_alert_t layout below. Consumers can check this at
++ * compile time to make sure they were built against a matching definition. */
++#define WELLE_ASA_ALERT_VERSION 1
++
++/* A decoded FIG 0/15 instance (Emergency Warning System, ETSI TS 104 089,
++ * annex E). The fields are unpacked from the bitstream but not interpreted:
++ * alert sets, phase progression and the geometry of the location codes are
++ * left to the application. */
++struct asa_alert_t {
++    bool     cn = false;               /* C/N flag, used for SIV signalling */
++    bool     oe = false;               /* 0 = tuned ensemble, 1 = other ensemble */
++    bool     secondHalfMinute = false; /* P/D flag: set for seconds 30-59 */
++    bool     heartbeat = false;        /* length field == 1, empty type 0 field */
++
++    uint8_t  phase    = 0;             /* 0 Pre-trigger, 1 Trigger, 2 Sustain, 3 End */
++    uint8_t  subChId  = 0;             /* valid when oe == false */
++    uint16_t otherEId = 0;             /* valid when oe == true */
++
++    bool     hasSec   = false;         /* Sec is only present in Pre-trigger phase */
++    uint8_t  sec      = 0;             /* 63 means: start at second 0, 5 s trigger */
++
++    bool     hasStatus = false;        /* Status field: Pre-trigger and Trigger only */
++    bool     last      = false;
++    uint8_t  stage     = 0;            /* 0-7, 7 = Test */
++    uint8_t  iid       = 0;            /* 0-15 */
++
++    bool     hasNff    = false;        /* NFF only exists alongside location codes */
++    uint8_t  nff       = 0;            /* number of following FIG 0/15 in the set */
++
++    /* Raw location code bytes, undecoded. The first two bits carry NFF, which
++     * is not part of the location code itself but reported separately above. */
++    std::vector<uint8_t> locationCodes;
++
++    /* The packed FIG bytes including both headers. There is no reference
++     * implementation of FIG 0/15, so the evidence travels with the event. */
++    std::vector<uint8_t> raw;
++
++    /* The FIG was malformed: its length field did not cover the fields the
++     * specification requires, or the location codes exceeded the 25 bytes
++     * TS 104 089 allows. The alert is still reported — an unexpected value is
++     * an observation worth reporting, not something to discard silently. */
++    bool     parseError = false;
++};
++
+ /* Definition of the interface all radio controllers must implement.
+  * The RadioController handles events that are common to all programmes
+  * being listened to.
+@@ -130,6 +174,18 @@ class RadioControllerInterface {
+         /* When a information or warning message should be printed */
+         virtual void onMessage(message_level_t level, const std::string& text, const std::string& text2 = std::string()) = 0;
+ 
++        /* A FIG 0/15 (EWS/ASA, ETSI TS 104 089) was decoded.
++         *
++         * Deliberately not pure virtual: every other on... callback is, and
++         * adding another one would break every implementer in the tree.
++         * onInputFailure() and onRestartService() below are non-pure for the
++         * same reason.
++         *
++         * Called while the FIBProcessor mutex is held. Do not call back into
++         * the receiver (getServiceList(), getComponents(), getSubchannel(),
++         * getEnsembleId()) from here — that mutex is not recursive. */
++        virtual void onAsaAlert(const asa_alert_t& alert) { (void)alert; };
++
+         /* The receiver has shutdown due to a failure in the input device */
+         virtual void onInputFailure(void) { };
+ 
+-- 
+2.46.0.windows.1
+

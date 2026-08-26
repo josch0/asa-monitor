@@ -1,0 +1,41 @@
+ASA
+Automatic Safety Alert
+
+DAB+ can save lives: The Automatic Safety Alert (ASA) system uses DAB+ digital radio technology
+to provide automatic, real-time safety alerts with no user intervention. ASA improves public
+safety through timely, user-friendly communication of critical, region-specific information.
+
+       Basic Information
+
+   Distributed through DAB+ digital radio
+   Runs continuously in the background
+   Combines sound and text information
+   More precise and faster than FM radio
+   Geofencing allows for robust regionalisation
+   Radios in sleep mode can be woken up
+
+    Important Facts
+
+1.  It`s automatic, listeners can be sure it will reach them at the right time
+    No action is needed from the listener to receive this message
+    ASA radios stay on top of things and monitor the situation on air
+    Radios on different stations or standby can be tuned to sound the alarm
+
+2.  Innovative location coding allows for universal scalability for regions of all sizes
+    and shapes
+    Only simple and basic hardware requirements
+    Efficient transmission through low data capacity and fast processing
+
+3.  ASA closes gaps in crisis communication with a robust radio innovation
+    By leveraging radio technology, ASA diversifies communication channels to
+    ensure reliability when mobile networks are down
+    Builds on the inherent trust in radio for safety information during emergencies
+
+       Marketing:                                     International Testing
+       Toolbox & Logo                                 and Certification
+
+ASA will be implemented as an international    Devices need to be certified. The
+multilingual standard. For marketing,          certification process is based on the
+WorldDAB offers a style guide and a new        Digital Radio Tick Mark, plus additional
+logo as part of a marketing toolbox for free.  tests defined by ETSI standards.
+
