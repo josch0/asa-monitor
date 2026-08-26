@@ -833,6 +833,6 @@ Debian; der Empfangspfad lief über `--device rawfile`. Offen bleiben damit:
   kein Speicherwachstum, ersetzt die 24 h auf dem Pi aber nicht.
 - **Patch 2** (Geräteauswahl über die Seriennummer). Bis dahin: **ein Stick je Knoten**, und
   `device_serial` bleibt im `init`-Record leer.
-- **Der öffentliche welle.io-Fork.** Der Patch liegt als lokaler Zweig und als Patchdatei vor.
-  Solange nur lokal gebaut wird, entsteht keine Weitergabe und damit keine GPL-Auflage; für die
-  Verteilung an Knoten muss der Fork öffentlich sein.
+Der **öffentliche welle.io-Fork** ist dagegen erledigt: Das Submodul zeigt auf
+[josch0/welle.io](https://github.com/josch0/welle.io), Zweig `asa-fig0-15`, ein Commit über dem
+Upstream-Stand. Damit ist die GPL-Auflage aus dem veränderten welle.io erfüllt.

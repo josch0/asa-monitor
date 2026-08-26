@@ -51,9 +51,11 @@ Wurde ohne `--recurse-submodules` geklont:
 git submodule update --init --recursive
 ```
 
-Der welle.io-Quellbaum unter `external/welle.io` steht auf einem **festgenagelten Commit** und
-trägt einen Patch — ohne ihn baut `asamon-rx` nicht. Was, warum und wie er sich auf einen
-anderen Stand übertragen lässt: [`docs/welle-patches.md`](docs/welle-patches.md).
+Das Submodul zeigt auf den Fork **[josch0/welle.io](https://github.com/josch0/welle.io)**,
+Zweig `asa-fig0-15`: ein festgenagelter Commit, ein Patch darüber. Ohne diesen Patch baut
+`asamon-rx` nicht — er ist der Zweck des Programms, nicht sein Beiwerk. Was er ändert, warum,
+und wie er sich auf einen neueren welle.io-Stand übertragen lässt:
+[`docs/welle-patches.md`](docs/welle-patches.md).
 
 ### Übersetzen
 
@@ -239,4 +241,6 @@ cmake --build build-fuzz --target fuzz_fig0_15
 das in `src/backend/dabplus_decoder.cpp` dablin-Code unter GPL-3-or-later enthält.
 
 Weil ein **verändertes** welle.io mit ausgeliefert wird, muss dessen Quelltext samt Änderungen
-bei Weitergabe verfügbar sein. Siehe [`docs/welle-patches.md`](docs/welle-patches.md).
+bei Weitergabe verfügbar sein. Das erledigt der öffentliche Fork
+[josch0/welle.io](https://github.com/josch0/welle.io), Zweig `asa-fig0-15` — siehe
+[`docs/welle-patches.md`](docs/welle-patches.md).

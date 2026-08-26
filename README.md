@@ -147,11 +147,11 @@ Geplante, noch nicht angelegte Bereiche: `backend/` (Server), `frontend/` (Karte
   FIG-0/15-Patch (Variante V2c). eti-cmdline bleibt als Werkzeug für Gegenproben
 - Datenmodell und Ingest-Protokoll zwischen Knoten und Server
 - Umgang mit Vertrauen/Verifikation bei Crowd-Daten (mehrere Knoten melden dasselbe Ereignis)
-- ~~Lizenz des Knotens~~ — **entschieden**: `asamon-rx` ist von Anfang an **GPL-3.0-or-later**
-  deklariert, mit `LICENSE` und SPDX-Kopf in jeder Quelldatei. Der Server bleibt als
-  eigenständiges Programm frei lizenzierbar. Offen bleibt nur die Auflage, die nicht zur Wahl
-  steht: Wir geben ein **verändertes** welle.io weiter, dessen Quelltext samt Änderungen
-  verfügbar sein muss — dafür braucht es einen **öffentlichen Fork**, der noch fehlt
+- ~~Lizenz des Knotens~~ — **entschieden und erledigt**: `asamon-rx` ist von Anfang an
+  **GPL-3.0-or-later** deklariert, mit `LICENSE` und SPDX-Kopf in jeder Quelldatei. Die Auflage
+  aus dem veränderten welle.io ist mit dem öffentlichen Fork
+  [josch0/welle.io](https://github.com/josch0/welle.io) erfüllt. Der Server bleibt als
+  eigenständiges Programm frei lizenzierbar
 - Ob der FIG-0/15-Patch welle.io als Pull Request angeboten wird. Upstream gibt es dazu
   **keinen einzigen** PR; angenommen würde er die Fork-Last ganz beseitigen. Der Patch ist
   bereits so geschnitten, dass daraus einer werden kann: ein Commit, englische Kommentare,

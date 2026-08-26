@@ -1,3 +1,4 @@
 [submodule "asamon-rx/external/welle.io"]
 	path = asamon-rx/external/welle.io
-	url = https://github.com/AlbrechtL/welle.io.git
+	url = https://github.com/josch0/welle.io.git
+	branch = asa-fig0-15

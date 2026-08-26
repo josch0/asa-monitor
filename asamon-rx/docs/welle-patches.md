@@ -7,22 +7,34 @@ Dieses Dokument hält fest, worauf der Bau festgenagelt ist und was daran verän
 
 | | |
 |---|---|
-| Upstream | `https://github.com/AlbrechtL/welle.io`, Zweig `next` |
+| Fork (Submodul, `origin`) | `https://github.com/josch0/welle.io`, Zweig **`asa-fig0-15`** |
+| Upstream (`upstream`) | `https://github.com/AlbrechtL/welle.io`, Zweig `next` |
 | Basis-Commit | `fe06fadf561a954f56580fd9a674316488ae4973` (13.08.2026, `v2.7-102-gfe06fadf`) |
-| Zweig im Klon | `asa-fig0-15` |
 | Commit mit Patch 1 | `296e5d306008080ad1de735d1ed212b8efae10e5` |
 | Patchdatei | [`../patches/0001-add-fig-0-15-ews-asa-decoding.patch`](../patches/0001-add-fig-0-15-ews-asa-decoding.patch) |
+
+Der Fork trägt **einen** Commit über dem Upstream-Stand. Das ist Absicht: Je weniger zwischen
+`next` und uns liegt, desto schmerzloser der nächste Wechsel des Basis-Commits — und desto eher
+lässt sich der Patch als Pull Request anbieten.
+
+Im Submodul sind beide Fernarchive eingerichtet:
+
+```bash
+cd external/welle.io
+git remote -v
+# origin    https://github.com/josch0/welle.io.git
+# upstream  https://github.com/AlbrechtL/welle.io.git
+```
 
 **Der Commit wird hart festgenagelt.** Ohne installierte Header ist die welle-API **keine
 zugesagte Schnittstelle**; sie kann sich zwischen zwei Commits ändern, ohne dass das irgendwo
 als Bruch auftaucht. Ein Wechsel des Basis-Commits ist deshalb eine bewusste Handlung mit
 Gegenprobe, kein `git pull`.
 
-> **Noch offen: das öffentliche Fork-Repo.** Der Patch liegt bisher nur als lokaler Zweig und
-> als Patchdatei vor. Weil das gebaute Binary ein **verändertes** welle.io enthält, muss dessen
-> Quelltext samt Änderungen bei Weitergabe verfügbar sein — ein öffentlicher Fork erledigt das.
-> Sobald die URL feststeht, wird das Submodul dorthin umgehängt und dieser Abschnitt ergänzt.
-> Solange nur lokal gebaut wird, entsteht keine Weitergabe und damit keine Auflage.
+**Damit ist die GPL-Auflage erfüllt.** Das gebaute Binary enthält ein **verändertes**
+welle.io; dessen Quelltext samt Änderungen muss bei Weitergabe verfügbar sein. Der öffentliche
+Fork erledigt das — jeder, der ein asamon-rx-Binary bekommt, kann sich den Quelltext dazu
+holen, aus dem es entstanden ist.
 
 ---
 
@@ -142,10 +154,14 @@ Ebenfalls bewusst nicht angerührt (aus `TODO.md` Abschnitt 10, „Später, nich
 
 ```bash
 cd external/welle.io
-git fetch origin next
+git fetch upstream next
 git checkout -b asa-fig0-15-neu <neuer-commit>
 git am ../../patches/0001-add-fig-0-15-ews-asa-decoding.patch
+git push origin asa-fig0-15-neu
 ```
+
+Danach im Hauptrepo den neuen Stand festhalten — `git add asamon-rx/external/welle.io` — und
+`.gitmodules` auf den neuen Zweig zeigen lassen.
 
 Danach **immer** `ctest --test-dir build` laufen lassen: `tests/fixtures/fig0_15.fixtures`
 enthält die erwarteten Records byteweise, ein Abweichen fällt sofort auf. Und diesen Abschnitt
