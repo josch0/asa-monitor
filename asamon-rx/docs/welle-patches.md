@@ -17,6 +17,15 @@ Der Fork trägt **einen** Commit über dem Upstream-Stand. Das ist Absicht: Je w
 `next` und uns liegt, desto schmerzloser der nächste Wechsel des Basis-Commits — und desto eher
 lässt sich der Patch als Pull Request anbieten.
 
+Ein frischer Klon holt den Patch damit von allein:
+
+```bash
+git clone --recurse-submodules <asa-monitor>
+cd asamon-rx && cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build
+```
+
+Am 26.08.2026 so geprüft — gebaut ohne Warnung, `ctest` 6/6.
+
 Im Submodul sind beide Fernarchive eingerichtet:
 
 ```bash
