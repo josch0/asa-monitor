@@ -15,9 +15,11 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -32,8 +34,14 @@ func main() {
 		stillNach     = flag.Int("go-silent", 0, "nach n Records verstummen, aber weiterlaufen (0 = nie)")
 		ignoriereQuit = flag.Bool("ignore-quit", false, "QUIT nicht beachten — prüft den SIGTERM-Pfad")
 		serve         = flag.Bool("serve", false, "als asamon-rx auftreten: Kommandos lesen und nach dem Strom auf QUIT warten")
-		// Die Optionen von asamon-rx werden angenommen und ignoriert, damit
-		// rxproc denselben Aufruf bauen kann wie im Betrieb.
+		// audioOut wird nicht ignoriert: Seit dem 30.08.2026 schreibt
+		// asamon-rx die Mitschnitte selbst dorthin und nennt sie nur noch im
+		// aud-Record. Ein fake-rx, das den Record schickt, ohne die Dateien
+		// anzulegen, prüfte die halbe Kette — der Knoten fände beim Hochladen
+		// nichts vor.
+		audioOut = flag.String("audio-out", "", "Ablageordner: gemeldete Dateien dort anlegen")
+		// Die übrigen Optionen von asamon-rx werden angenommen und ignoriert,
+		// damit rxproc denselben Aufruf bauen kann wie im Betrieb.
 		_ = flag.String("channel", "", "DAB-Kanal (wird angenommen und ignoriert)")
 		_ = flag.String("device", "", "Gerät (wird angenommen und ignoriert)")
 		_ = flag.String("device-serial", "", "Seriennummer (wird angenommen und ignoriert)")
@@ -66,7 +74,40 @@ func main() {
 
 	beende := make(chan struct{})
 	go leseKommandos(beende, *ignoriereQuit)
-	spiele(zeilen, *speed, *crashNach, *stillNach, beende)
+	spiele(zeilen, *speed, *crashNach, *stillNach, beende, *audioOut)
+}
+
+// legeDateienAn schreibt die Dateien, die ein aud-Record nennt — mit genau der
+// Größe, die dort steht, und mit Nullbytes gefüllt. Deren Prüfsumme ist die,
+// die im Record steht (musterSumme in szenario.go).
+//
+// Ist kein Ablageordner gesetzt, passiert nichts: Dann läuft fake-rx als
+// reiner Stromerzeuger, etwa für `make streams`.
+func legeDateienAn(zeile, dir string) {
+	if dir == "" || !strings.Contains(zeile, `"type":"aud"`) {
+		return
+	}
+	var r struct {
+		Files []struct {
+			Name  string `json:"name"`
+			Bytes int64  `json:"bytes"`
+		} `json:"files"`
+	}
+	if err := json.Unmarshal([]byte(zeile), &r); err != nil {
+		return
+	}
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		fmt.Fprintln(os.Stderr, "fake-rx:", err)
+		return
+	}
+	for _, f := range r.Files {
+		if f.Name == "" || strings.ContainsAny(f.Name, `/\`) {
+			continue
+		}
+		if err := os.WriteFile(filepath.Join(dir, f.Name), make([]byte, f.Bytes), 0o600); err != nil {
+			fmt.Fprintln(os.Stderr, "fake-rx:", err)
+		}
+	}
 }
 
 func hoteZeilen(szenarioName, datei string) ([]string, error) {
@@ -107,7 +148,7 @@ func schreibeAlles(zeilen []string) {
 // ein Prozess, der lebt, aber nichts mehr sagt. Zusammen mit --ignore-quit
 // wird daraus ein wirklich festgefahrener Prozess, den nur der harte Weg
 // beendet — genau der Fall, den früher der systemd-Watchdog abgedeckt hat.
-func spiele(zeilen []string, speed float64, crashNach, stillNach int, beende <-chan struct{}) {
+func spiele(zeilen []string, speed float64, crashNach, stillNach int, beende <-chan struct{}, audioOut string) {
 	w := bufio.NewWriter(os.Stdout)
 	begonnen := time.Now()
 	var erstesTs time.Time
@@ -137,6 +178,10 @@ func spiele(zeilen []string, speed float64, crashNach, stillNach int, beende <-c
 				}
 			}
 		}
+
+		// Erst die Dateien, dann der Record: Der Knoten darf nie von einer
+		// Aufnahme erfahren, die noch nicht auf der Platte liegt.
+		legeDateienAn(z, audioOut)
 
 		w.WriteString(z)
 		w.WriteByte('\n')

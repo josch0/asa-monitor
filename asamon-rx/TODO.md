@@ -1079,3 +1079,87 @@ läuft und `tlm` als erstes fliegt.
 Auf beiden Plattformen gebaut und getestet: Windows 11 mit MSYS2/MinGW-w64 und Debian in WSL,
 `ctest` je 6/6. Die Erkennung selbst liegt in `asamon-node` und ist dort geprüft
 (`internal/rxproc`, drei Tests) — siehe `asamon-node/TODO.md` Abschnitt 24.
+
+---
+
+## 20. Mitschnitte gehen auf die Platte, samt MP3 (umgesetzt am 30.08.2026)
+
+Bis hierher trug der Record-Strom die Audiobytes selbst: `aud`-Records mit je 4 kB
+base64-kodiertem Subchannel-Bitstrom, rund 5,3 kB/s. Seit dem 30.08.2026 schreibt `asamon-rx`
+die Aufnahme als Datei und meldet mit **einem** `aud`-Record am Ende, was entstanden ist.
+
+### Warum
+
+Drei Gründe, der wichtigste zuletzt:
+
+1. Base64 kostet ein Drittel Übertragung, und `aud` war der teuerste Pfad im Record-Leser des
+   Knotens (`BenchmarkParseLineAud`, der Grund für `encoding/json/v2`).
+2. Ein Mitschnitt braucht keine Zwischenstände. Wer ihn auswertet, will die ganze Datei.
+3. **Ein `aud`-Record konnte verworfen werden.** Die Vorrangregel `asa` vor `aud` vor `tlm`
+   gilt weiter, und im Überlauf bedeutete das ein Loch mitten in der Aufnahme — sichtbar nur
+   als `seq`-Lücke. Eine Datei kennt diesen Fall nicht.
+
+### Und die MP3 kostet fast nichts
+
+welle.io dekodiert jeden zugeschalteten Subchannel ohnehin und reicht das PCM über
+`ProgrammeHandlerInterface::onNewAudio()` heraus — der Rückruf war bis dahin leer, das fertige
+Audio wurde weggeworfen. Zur abspielbaren Datei fehlte nur der Encoder. LAME reiht sich in die
+vier C-Bibliotheken ein, gegen die `asamon-rx` ohnehin linkt, und `asamon-node` bleibt frei
+davon: kein cgo, weiterhin statisch und für vier Plattformen von einem Rechner baubar.
+
+**Warum MP3 und nicht der naheliegende AAC-Container:** Die AAC-Rahmen ließen sich ohne Codec
+in ein MP4 umpacken — aber DAB+ verwendet die 960er Transformation (welle.ios
+`dabplus_decoder.cpp:369`: „the only way to select 960 transform here"), und ob der Decoder
+eines Browsers die kennt, hängt an der Plattform. MP3 kennt jeder, ist bei 64 kbit/s ähnlich
+groß und macht die Frage gegenstandslos.
+
+### Was dabei festgelegt wurde
+
+- **`--audio-out` ist kein Umschalter.** Ohne Angabe gilt `/var/lib/asamon/audio` (Windows:
+  `%ProgramData%\asamon\state\audio`) — derselbe Ort, den `asamon-node` ohne `paths:`-Abschnitt
+  annimmt. Angelegt wird er erst beim ersten `REC`.
+- **`.part` bis zum Abschluss.** Erst nach dem Schließen und Hashen wird umbenannt. Damit ist
+  jede Datei ohne `.part` vollständig und in einem `aud`-Record genannt, und jede `.part`-Datei
+  erkennbar eine Waise. Aufgeräumt wird vom Knoten nach den Zeitstempeln; `asamon-rx` löscht in
+  diesem Ordner nichts, was es nicht selbst angelegt hat.
+- **`REC <subChId> [alert_uid]`.** Die uid wird nicht gedeutet — `asamon-rx` kennt kein ASA —,
+  sondern nur zur Benennung verwendet: `<alert_uid>-<kanal>-<subchid>.dabp`, exakt das Schema,
+  das `asamon-node` bisher selbst vergab. Ohne uid tritt der Startzeitpunkt an ihre Stelle. Was
+  daraus ein Dateiname werden darf, entscheidet `sicherFuerDateinamen()`: Die uid kommt über
+  stdin herein und darf niemals in einen Pfad durchschlagen.
+- **Der Record trägt alles, was der Knoten braucht**, statt ihn die Dateien noch einmal lesen zu
+  lassen: Größe und SHA-256 je Datei, Dauer, `truncated`, die Audioparameter und die
+  Fehlerzähler aus welle.ios Rückrufen (`frame_errors`, `rs_errors`, `rs_corrected`,
+  `aac_errors`). Ohne Letztere ließe sich eine stockende Aufnahme nicht von einer stillen
+  Meldung unterscheiden.
+- **SHA-256 im eigenen Haus.** 150 Zeilen nach FIPS 180-4 statt einer Abhängigkeit auf OpenSSL
+  mit ihrer Bauwelt auf vier Zielplattformen; geprüft gegen die Testvektoren des Standards
+  (`tests/test_sha256.cpp`).
+
+### Der Preis, offen benannt
+
+Der Record-Strom war als **IPC-Protokoll, Archivformat und Beleg** in einem gedacht (Abschnitt
+7). Das erste und das dritte bleiben, das zweite nicht: Ein Replay einer NDJSON-Datei enthält
+nur noch Dateinamen. Ein vollständiger Mitschnitt besteht seitdem aus Strom **und** Ordner.
+
+Dazu bekommt die Prozessgrenze einen zweiten Kanal — einen gemeinsamen Pfad. Die
+Eigentumsfrage beantwortet `.part`, die Aufräumfrage der Knoten.
+
+### Wie es geprüft ist
+
+`ctest` 7/7 unter Windows 11 mit MSYS2/MinGW-w64, einmal ohne und einmal mit
+`mingw-w64-x86_64-lame` — der Bau ohne LAME ist kein Sonderfall, sondern der belegte
+Rückfallpfad: Es entsteht dann nur die `.dabp`, und der Grund steht im `aud`-Record.
+`tests/test_recorder.cpp` prüft den ganzen Weg ohne Empfänger: Bytes und PCM über eine Referenz
+auf `ProgrammeHandlerInterface` hinein — also genau so, wie welle.io es ruft —, heraus kommen
+zwei Dateien, deren Inhalt, Größe und SHA-256 mit dem Record übereinstimmen, und deren MP3 mit
+einem MPEG-Rahmenkopf beginnt.
+
+**Offen:** der Bau unter Linux und der Lauf am Gerät. Beides braucht den Pi.
+
+### Was das für `asamon-node` bedeutet
+
+Der Knoten ist **noch nicht angepasst** und liefert damit vorerst kein Audio mehr zum Server:
+Sein Parser überliest unbekannte Felder (er bricht nicht ab), findet aber kein `data` mehr. Zu
+tun bleibt dort: den `aud`-Record mit `files` lesen, die Dateien aus dem Ablageordner
+hochladen, `REC` um die `alert_uid` erweitern und den Ordner nach Zeitstempeln aufräumen.

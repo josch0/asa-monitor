@@ -107,9 +107,22 @@ Gleichtakt wieder und legten ihn erneut lahm.
 
 ## `POST /api/v1/alerts/{alert_uid}/audio`
 
-`Content-Type: application/octet-stream`. Der Rumpf ist der **rohe Subchannel-Bitstrom**,
-unverändert wie empfangen — kein AAC, kein Umkodieren, keine Superframe-Zerlegung. Zum Abspielen
-eignen sich `dablin` oder `welle-cli`.
+`Content-Type: application/octet-stream`.
+
+**Zu einer `alert_uid` gehören seit dem 30.08.2026 zwei Dateien**, und der Endpunkt wird je
+Aufnahme zweimal aufgerufen — unterschieden allein durch `X-Asamon-Codec`:
+
+| Codec | Rumpf |
+|---|---|
+| `dabp` | der **rohe Subchannel-Bitstrom**, unverändert wie empfangen. Der Beleg. `dablin` liest ihn **nicht** (es erwartet ETI oder EDI); `welle-cli -c <kanal> -D` erzeugt Dateien desselben Formats |
+| `mp3` | dieselbe Aufnahme, abspielbar. `asamon-rx` kodiert sie aus dem PCM, das welle.io beim Dekodieren ohnehin erzeugt — kein zweiter Decoder, kein Transkodieren aus dem Rohstrom |
+
+Ein Server, der nur eines von beidem will, quittiert das andere mit `200`; der Knoten hakt es
+dann ab. Bleibt **eine** der beiden Dateien hängen, gilt die Aufnahme als nicht hochgeladen und
+wird beim nächsten `audio_wanted` erneut angeboten — sonst verschwände der Beleg nach
+`audio.keep_days`, obwohl der Server ihn nie bekommen hat.
+
+Fehlt LAME beim Bau von `asamon-rx` oder steht `--mp3-bitrate 0`, kommt nur die `dabp`-Datei.
 
 | Kopfzeile | Inhalt |
 |---|---|
@@ -117,8 +130,10 @@ eignen sich `dablin` oder `welle-cli`.
 | `X-Asamon-Channel` | DAB-Kanal, etwa `5C` |
 | `X-Asamon-SubChId` | Subchannel, dezimal |
 | `X-Asamon-Started` | erste Aufnahmezeit, RFC 3339 |
-| `X-Asamon-Sha256` | SHA-256 der Datei, hex |
+| `X-Asamon-Sha256` | SHA-256 **dieser** Datei, hex |
 | `X-Asamon-Truncated` | `true`, wenn `audio.max_seconds` zuschlug |
+| `X-Asamon-Codec` | `dabp` oder `mp3` |
+| `X-Asamon-Filename` | Dateiname beim Knoten: `<alert_uid>-<kanal>-<subchid>.<endung>` |
 
 | Antwort | Bedeutung |
 |---|---|
@@ -320,9 +335,15 @@ bleibt das Feld dann leer statt falsch.
     "geojson": { "type": "MultiPolygon", "coordinates": [ … ] },
     "raw": "0a2b3c4d"
   },
-  "audio": { "state": "recording", "subch_id": 7, "bytes": 41984,
-             "started_at": "…", "sha256": "", "truncated": false,
-             "duration_s_est": 10.5, "audio_gaps": 0 }
+  "audio": { "state": "stored", "subch_id": 7, "bytes": 507904,
+             "started_at": "…", "sha256": "…", "truncated": false,
+             "duration_s": 43.75, "duration_s_est": 0, "audio_gaps": 0,
+             "sample_rate": 48000, "channels": 2, "mode": "HE-AACv2",
+             "rs_corrected": 12,
+             "files": [ { "name": "7c2d…-5C-7.dabp", "codec": "dabp",
+                          "bytes": 262144, "sha256": "…" },
+                        { "name": "7c2d…-5C-7.mp3", "codec": "mp3",
+                          "bytes": 245760, "sha256": "…" } ] }
 }
 ```
 
@@ -338,9 +359,20 @@ bleibt das Feld dann leer statt falsch.
 | `whole_ensemble` | **dreiwertig.** `true`: keine Location Codes, der Alert gilt für das gesamte Versorgungsgebiet. `false`: es gibt ein Warngebiet. `null`: der Knoten sah nie eine Instanz mit Status-Feld und kann nichts sagen |
 | `area.raw` | bleibt **immer** dabei, auch wenn die Geometrie gelingt |
 | `area.decode_error` | steht dort, wenn die Location Codes nicht zu deuten waren. Der Alert wird trotzdem gemeldet |
+| `audio.files` | je Datei Name, Codec, Größe und Prüfsumme. Über genau diese Namen läuft der Upload |
+| `audio.sha256` | die Prüfsumme des **rohen** Bitstroms, also des Belegs; die der MP3 steht in `files` |
+| `audio.duration_s` | die gemessene Dauer, sobald `asamon-rx` die Aufnahme gemeldet hat. Solange sie läuft, steht stattdessen `duration_s_est` — aus der Bitrate der Komponente geschätzt |
+| `audio.rs_corrected`, `rs_errors`, `frame_errors`, `aac_errors` | was welle.io während der Aufnahme meldete. Ohne diese Zahlen ließe sich eine stockende Aufnahme nicht von einer stillen Meldung unterscheiden |
+| `audio.audio_gaps` | bleibt seit dem 30.08.2026 **immer 0**: Der Mitschnitt geht nicht mehr durch den Record-Strom und kann keine Lücken durch verworfene Records bekommen. Das Feld bleibt, damit ältere Server nichts vermissen |
 
 Ein Alert erscheint in **jedem** Datensatz, solange er läuft, und **genau einmal** mit
 `closed: true`. Danach taucht er nicht mehr auf.
+
+**Eine Ausnahme gibt es seit dem 30.08.2026:** Ein Alert mit Mitschnitt erscheint noch ein
+zweites Mal mit `closed: true` — dann mit gefülltem `audio.files`. Grund ist die Reihenfolge:
+`asamon-rx` meldet die fertigen Dateien erst nach dem STOP, also nach der letzten regulären
+Meldung des Alerts. Ohne diesen Nachzügler erführe der Server nie, dass es die Dateien gibt,
+und könnte sie folglich nie über `audio_wanted` anfordern.
 
 **OE-Alerts enden nie mit `close_reason: "end"`.** OE-Signalisierung ist nach TS 104 089 §6.5.1
 stets Trigger und trägt kein Phasenfeld; ein OE-Alert läuft daher immer in die 30-Sekunden-Frist

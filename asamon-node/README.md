@@ -28,8 +28,11 @@ stecken.
   Felder fertig heraus. `asamon-node` liest `location_codes` als Hex und deutet **nur diese**.
 - **Kein FIC-Parser.** FIG 0/0, 0/1, 0/2, 0/9, 0/10 und 1/x kommen als `ens`- und `tlm`-Records
   fertig an.
-- **Kein Audio-Decoder.** Der rohe Subchannel-Bitstrom wird durchgereicht, nicht dekodiert. Die
-  Datei geht so zum Server, wie sie vom Kanal kam.
+- **Kein Audio-Decoder, kein Audio-Encoder — und seit dem 30.08.2026 nicht einmal mehr ein
+  Schreiber.** Die Mitschnitte legt `asamon-rx` selbst im Ablageordner ab: den rohen
+  Subchannel-Bitstrom als Beleg (`.dabp`) und, wenn LAME zur Hand war, eine abspielbare `.mp3`
+  daneben. Der Knoten erfährt davon durch einen einzigen `aud`-Record, lädt die Dateien hoch und
+  räumt sie auf. Er öffnet sie **nur** zum Hochladen und sieht nie in sie hinein.
 - **Kein Server.** Datenhaltung, Karte und Korrelation über Knoten hinweg gehören ins Backend.
 - **Kein SDR-Code.** Kein librtlsdr, kein cgo. `CGO_ENABLED=0` ist verbindlich — die Binaries
   sind statisch.
@@ -234,7 +237,7 @@ Keiner der Tests braucht einen SDR-Stick oder Netz.
 | `rxproc` | Start, Absturz, Backoff, `QUIT` → `SIGTERM` → `SIGKILL` |
 | `spool` | Reihenfolge, Überlauf mit Alert-Vorrang, halbe Dateien nach einem Absturz |
 | `uplink` | Wiederholung, Backoff mit Streuung, Idempotenz, `audio_wanted` |
-| `audio` | Prüfsummen, Lücken, Aufräumen |
+| `audio` | Übernahme der Dateien, Wiederfinden nach einem Neustart, Aufräumen samt Waisen und angefangenen `.part`-Dateien |
 | `supervisor` | drei Kanäle mit einem abstürzenden; Serverausfall und Nachlieferung; die Gesamtkette |
 
 ### Die zwei Proben, auf denen alles ruht

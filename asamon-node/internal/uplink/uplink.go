@@ -201,8 +201,10 @@ func (u *Uplink) statusFehler(res *http.Response, rumpf []byte) *Fehler {
 
 // LadeAudio schickt eine Mitschnittdatei.
 //
-// Der Rumpf ist der rohe Subchannel-Bitstrom, unverändert wie empfangen — kein
-// AAC, kein Umkodieren, keine Superframe-Zerlegung.
+// Bei `codec: dabp` ist der Rumpf der rohe Subchannel-Bitstrom, unverändert wie
+// empfangen — kein Umkodieren, keine Superframe-Zerlegung. Bei `codec: mp3` ist
+// es dieselbe Aufnahme, von asamon-rx aus dem PCM kodiert, das welle.io beim
+// Dekodieren ohnehin erzeugt.
 func (u *Uplink) LadeAudio(ctx context.Context, alertUID string, kopf AudioKopf, daten io.Reader, laenge int64) error {
 	ziel := strings.TrimRight(u.k.BaseURL, "/") + fmt.Sprintf(PfadAudio, alertUID)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, ziel, daten)
@@ -218,6 +220,12 @@ func (u *Uplink) LadeAudio(ctx context.Context, alertUID string, kopf AudioKopf,
 	req.Header.Set("X-Asamon-Started", kopf.Started)
 	req.Header.Set("X-Asamon-Sha256", kopf.Sha256)
 	req.Header.Set("X-Asamon-Truncated", strconv.FormatBool(kopf.Truncated))
+	if kopf.Codec != "" {
+		req.Header.Set("X-Asamon-Codec", kopf.Codec)
+	}
+	if kopf.Dateiname != "" {
+		req.Header.Set("X-Asamon-Filename", kopf.Dateiname)
+	}
 
 	res, err := u.client.Do(req)
 	if err != nil {
@@ -240,12 +248,19 @@ func (u *Uplink) LadeAudio(ctx context.Context, alertUID string, kopf AudioKopf,
 }
 
 // AudioKopf sind die Metadaten, die als Kopfzeilen mitgehen.
+//
+// Seit dem 30.08.2026 gehören zu einem Mitschnitt zwei Dateien — der rohe
+// Bitstrom als Beleg und die abspielbare MP3 —, und der Server muss sie
+// auseinanderhalten können. Deshalb Codec und Dateiname im Kopf: Ohne sie
+// stünden zwei Uploads unter derselben alert_uid, ohne Unterschied.
 type AudioKopf struct {
 	Channel   string
 	SubChID   int
 	Started   string
 	Sha256    string
 	Truncated bool
+	Codec     string // "dabp" | "mp3"
+	Dateiname string
 }
 
 // Backoff gibt die nächste Wartezeit und schreibt sie fort.

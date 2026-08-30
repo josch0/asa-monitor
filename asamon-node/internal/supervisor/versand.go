@@ -117,27 +117,50 @@ func (s *Supervisor) verarbeiteAudio(ctx context.Context, a *uplink.Antwort) {
 		if ctx.Err() != nil {
 			return
 		}
-		f, err := os.Open(auf.Pfad)
-		if err != nil {
-			s.log.Error("Mitschnitt lässt sich nicht öffnen", "datei", auf.Pfad, "fehler", err)
-			continue
-		}
-		err = s.up.LadeAudio(ctx, auf.AlertUID, uplink.AudioKopf{
-			Channel:   auf.Channel,
-			SubChID:   auf.SubChID,
-			Started:   report.Zeitpunkt(auf.Start),
-			Sha256:    auf.Sha256,
-			Truncated: auf.Truncated,
-		}, f, auf.Bytes)
-		f.Close()
+		// Zu einer Aufnahme gehören seit dem 30.08.2026 zwei Dateien. Als
+		// hochgeladen gilt sie erst, wenn **jede** durchging: Bleibt eine
+		// liegen, soll der nächste audio_wanted-Durchgang es erneut versuchen,
+		// statt sie nach keep_days stillschweigend zu löschen.
+		alleDurch := true
+		var gesamt int64
+		for _, d := range auf.Dateien {
+			if ctx.Err() != nil {
+				return
+			}
+			pfad := s.audio.Pfad(d)
+			f, err := os.Open(pfad)
+			if err != nil {
+				s.log.Error("Mitschnitt lässt sich nicht öffnen", "datei", pfad, "fehler", err)
+				alleDurch = false
+				continue
+			}
+			err = s.up.LadeAudio(ctx, auf.AlertUID, uplink.AudioKopf{
+				Channel:   auf.Channel,
+				SubChID:   auf.SubChID,
+				Started:   report.Zeitpunkt(auf.Start),
+				Sha256:    d.Sha256,
+				Truncated: auf.Truncated,
+				Codec:     d.Codec,
+				Dateiname: d.Name,
+			}, f, d.Bytes)
+			f.Close()
 
-		if err != nil {
-			s.log.Warn("Mitschnitt ließ sich nicht hochladen",
-				"alert_uid", auf.AlertUID, "bytes", auf.Bytes, "fehler", err)
-			continue
+			if err != nil {
+				s.log.Warn("Mitschnitt ließ sich nicht hochladen",
+					"alert_uid", auf.AlertUID, "datei", d.Name,
+					"bytes", d.Bytes, "fehler", err)
+				alleDurch = false
+				continue
+			}
+			gesamt += d.Bytes
+			s.log.Info("Mitschnitt hochgeladen", "alert_uid", auf.AlertUID,
+				"datei", d.Name, "codec", d.Codec, "bytes", d.Bytes)
 		}
-		s.audio.Hochgeladen(auf.AlertUID, time.Now())
-		s.log.Info("Mitschnitt hochgeladen", "alert_uid", auf.AlertUID, "bytes", auf.Bytes)
+		if alleDurch && len(auf.Dateien) > 0 {
+			s.audio.Hochgeladen(auf.AlertUID, time.Now())
+			s.log.Info("Mitschnitt vollständig hochgeladen",
+				"alert_uid", auf.AlertUID, "dateien", len(auf.Dateien), "bytes", gesamt)
+		}
 	}
 }
 

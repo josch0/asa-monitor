@@ -32,6 +32,17 @@ const (
 	// als Geist, der nur die End-Phase kennt.
 	Nachklangfrist = 5 * time.Second
 
+	// AudioMeldefrist ist die Zeit, die ein abgeschlossener Alert auf seinen
+	// aud-Record wartet, bevor er trotzdem aufgeräumt wird.
+	//
+	// Seit dem 30.08.2026 schreibt asamon-rx die Mitschnitte selbst und meldet
+	// sie erst nach dem STOP — also nach der letzten Meldung des Alerts. Ohne
+	// diese Wartezeit wäre der Alert bereits aufgeräumt, wenn seine Dateien
+	// bekannt werden, und der Server erführe nie von ihnen. Großzügig bemessen:
+	// Zwischen STOP und Record liegt nur das Schließen zweier Dateien, aber auf
+	// einer vollen SD-Karte kann auch das dauern.
+	AudioMeldefrist = 60 * time.Second
+
 	// IidUnbekannt steht im Schlüssel, solange kein Status-Feld kam.
 	IidUnbekannt = -1
 )
@@ -117,6 +128,16 @@ type verfolgterAlert struct {
 	audioLaeuft        time.Time // Nullzeit = läuft nicht
 	audioStopBei       time.Time // Nullzeit = kein Nachlauf geplant
 	audioAbgeschnitten bool
+	// audioBegonnen bleibt gesetzt, auch nachdem die Aufnahme gestoppt wurde.
+	// Der aud-Record von asamon-rx kommt **nach** dem STOP — ein Alert mit
+	// laufendem Audio ist zu diesem Zeitpunkt per Definition nicht mehr zu
+	// finden.
+	audioBegonnen time.Time
+	// audioGemeldet sagt, dass asamon-rx die fertigen Dateien genannt hat.
+	// Bis dahin bleibt der Alert in der Verfolgung, auch wenn er längst
+	// abgeschlossen ist: Sonst käme die Aufnahme in keinem Datensatz vor, und
+	// der Server erführe nie, dass es sie gibt.
+	audioGemeldet bool
 }
 
 // schluessel ist die Kennung, unter der ein Alert verfolgt wird.

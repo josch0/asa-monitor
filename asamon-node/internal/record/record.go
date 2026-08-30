@@ -211,11 +211,47 @@ type Asa struct {
 	Raw           string `json:"raw"`            // immer
 }
 
-// Aud trägt Chunks des rohen Subchannel-Bitstroms, nicht dekodiertes Audio.
+// AudDatei ist eine Datei, die asamon-rx geschrieben hat.
+type AudDatei struct {
+	Name   string `json:"name"`  // ohne Verzeichnis
+	Codec  string `json:"codec"` // "dabp" (roher Bitstrom) | "mp3"
+	Bytes  int64  `json:"bytes"`
+	Sha256 string `json:"sha256"` // hex, klein
+}
+
+// Aud meldet eine abgeschlossene Aufnahme — genau einer je Mitschnitt, nach
+// dem STOP.
+//
+// Bis zum 30.08.2026 trug dieser Typ den Subchannel-Bitstrom selbst, in
+// base64-kodierten Stücken. Seitdem schreibt asamon-rx die Dateien in den
+// Ablageordner und nennt sie hier mit Größe und Prüfsumme; der Knoten liest
+// sie nur noch zum Hochladen. Drei Dinge werden damit besser: ein Drittel
+// weniger Übertragung, kein Base64 auf dem heißesten Pfad dieses Parsers —
+// und ein Mitschnitt kann nicht mehr löchrig werden, weil ein Record im
+// Warteschlangenüberlauf verworfen wurde.
 type Aud struct {
-	SubChID int    `json:"subch_id"`
-	Chunk   int    `json:"chunk"`
-	Data    string `json:"data"` // Base64
+	SubChID   int     `json:"subch_id"`
+	AlertUID  string  `json:"alert_uid"` // fehlt, wenn REC ohne uid kam
+	Dir       string  `json:"dir"`
+	Started   string  `json:"started"`
+	Seconds   float64 `json:"seconds"`
+	Truncated bool    `json:"truncated"`
+
+	// Erst bekannt, sobald dekodiertes Audio kam.
+	SampleRate int    `json:"sample_rate"`
+	Channels   int    `json:"channels"`
+	Mode       string `json:"mode"`
+	Mp3Bitrate int    `json:"mp3_bitrate"`
+
+	// Summen über die Aufnahme, aus welle.ios Rückrufen. Ohne sie ließe sich
+	// eine stockende Aufnahme nicht von einer stillen Meldung unterscheiden.
+	FrameErrors int64 `json:"frame_errors"`
+	RsErrors    int64 `json:"rs_errors"`
+	RsCorrected int64 `json:"rs_corrected"`
+	AacErrors   int64 `json:"aac_errors"`
+
+	Files []AudDatei `json:"files"`
+	Error string     `json:"error"`
 }
 
 // kopf ist der gemeinsame Teil jeder Zeile.

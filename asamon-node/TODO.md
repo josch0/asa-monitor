@@ -1567,3 +1567,71 @@ Die volle Testsuite läuft weiterhin durch (`go test ./...`, einschließlich `su
 - **Der Wert 15 s ist geschätzt**, nicht gemessen. Er stammt aus dem Verhältnis von einem
   Record je Sekunde zu einer Frist, die einen ausgelasteten Pi nicht stört. Der Feldtest kann
   ihn korrigieren.
+
+---
+
+## 25. Mitschnitte kommen als Dateien, nicht mehr als Records (umgesetzt am 30.08.2026)
+
+`asamon-rx` schreibt die Aufnahme seit dem 30.08.2026 selbst auf die Platte (dessen `TODO.md`
+Abschnitt 20) und meldet mit **einem** `aud`-Record am Ende, was entstanden ist. Der Knoten ist
+nachgezogen: Er nimmt die Meldung entgegen, lädt die Dateien hoch und räumt den Ordner auf.
+
+### Was im Knoten weggefallen ist
+
+- `Verwaltung.Schreibe()` samt Chunk-Zählung, Lückenerkennung und mitlaufendem SHA-256. Die
+  Lücken gab es nur, weil ein `aud`-Record im Warteschlangenüberlauf verworfen werden konnte;
+  eine Datei kennt diesen Fall nicht. `audio.audio_gaps` bleibt im Protokoll und ist ab sofort
+  immer 0 — ein Feld zu entfernen, das ein Server schon liest, wäre teurer als es stehenzulassen.
+- `SchliesseAlle()` beim Herunterfahren: Es gibt nichts mehr zu schließen.
+- Der Base64-Pfad im Record-Leser. Er war der Grund für `encoding/json/v2` (Abschnitt 22,
+  `BenchmarkParseLineAud`); die Entscheidung bleibt richtig, ihr teuerster Anwendungsfall ist nur
+  verschwunden.
+
+### Drei Dinge, die dabei neu entschieden wurden
+
+1. **`--audio-out` geht ausdrücklich mit.** Die Vorgaben beider Programme stimmen überein
+   (`/var/lib/asamon/audio`), aber nur so lange, wie niemand `paths.state_dir` verlegt. Der
+   Supervisor gibt den Ordner deshalb jedem Kindprozess mit, statt sich auf die Übereinstimmung
+   zu verlassen.
+2. **`REC <subChId> <alert_uid>`.** Damit benennt `asamon-rx` die Dateien von vornherein so, wie
+   der Knoten sie kennt (`<alert_uid>-<kanal>-<subchid>`), und niemand muss hinterher umbenennen.
+   Gedeutet wird die uid dort nicht.
+3. **Als hochgeladen gilt eine Aufnahme erst, wenn jede ihrer Dateien durchging.** Bleibt eine
+   liegen, wird die ganze beim nächsten `audio_wanted` erneut angeboten — sonst verschwände der
+   Beleg nach `keep_days`, obwohl der Server ihn nie bekommen hat.
+
+### Der Fehler, den erst der Testlauf zeigte
+
+Der `aud`-Record kommt **nach** dem STOP — also nach der letzten Meldung des Alerts, der mit
+`closed: true` längst hinaus war und von `raeumeAlertsAuf()` abgeräumt wurde. Die fertigen
+Dateien wären damit in **keinem** Datensatz je aufgetaucht: Der Server hätte nie erfahren, dass
+es sie gibt, und sie folglich nie über `audio_wanted` anfordern können. Aufgefallen ist das
+nicht am Entwurf, sondern an `TestGesamtketteAusAufzeichnung`, der hartnäckig „kein Mitschnitt
+im Datensatz" meldete.
+
+Zwei Ergänzungen beheben es:
+
+- Ein abgeschlossener Alert bleibt in der Verfolgung, solange eine angeforderte Aufnahme noch
+  nicht gemeldet ist — begrenzt durch `AudioMeldefrist` (60 s Stromzeit), damit ein gestorbener
+  `asamon-rx` ihn nicht ewig festhält.
+- Trifft die Meldung ein, wird `gemeldet` zurückgesetzt und der Reporter geweckt: Der Alert geht
+  **ein zweites Mal** mit `closed: true` hinaus, diesmal mit `audio.files`. Das steht so im
+  Protokoll (`docs/uplink-protokoll.md`), weil es die einzige Ausnahme von „genau einmal mit
+  closed" ist.
+
+### Wie es geprüft ist
+
+`go test ./...` vollständig grün, `go vet` und `gofmt` sauber. Neu:
+
+- `internal/audio`: Übernahme, fehlende Datei als Fehler, Übernahme ohne vorheriges `Beginne`
+  (Knoten neu gestartet, während `asamon-rx` weiterlief), Wiederfinden nach Neustart samt
+  Wegräumen angefangener `.part`-Dateien, Aufräumen in beiden Spielarten.
+- `internal/chanstate/audio_test.go`: der ganze Weg vom Strom bis zum Datensatz — einschließlich
+  der Frage, ob die Aufnahme beim **richtigen** Alert landet, und der Prüfung, dass ein
+  Dateiname mit Pfadanteil abgelehnt wird.
+- `cmd/fake-rx` legt die gemeldeten Dateien beim Abspielen tatsächlich an, mit genau der Größe
+  und Prüfsumme aus dem Record. Ohne das prüfte die Gesamtkette nur die halbe Wahrheit: Der
+  Knoten fände beim Hochladen nichts vor.
+
+**Offen:** der Lauf am Gerät. Und `--replay` ist weiterhin kaputt (es startet `asamon-rx` statt
+`fake-rx`, siehe Abschnitt 21) — der Workaround bleibt `paths.rx_binary` auf `fake-rx` zu zeigen.

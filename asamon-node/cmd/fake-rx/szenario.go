@@ -3,16 +3,27 @@
 package main
 
 import (
-	"encoding/base64"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"maps"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/josch0/asa-monitor/asamon-node/internal/loc"
 )
+
+// musterSumme ist die Prüfsumme über `bytes` Nullbytes — genau der Inhalt, mit
+// dem fake-rx die Datei beim Abspielen anlegt (legeDateienAn in main.go). Sie
+// stimmt also mit der Datei überein, statt eine Zahl zu erfinden, und ist bei
+// jedem Lauf dieselbe: Die Ströme sollen byteweise wiederholbar entstehen.
+func musterSumme(bytes int64) string {
+	summe := sha256.Sum256(make([]byte, bytes))
+	return hex.EncodeToString(summe[:])
+}
 
 // Echten ASA-Verkehr hat niemand aufgezeichnet. Die Ströme in testdata/streams
 // werden deshalb hier erzeugt — nach TS 104 089 Annex E gepackt, mit
@@ -31,6 +42,7 @@ const (
 	testEid       = "0x10FF"
 	testEcc       = 224
 	testEnsLabel  = "Bundesmux 1"
+	testChannel   = "5C"
 	testSubChID   = 7
 	testBitrate   = 32
 	fremdEid      = "0x20AB"
@@ -310,17 +322,36 @@ func baueAlert(p alertPlan) []string {
 			s.heartbeat(asaTs, ensSek)
 		}
 
-		if p.mitAudio && i >= p.triggerVon && i < p.sustainBis+1 {
-			// Roher Subchannel-Bitstrom, 4 kB/s bei 32 kbit/s. Für den Test
-			// genügt ein wiedererkennbares Muster.
-			daten := make([]byte, testBitrate*1000/8)
-			for j := range daten {
-				daten[j] = byte((audioChunk*7 + j) % 251)
-			}
+		// Ein einziger aud-Record am Ende der Aufnahme — so, wie asamon-rx es
+		// seit dem 30.08.2026 hält: Die Bytes liegen als Datei im
+		// Ablageordner, der Strom nennt sie nur noch.
+		//
+		// Ohne alert_uid, weil fake-rx keine kennt: Es spielt eine
+		// Aufzeichnung ab und hat kein REC gesehen. Damit prüft dieser Strom
+		// zugleich den Notnagel im Knoten, der die Aufnahme dann über den
+		// Subchannel dem laufenden Alert zuordnet.
+		if p.mitAudio && i == p.sustainBis {
+			sekunden := float64(p.sustainBis + 1 - p.triggerVon)
+			roh := int64(sekunden) * testBitrate * 1000 / 8
+			start := asaTs.Add(-time.Duration(sekunden) * time.Second)
+			basis := start.UTC().Format("20060102T150405Z") +
+				"-" + testChannel + "-" + strconv.Itoa(testSubChID)
 			s.schreibe("aud", asaTs.Add(300*time.Millisecond), map[string]any{
-				"subch_id": testSubChID,
-				"chunk":    audioChunk,
-				"data":     base64.StdEncoding.EncodeToString(daten),
+				"subch_id":    testSubChID,
+				"dir":         "/var/lib/asamon/audio",
+				"started":     start.UTC().Format(time.RFC3339Nano),
+				"seconds":     sekunden,
+				"truncated":   false,
+				"sample_rate": 48000,
+				"channels":    2,
+				"mode":        "HE-AACv2",
+				"mp3_bitrate": 64,
+				"files": []map[string]any{
+					{"name": basis + ".dabp", "codec": "dabp", "bytes": roh,
+						"sha256": musterSumme(roh)},
+					{"name": basis + ".mp3", "codec": "mp3", "bytes": roh * 3 / 4,
+						"sha256": musterSumme(roh * 3 / 4)},
+				},
 			})
 			audioChunk++
 		}

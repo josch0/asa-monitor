@@ -1,20 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
-// Mitschnitt eines Subchannels: REC <subChId> schaltet ihn zu, der rohe
-// MSC-Strom kommt ueber onMscData() herein und geht als aud-Records hinaus.
+// Mitschnitt eines Subchannels: REC <subChId> [alert_uid] schaltet ihn zu, der
+// rohe MSC-Strom kommt ueber onMscData() herein, das dekodierte PCM ueber
+// onNewAudio(). Beides geht **auf die Platte**, nicht in den Record-Strom; erst
+// nach STOP meldet ein einzelner aud-Record, welche Dateien entstanden sind.
 //
-// Bis zum 27.08.2026 lief das ueber eine benannte Leitung: addServiceToDecode()
-// nimmt einen *Dateinamen*, und wir gaben ihm eine FIFO. Patch 3 des
-// welle.io-Forks hat das abgeloest (docs/welle-patches.md). Damit verschwunden
-// sind: mkfifo und CreateNamedPipeA, die ueberlappte E/A, die Regel "Leser
-// steht, bevor zugeschaltet wird" — und die Option --fifo-dir.
+// Zwei Umbauten liegen dahinter:
 //
-// Die Bytes sind dieselben geblieben. onMscData() liefert genau das, was
-// welle.io in die Dumpdatei geschrieben haette: den Subchannel-Bitstrom, einen
-// Aufruf je DAB-Rahmen, vor der Audiodekodierung.
+//   27.08.2026 — Patch 3 des welle.io-Forks (docs/welle-patches.md) loeste die
+//   benannte Leitung ab: addServiceToDecode() nimmt einen *Dateinamen*, und wir
+//   gaben ihm frueher eine FIFO. Damit verschwanden mkfifo und
+//   CreateNamedPipeA, die ueberlappte E/A und die Option --fifo-dir.
+//
+//   30.08.2026 — der Weg ueber die Platte. Vorher wanderte der Subchannel-
+//   Bitstrom base64-kodiert durch den Record-Strom. Das kostete ein Drittel
+//   Uebertragung, machte aud zum groessten Record-Typ und setzte den Mitschnitt
+//   der Vorrangregel beim Verwerfen aus: ein verworfener aud-Record ist ein
+//   Loch mitten in der Aufnahme. Seitdem schreibt asamon-rx die Dateien selbst
+//   und meldet sie mit Groesse und SHA-256, damit asamon-node sie nicht noch
+//   einmal lesen muss.
+//
+// Was dabei **nicht** gewandert ist: die Steuerung. Wann aufgenommen wird,
+// entscheidet weiterhin allein asamon-node — asamon-rx kennt kein ASA.
 
 #pragma once
 
+#include "audiofile.h"
+#include "mp3encoder.h"
 #include "options.h"
 #include "record.h"
 #include "writer.h"
@@ -44,56 +56,52 @@ class RadioReceiver;
 
 namespace asamon {
 
-// Ein Record je 4096 Byte. Bei 32 kbit/s — der Bitrate, mit der "ASA DE" auf 5C
-// geplant ist — ist das gerade eine Sekunde Warn-Audio.
-//
-// Der Rueckruf kommt viel kleiner herein: ein DAB-Rahmen sind dort 96 Byte alle
-// 24 ms. Ungepuffert waeren das ~42 Records je Sekunde, und der Base64-Aufwand
-// je Record faende sich im Strom wieder. Deshalb wird gesammelt.
-constexpr std::size_t kChunkBytes = 4096;
+// Macht aus fremdem Text einen Dateinamensbestandteil: alles ausser
+// [A-Za-z0-9._-] wird zu '_'. Die alert_uid kommt ueber stdin herein und
+// darf niemals in einen Pfad durchschlagen.
+std::string sicherFuerDateinamen(const std::string& in);
 
-// Nimmt den rohen MSC-Strom eines Subchannels entgegen und stellt ihn als
-// aud-Records ein.
+// Basisname ohne Endung. Mit alert_uid ist es genau das Schema, das
+// asamon-node bisher selbst vergeben hat (internal/audio: "<uid>-<kanal>-<id>");
+// ohne sie tritt der Startzeitpunkt an die Stelle der uid.
+std::string aufnahmeBasisName(const std::string& alertUid,
+                              const std::string& channel, std::uint8_t subChId,
+                              const std::string& startedRfc3339);
+
+// Nimmt den rohen MSC-Strom und das dekodierte PCM eines Subchannels entgegen
+// und schreibt beides in je eine Datei.
 //
 // welle.io verlangt fuer addServiceToDecode() ohnehin einen
-// ProgrammeHandlerInterface. Frueher war das hier ein leerer Platzhalter, weil
-// die Nutzdaten durch die FIFO kamen; seit Patch 3 ist er der Weg selbst. Die
-// uebrigen Rueckrufe bleiben leer: dekodiertes Audio, MOT und Dynamic Label
-// interessieren asamon-rx nicht.
+// ProgrammeHandlerInterface; seit Patch 3 ist er der Weg selbst. Alle
+// Rueckrufe kommen aus demselben Thread (DabAudio::run() treibt den
+// DecoderAdapter, der beide ausloest) — deshalb braucht es hier keine Sperre.
 //
 // Frei stehend und ohne Empfaenger pruefbar (tests/test_recorder.cpp): Bytes
-// hinein, fertige Records heraus.
-class MscSink : public ProgrammeHandlerInterface {
+// hinein, fertige Dateien und ein Abschlussrecord heraus.
+class AudioSink : public ProgrammeHandlerInterface {
 public:
-    MscSink(Writer& writer, std::uint8_t subChId);
+    AudioSink(const Options& options, std::uint8_t subChId,
+              std::string alertUid, std::string channel,
+              Clock::time_point started);
 
-    MscSink(const MscSink&) = delete;
-    MscSink& operator=(const MscSink&) = delete;
+    AudioSink(const AudioSink&) = delete;
+    AudioSink& operator=(const AudioSink&) = delete;
 
-    // Laeuft auf dem Decoder-Thread des Subchannels (DabAudio::ourThread), nie
-    // auf unserem. Es gilt die Regel aus controller.h: kopieren, einstellen,
-    // zurueckkehren. Writer::enqueue() blockiert nie und verwirft im Ueberlauf.
+    // Legt den Ablageordner an und oeffnet die .dabp-Datei. Muss vor
+    // addServiceToDecode() gelingen: Ohne Ziel gibt es keine Aufnahme.
+    bool oeffne(std::string& fehler);
+
+    // --- Rueckrufe, alle auf dem Decoder-Thread ---------------------------
     void onMscData(const uint8_t* data, std::size_t len) override;
 
-    // Reiht ein angefangenes Stueck vorzeitig ein. Nur aufrufen, wenn der
-    // Decoder-Thread nachweislich weg ist — also nach removeServiceToDecode().
-    // Warum das reicht: removeSubchannel() loescht den SelectedStream, damit
-    // faellt der letzte shared_ptr auf DabAudio, und ~DabAudio joint seinen
-    // Thread. Nach der Rueckkehr kann onMscData() nicht mehr gerufen werden.
-    void flush();
-
-    // --- der Rest von ProgrammeHandlerInterface, absichtlich leer ----------
-    void onFrameErrors(int frameErrors) override { (void)frameErrors; }
     void onNewAudio(std::vector<int16_t>&& audioData, int sampleRate,
-                    const std::string& mode) override
-    {
-        (void)audioData; (void)sampleRate; (void)mode;
-    }
-    void onRsErrors(bool uncorrectedErrors, int numCorrectedErrors) override
-    {
-        (void)uncorrectedErrors; (void)numCorrectedErrors;
-    }
-    void onAacErrors(int aacErrors) override { (void)aacErrors; }
+                    const std::string& mode) override;
+
+    void onFrameErrors(int frameErrors) override;
+    void onRsErrors(bool uncorrectedErrors, int numCorrectedErrors) override;
+    void onAacErrors(int aacErrors) override;
+
+    // --- der Rest, absichtlich leer ---------------------------------------
     void onNewDynamicLabel(const std::string& label) override { (void)label; }
     void onMOT(const mot_file_t& motFile) override { (void)motFile; }
     void onPADLengthError(size_t announcedXpadLen, size_t xpadLen) override
@@ -101,17 +109,36 @@ public:
         (void)announcedXpadLen; (void)xpadLen;
     }
 
-private:
-    // Stellt die ersten `count` Bytes des Puffers als aud-Record ein und
-    // entfernt sie daraus.
-    void emit(std::size_t count);
+    // Schliesst alle Dateien, benennt sie um und baut den Abschlussrecord.
+    // Nur aufrufen, wenn der Decoder-Thread nachweislich weg ist — also nach
+    // removeServiceToDecode(). Warum das reicht: removeSubchannel() loescht
+    // den SelectedStream, damit faellt der letzte shared_ptr auf DabAudio,
+    // und ~DabAudio joint seinen Thread.
+    AudPayload abschluss(bool truncated, Clock::time_point ende);
 
-    Writer&     writer_;
-    std::uint8_t subChId_;
-    std::uint64_t chunk_ = 0;
-    // Nur vom Decoder-Thread beruehrt, und nach dessen Ende von flush().
-    // Deshalb ohne Sperre.
-    std::vector<std::uint8_t> buffer_;
+private:
+    const Options& options_;
+    std::uint8_t   subChId_;
+    std::string    alertUid_;
+    std::string    channel_;
+    Clock::time_point started_;
+    std::string    startedTs_;
+    std::string    basisName_;
+
+    DateiSenke  roh_;
+    Mp3Encoder  mp3_;
+    bool        mp3Versucht_ = false;
+
+    std::string mode_;
+    int         sampleRate_ = 0;
+    int         channels_ = 0;
+
+    std::uint64_t frameErrors_ = 0;
+    std::uint64_t rsErrors_ = 0;
+    std::uint64_t rsCorrected_ = 0;
+    std::uint64_t aacErrors_ = 0;
+
+    std::string fehler_;
 };
 
 class Recorder {
@@ -122,10 +149,11 @@ public:
     Recorder(const Recorder&) = delete;
     Recorder& operator=(const Recorder&) = delete;
 
-    // Schaltet den Subchannel zu. Laeuft auf dem Kommando-Thread, nie in
-    // einem Rueckruf: die Aufloesung SubChId -> Service nimmt den
-    // FIBProcessor-Mutex.
-    bool start(std::uint8_t subChId);
+    // Schaltet den Subchannel zu. `alertUid` darf leer sein — dann benennt
+    // sich die Aufnahme nach ihrem Startzeitpunkt. Laeuft auf dem
+    // Kommando-Thread, nie in einem Rueckruf: die Aufloesung SubChId ->
+    // Service nimmt den FIBProcessor-Mutex.
+    bool start(std::uint8_t subChId, const std::string& alertUid);
 
     void stop(std::uint8_t subChId);
     void stopAll();
@@ -136,20 +164,23 @@ public:
 
 private:
     struct Recording {
-        Recording(Writer& writer, uint32_t sid, std::uint8_t subChId)
-            : service(sid), subChId(subChId), sink(writer, subChId) {}
+        Recording(const Options& options, uint32_t sid, std::uint8_t subChId,
+                  const std::string& alertUid, const std::string& channel,
+                  Clock::time_point started)
+            : service(sid), subChId(subChId), started(started),
+              sink(options, subChId, alertUid, channel, started) {}
 
         Service      service;
         std::uint8_t subChId;
+        Clock::time_point started;
         // Muss die Aufnahme ueberleben: welle.io haelt eine Referenz darauf,
         // bis removeServiceToDecode() zurueckkehrt.
-        MscSink      sink;
-        Clock::time_point started;
+        AudioSink    sink;
     };
 
-    // Schaltet ab und reiht den Rest ein. Erst welle.io, dann flush() — die
-    // Reihenfolge ist die Zusicherung aus MscSink::flush().
-    void teardown(Recording& recording);
+    // Schaltet ab und schliesst die Dateien. Erst welle.io, dann abschluss() —
+    // die Reihenfolge ist die Zusicherung aus AudioSink::abschluss().
+    void teardown(Recording& recording, bool truncated);
 
     Writer& writer_;
     const Options& options_;

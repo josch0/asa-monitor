@@ -1,23 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// Paket audio verwaltet die Mitschnitte: sammeln, schreiben, aufräumen.
+// Paket audio verwaltet die Mitschnitte: übernehmen, hochladen, aufräumen.
 //
-// Der rohe Subchannel-Bitstrom wird durchgereicht, nicht dekodiert. Kein AAC,
-// kein FFmpeg, keine Superframe-Zerlegung — die Datei geht so zum Server, wie
-// sie vom Kanal kam.
+// **Geschrieben werden sie nicht mehr hier.** Seit dem 30.08.2026 legt
+// asamon-rx die Dateien selbst an — den rohen Subchannel-Bitstrom als Beleg
+// (.dabp) und, wenn LAME zur Hand war, eine abspielbare MP3 daneben — und
+// meldet sie mit einem einzigen aud-Record am Ende der Aufnahme. Der Knoten
+// führt seitdem Buch, lädt hoch und räumt auf; die Bytes gehen nicht mehr
+// durch die Prozessgrenze.
 //
-// **Zuschneiden ist Pflicht, nicht Kür.** Der warnende Service kann ein
+// Was das besser macht: ein Drittel weniger Übertragung (kein Base64), kein
+// heißer Pfad mehr im Record-Leser — und vor allem kann ein Mitschnitt nicht
+// mehr löchrig werden, weil ein Record im Warteschlangenüberlauf verworfen
+// wurde. Die Lückenzählung, die es dafür brauchte, ist ersatzlos entfallen.
+//
+// **Zuschneiden bleibt Pflicht, nicht Kür.** Der warnende Service kann ein
 // reguläres Programm sein, dessen Audio nur für die Dauer der Meldung ersetzt
-// wird. Kein Vorlauf, kurzer Nachlauf, harte Obergrenze. Was hier großzügig
-// eingestellt wird, landet als fremdes Programm-Audio zentral auf einem Server.
+// wird. Kein Vorlauf, kurzer Nachlauf, harte Obergrenze — durchgesetzt wird
+// das weiterhin vom Kanalzustand über REC und STOP.
 package audio
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"hash"
 	"io/fs"
 	"log/slog"
 	"os"
@@ -30,8 +35,22 @@ import (
 	"github.com/josch0/asa-monitor/asamon-node/internal/report"
 )
 
-// Endung der Mitschnitte. Roher Subchannel-Bitstrom, kein Containerformat.
-const Endung = ".dabp"
+// Endungen der Mitschnitte.
+const (
+	// EndungRoh trägt den rohen Subchannel-Bitstrom, kein Containerformat.
+	EndungRoh = ".dabp"
+	// EndungMp3 trägt dieselbe Aufnahme abspielbar.
+	EndungMp3 = ".mp3"
+	// EndungTeil hängt an jeder Datei, die asamon-rx gerade schreibt. Eine
+	// solche Datei ohne laufende Aufnahme ist eine Waise.
+	EndungTeil = ".part"
+)
+
+// Codecs, wie asamon-rx sie im aud-Record nennt.
+const (
+	CodecRoh = "dabp"
+	CodecMp3 = "mp3"
+)
 
 // Konfig ist die Einstellung des Mitschnitts.
 type Konfig struct {
@@ -40,26 +59,69 @@ type Konfig struct {
 	Aktiv    bool
 }
 
-// Aufnahme ist ein Mitschnitt, laufend oder abgeschlossen.
+// Datei ist eine einzelne Datei eines Mitschnitts.
+type Datei struct {
+	Name   string
+	Codec  string
+	Bytes  int64
+	Sha256 string
+}
+
+// Uebernahme ist, was asamon-rx am Ende einer Aufnahme meldet. Der
+// Kanalzustand baut sie aus dem aud-Record — damit bleibt dieses Paket
+// unabhängig vom Record-Format.
+type Uebernahme struct {
+	Channel   string
+	SubChID   int
+	Start     time.Time
+	Seconds   float64
+	Truncated bool
+
+	SampleRate int
+	Channels   int
+	Mode       string
+
+	FrameErrors int64
+	RsErrors    int64
+	RsCorrected int64
+	AacErrors   int64
+
+	Dateien []Datei
+	Fehler  string
+}
+
+// Aufnahme ist ein Mitschnitt, angekündigt oder abgeschlossen.
 type Aufnahme struct {
 	AlertUID  string
 	Channel   string
 	SubChID   int
-	Pfad      string
 	Start     time.Time
-	Bitrate   int // kbit/s, für die Dauerschätzung
+	Seconds   float64
+	Bitrate   int // kbit/s, für die Dauerschätzung während der Aufnahme
 	Bytes     int64
-	Sha256    string
 	Truncated bool
-	Gaps      int
+	Dateien   []Datei
 	Uploaded  time.Time
 	Zustand   string
 	Fehler    string
 
-	datei        *os.File
-	hash         hash.Hash
-	letzterChunk int
-	hatChunk     bool
+	SampleRate  int
+	Channels    int
+	Mode        string
+	FrameErrors int64
+	RsErrors    int64
+	RsCorrected int64
+	AacErrors   int64
+}
+
+// RohDatei gibt die Beleg-Datei, oder nil.
+func (a *Aufnahme) RohDatei() *Datei {
+	for i := range a.Dateien {
+		if a.Dateien[i].Codec == CodecRoh {
+			return &a.Dateien[i]
+		}
+	}
+	return nil
 }
 
 // Verwaltung hält alle Aufnahmen des Knotens.
@@ -67,9 +129,8 @@ type Verwaltung struct {
 	k   Konfig
 	log *slog.Logger
 
-	mu    sync.Mutex
-	nach  map[string]*Aufnahme // je alert_uid
-	dauer time.Duration
+	mu   sync.Mutex
+	nach map[string]*Aufnahme // je alert_uid
 }
 
 // Neu öffnet das Audio-Verzeichnis und liest ein, was noch daliegt.
@@ -84,15 +145,35 @@ func Neu(stateDir string, k Konfig, log *slog.Logger) (*Verwaltung, error) {
 	return v, nil
 }
 
+// Dir ist der Ablageordner. Er geht als --audio-out an jeden asamon-rx: Beide
+// Prozesse müssen denselben Ordner meinen, und die Vorgabe stimmt nur so
+// lange überein, wie niemand paths.state_dir verlegt hat.
+func (v *Verwaltung) Dir() string { return v.k.Dir }
+
 // leseEin findet Mitschnitte aus einem früheren Lauf wieder. Sie sind noch
 // nicht hochgeladen — der Server sagt beim nächsten Datensatz, ob er sie will.
+//
+// Angefangene Dateien (.part) sind Waisen: asamon-rx ist gestorben, bevor die
+// Aufnahme endete, und einen aud-Record wird es dazu nie geben.
 func (v *Verwaltung) leseEin() {
 	eintraege, err := os.ReadDir(v.k.Dir)
 	if err != nil {
 		return
 	}
+	var waisen int
 	for _, e := range eintraege {
-		if e.IsDir() || !strings.HasSuffix(e.Name(), Endung) {
+		if e.IsDir() {
+			continue
+		}
+		if strings.HasSuffix(e.Name(), EndungTeil) {
+			pfad := filepath.Join(v.k.Dir, e.Name())
+			if err := os.Remove(pfad); err == nil {
+				waisen++
+			}
+			continue
+		}
+		codec := codecVon(e.Name())
+		if codec == "" {
 			continue
 		}
 		uid, channel, subch, ok := zerlegeName(e.Name())
@@ -103,26 +184,33 @@ func (v *Verwaltung) leseEin() {
 		if err != nil {
 			continue
 		}
-		pfad := filepath.Join(v.k.Dir, e.Name())
-		a := &Aufnahme{
-			AlertUID: uid, Channel: channel, SubChID: subch, Pfad: pfad,
-			Start: info.ModTime().UTC(), Bytes: info.Size(), Zustand: report.AudioGespeicht,
+		a, vorhanden := v.nach[uid]
+		if !vorhanden {
+			a = &Aufnahme{
+				AlertUID: uid, Channel: channel, SubChID: subch,
+				Start: info.ModTime().UTC(), Zustand: report.AudioGespeicht,
+			}
+			v.nach[uid] = a
 		}
-		if summe, err := dateiSumme(pfad); err == nil {
-			a.Sha256 = summe
-		}
-		v.nach[uid] = a
+		// Ohne Prüfsumme: Sie stand im aud-Record, den es in diesem Lauf nicht
+		// mehr gibt. Der Server bekommt die Datei dann ohne Vorabvergleich —
+		// sie neu zu lesen wäre auf einem Pi teurer als der Nutzen.
+		a.Dateien = append(a.Dateien, Datei{
+			Name: e.Name(), Codec: codec, Bytes: info.Size(),
+		})
+		a.Bytes += info.Size()
 	}
 	if len(v.nach) > 0 {
-		v.log.Info("Mitschnitte aus früherem Lauf gefunden", "dateien", len(v.nach))
+		v.log.Info("Mitschnitte aus früherem Lauf gefunden", "aufnahmen", len(v.nach))
+	}
+	if waisen > 0 {
+		v.log.Info("angefangene Mitschnitte aufgeräumt", "dateien", waisen)
 	}
 }
 
-// Beginne legt eine Datei an und beginnt den Mitschnitt.
-//
-// Beim REC wird sofort auf die Platte geschrieben — kein Puffern im
-// Arbeitsspeicher: Eine zweiminütige Meldung sind bei 32 kbit/s rund 480 kB,
-// und der Knoten läuft auf einem Pi.
+// Beginne vermerkt, dass ein Mitschnitt angefordert wurde. Geschrieben wird er
+// von asamon-rx; hier entsteht nur der Eintrag, damit der Datensatz schon
+// während der Aufnahme "recording" melden kann.
 func (v *Verwaltung) Beginne(alertUID, channel string, subChID int, start time.Time, bitrate int) {
 	if !v.k.Aktiv {
 		return
@@ -130,82 +218,72 @@ func (v *Verwaltung) Beginne(alertUID, channel string, subChID int, start time.T
 	v.mu.Lock()
 	defer v.mu.Unlock()
 
-	if vorhanden, ok := v.nach[alertUID]; ok && vorhanden.datei != nil {
+	if vorhanden, ok := v.nach[alertUID]; ok && vorhanden.Zustand == report.AudioLaeuft {
 		return // läuft bereits
 	}
-	pfad := filepath.Join(v.k.Dir, dateiName(alertUID, channel, subChID))
-	f, err := os.OpenFile(pfad, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
-	if err != nil {
-		v.log.Error("Mitschnitt lässt sich nicht anlegen", "datei", pfad, "fehler", err)
-		v.nach[alertUID] = &Aufnahme{
-			AlertUID: alertUID, Channel: channel, SubChID: subChID,
-			Zustand: report.AudioFehler, Fehler: err.Error(),
-		}
-		return
-	}
 	v.nach[alertUID] = &Aufnahme{
-		AlertUID: alertUID, Channel: channel, SubChID: subChID, Pfad: pfad,
+		AlertUID: alertUID, Channel: channel, SubChID: subChID,
 		Start: start.UTC(), Bitrate: bitrate, Zustand: report.AudioLaeuft,
-		datei: f, hash: sha256.New(),
 	}
-	v.log.Info("Mitschnitt begonnen", "alert_uid", alertUID, "channel", channel, "subch_id", subChID, "datei", pfad)
+	v.log.Info("Mitschnitt angefordert", "alert_uid", alertUID,
+		"channel", channel, "subch_id", subChID)
 }
 
-// Schreibe hängt einen Chunk an.
-//
-// Lücken in der Chunk-Nummer sind Verluste und gehören gezählt, nicht
-// geglättet: Ein Mitschnitt mit stillschweigend fehlenden Sekunden wäre als
-// Beleg wertlos.
-func (v *Verwaltung) Schreibe(alertUID string, chunk int, daten []byte) {
-	v.mu.Lock()
-	defer v.mu.Unlock()
-
-	a, ok := v.nach[alertUID]
-	if !ok || a.datei == nil {
-		return
-	}
-	if a.hatChunk && chunk != a.letzterChunk+1 {
-		luecke := chunk - a.letzterChunk - 1
-		if luecke < 0 {
-			luecke = 1
-		}
-		a.Gaps += luecke
-		v.log.Warn("Lücke im Mitschnitt", "alert_uid", alertUID,
-			"erwartet", a.letzterChunk+1, "erhalten", chunk, "luecken_gesamt", a.Gaps)
-	}
-	a.letzterChunk, a.hatChunk = chunk, true
-
-	n, err := a.datei.Write(daten)
-	if err != nil {
-		v.log.Error("Mitschnitt lässt sich nicht schreiben", "alert_uid", alertUID, "fehler", err)
-		a.Zustand, a.Fehler = report.AudioFehler, err.Error()
-		a.datei.Close()
-		a.datei = nil
-		return
-	}
-	a.hash.Write(daten[:n])
-	a.Bytes += int64(n)
-}
-
-// Beende schließt die Datei und berechnet die Prüfsumme.
+// Beende vermerkt das STOP. Die Dateien meldet asamon-rx erst danach mit
+// seinem aud-Record; bis dahin bleibt die Aufnahme "recording".
 func (v *Verwaltung) Beende(alertUID string, abgeschnitten bool) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
+	if a, ok := v.nach[alertUID]; ok {
+		a.Truncated = a.Truncated || abgeschnitten
+	}
+}
+
+// Uebernimm trägt ein, was asamon-rx geschrieben hat.
+//
+// Der Eintrag kann fehlen — etwa, wenn der Knoten neu gestartet wurde,
+// während asamon-rx weiterlief. Dann entsteht er hier: Eine fertige Datei ist
+// wertvoller als ein sauberer Zustandsverlauf.
+func (v *Verwaltung) Uebernimm(alertUID string, u Uebernahme) {
+	v.mu.Lock()
+	defer v.mu.Unlock()
 
 	a, ok := v.nach[alertUID]
-	if !ok || a.datei == nil {
-		return
+	if !ok {
+		a = &Aufnahme{AlertUID: alertUID, Start: u.Start.UTC()}
+		v.nach[alertUID] = a
 	}
-	a.Truncated = a.Truncated || abgeschnitten
-	if err := a.datei.Sync(); err != nil {
-		v.log.Warn("Mitschnitt ließ sich nicht synchronisieren", "alert_uid", alertUID, "fehler", err)
+	a.Channel = u.Channel
+	a.SubChID = u.SubChID
+	if !u.Start.IsZero() {
+		a.Start = u.Start.UTC()
 	}
-	a.datei.Close()
-	a.datei = nil
-	a.Sha256 = hex.EncodeToString(a.hash.Sum(nil))
-	a.Zustand = report.AudioGespeicht
-	v.log.Info("Mitschnitt abgeschlossen", "alert_uid", alertUID,
-		"bytes", a.Bytes, "sha256", a.Sha256, "truncated", a.Truncated, "luecken", a.Gaps)
+	a.Seconds = u.Seconds
+	a.Truncated = a.Truncated || u.Truncated
+	a.Dateien = u.Dateien
+	a.SampleRate, a.Channels, a.Mode = u.SampleRate, u.Channels, u.Mode
+	a.FrameErrors, a.RsErrors = u.FrameErrors, u.RsErrors
+	a.RsCorrected, a.AacErrors = u.RsCorrected, u.AacErrors
+	a.Fehler = u.Fehler
+
+	a.Bytes = 0
+	for _, d := range u.Dateien {
+		a.Bytes += d.Bytes
+	}
+
+	switch {
+	case len(u.Dateien) == 0:
+		a.Zustand = report.AudioFehler
+		if a.Fehler == "" {
+			a.Fehler = "asamon-rx meldete keine Datei"
+		}
+	default:
+		a.Zustand = report.AudioGespeicht
+	}
+
+	v.log.Info("Mitschnitt übernommen", "alert_uid", alertUID,
+		"dateien", len(a.Dateien), "bytes", a.Bytes,
+		"sekunden", a.Seconds, "truncated", a.Truncated, "fehler", a.Fehler)
 }
 
 // Stand gibt den Mitschnitt-Abschnitt eines Alerts für den Datensatz.
@@ -218,17 +296,31 @@ func (v *Verwaltung) Stand(alertUID string) *report.Audio {
 		return nil
 	}
 	aus := &report.Audio{
-		State:     a.Zustand,
-		SubChID:   a.SubChID,
-		Bytes:     a.Bytes,
-		StartedAt: report.Zeitpunkt(a.Start),
-		Sha256:    a.Sha256,
-		Truncated: a.Truncated,
-		Gaps:      a.Gaps,
+		State:       a.Zustand,
+		SubChID:     a.SubChID,
+		Bytes:       a.Bytes,
+		StartedAt:   report.Zeitpunkt(a.Start),
+		Truncated:   a.Truncated,
+		DurationS:   a.Seconds,
+		SampleRate:  a.SampleRate,
+		Channels:    a.Channels,
+		Mode:        a.Mode,
+		FrameErrors: a.FrameErrors,
+		RsErrors:    a.RsErrors,
+		RsCorrected: a.RsCorrected,
+		AacErrors:   a.AacErrors,
 	}
-	// Die Dauer wird aus der Bitrate der Komponente geschätzt, nicht gemessen —
-	// deshalb heißt das Feld so.
-	if a.Bitrate > 0 {
+	if roh := a.RohDatei(); roh != nil {
+		aus.Sha256 = roh.Sha256
+	}
+	for _, d := range a.Dateien {
+		aus.Files = append(aus.Files, report.AudioDatei{
+			Name: d.Name, Codec: d.Codec, Bytes: d.Bytes, Sha256: d.Sha256,
+		})
+	}
+	// Solange die Aufnahme läuft, kennt niemand ihre Dauer: Dann wird sie aus
+	// der Bitrate der Komponente geschätzt — deshalb heißt das Feld so.
+	if a.Seconds == 0 && a.Bitrate > 0 {
 		aus.DurationSEst = float64(a.Bytes) * 8 / float64(a.Bitrate*1000)
 	}
 	if !a.Uploaded.IsZero() {
@@ -249,13 +341,18 @@ func (v *Verwaltung) Angefordert(uids []string) []*Aufnahme {
 	var out []*Aufnahme
 	for _, uid := range uids {
 		a, ok := v.nach[uid]
-		if !ok || a.datei != nil || a.Zustand != report.AudioGespeicht || a.Bytes == 0 {
+		if !ok || a.Zustand != report.AudioGespeicht || len(a.Dateien) == 0 {
 			continue
 		}
 		out = append(out, a)
 	}
 	slices.SortFunc(out, func(a, b *Aufnahme) int { return a.Start.Compare(b.Start) })
 	return out
+}
+
+// Pfad gibt den vollen Pfad einer Datei im Ablageordner.
+func (v *Verwaltung) Pfad(d Datei) string {
+	return filepath.Join(v.k.Dir, d.Name)
 }
 
 // Hochgeladen vermerkt den erfolgreichen Upload.
@@ -268,10 +365,17 @@ func (v *Verwaltung) Hochgeladen(alertUID string, wann time.Time) {
 	}
 }
 
-// RaeumeAuf löscht hochgeladene Dateien nach keep_days.
+// RaeumeAuf löscht hochgeladene Dateien nach keep_days und dazu, was im
+// Ablageordner liegengeblieben ist.
 //
-// Nicht hochgeladene bleiben liegen: Sie sind der einzige Beleg, und der
-// Server kann sie später noch anfordern.
+// Zwei Fälle, ein Weg: Ein hochgeladener Mitschnitt darf nach keep_days
+// verschwinden. Und eine Datei, die zu keiner bekannten Aufnahme gehört — weil
+// asamon-rx sie schrieb, ohne dass der Record ankam —, ist nach derselben
+// Frist ebenfalls fällig. Beides geht nach den Zeitstempeln der Dateien; die
+// Verzeichniseinträge sind die Wahrheit, nicht der Speicher des Knotens.
+//
+// **Nicht hochgeladene, bekannte Aufnahmen bleiben liegen**: Sie sind der
+// einzige Beleg, und der Server kann sie später noch anfordern.
 func (v *Verwaltung) RaeumeAuf(jetzt time.Time) int {
 	if v.k.KeepDays <= 0 {
 		return 0
@@ -280,8 +384,12 @@ func (v *Verwaltung) RaeumeAuf(jetzt time.Time) int {
 
 	v.mu.Lock()
 	var weg []*Aufnahme
+	bekannt := map[string]bool{}
 	for uid, a := range v.nach {
-		if a.datei != nil || a.Uploaded.IsZero() || a.Uploaded.After(grenze) {
+		for _, d := range a.Dateien {
+			bekannt[d.Name] = true
+		}
+		if a.Uploaded.IsZero() || a.Uploaded.After(grenze) {
 			continue
 		}
 		weg = append(weg, a)
@@ -289,15 +397,54 @@ func (v *Verwaltung) RaeumeAuf(jetzt time.Time) int {
 	}
 	v.mu.Unlock()
 
+	geloescht := 0
 	for _, a := range weg {
-		if err := os.Remove(a.Pfad); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			v.log.Warn("Mitschnitt ließ sich nicht löschen", "datei", a.Pfad, "fehler", err)
-			continue
+		for _, d := range a.Dateien {
+			pfad := filepath.Join(v.k.Dir, d.Name)
+			if err := os.Remove(pfad); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				v.log.Warn("Mitschnitt ließ sich nicht löschen", "datei", pfad, "fehler", err)
+				continue
+			}
+			delete(bekannt, d.Name)
+			geloescht++
 		}
 		v.log.Info("hochgeladener Mitschnitt gelöscht", "alert_uid", a.AlertUID,
+			"dateien", len(a.Dateien),
 			"alter_tage", int(jetzt.Sub(a.Uploaded).Hours()/24))
 	}
-	return len(weg)
+	geloescht += v.raeumeVerwaisteAuf(bekannt, grenze)
+	return geloescht
+}
+
+// raeumeVerwaisteAuf entfernt Dateien im Ablageordner, die zu keiner bekannten
+// Aufnahme gehören und älter als die Frist sind — samt angefangener .part.
+func (v *Verwaltung) raeumeVerwaisteAuf(bekannt map[string]bool, grenze time.Time) int {
+	eintraege, err := os.ReadDir(v.k.Dir)
+	if err != nil {
+		return 0
+	}
+	geloescht := 0
+	for _, e := range eintraege {
+		if e.IsDir() || bekannt[e.Name()] {
+			continue
+		}
+		teil := strings.HasSuffix(e.Name(), EndungTeil)
+		if !teil && codecVon(e.Name()) == "" {
+			continue // fremde Datei: nicht anfassen
+		}
+		info, err := e.Info()
+		if err != nil || info.ModTime().After(grenze) {
+			continue
+		}
+		pfad := filepath.Join(v.k.Dir, e.Name())
+		if err := os.Remove(pfad); err != nil {
+			v.log.Warn("verwaiste Datei ließ sich nicht löschen", "datei", pfad, "fehler", err)
+			continue
+		}
+		v.log.Info("verwaiste Datei gelöscht", "datei", e.Name(), "angefangen", teil)
+		geloescht++
+	}
+	return geloescht
 }
 
 // Dateien gibt die Zahl der vorgehaltenen Mitschnitte für den Datensatz.
@@ -307,28 +454,28 @@ func (v *Verwaltung) Dateien() int {
 	return len(v.nach)
 }
 
-// SchliesseAlle beendet laufende Mitschnitte beim Herunterfahren.
-func (v *Verwaltung) SchliesseAlle() {
-	v.mu.Lock()
-	uids := make([]string, 0, len(v.nach))
-	for uid, a := range v.nach {
-		if a.datei != nil {
-			uids = append(uids, uid)
-		}
-	}
-	v.mu.Unlock()
-	for _, uid := range uids {
-		v.Beende(uid, false)
-	}
+// DateiName baut den Namen, den auch asamon-rx vergibt:
+// <alert_uid>-<channel>-<subch>.<endung>
+func DateiName(alertUID, channel string, subChID int, endung string) string {
+	return fmt.Sprintf("%s-%s-%d%s", alertUID, sicher(channel), subChID, endung)
 }
 
-// dateiName baut den Namen: <alert_uid>-<channel>-<subch>.dabp
-func dateiName(alertUID, channel string, subChID int) string {
-	return fmt.Sprintf("%s-%s-%d%s", alertUID, sicher(channel), subChID, Endung)
+func codecVon(name string) string {
+	switch {
+	case strings.HasSuffix(name, EndungRoh):
+		return CodecRoh
+	case strings.HasSuffix(name, EndungMp3):
+		return CodecMp3
+	default:
+		return ""
+	}
 }
 
 func zerlegeName(name string) (uid, channel string, subch int, ok bool) {
-	rumpf := strings.TrimSuffix(name, Endung)
+	rumpf := name
+	for _, endung := range []string{EndungRoh, EndungMp3} {
+		rumpf = strings.TrimSuffix(rumpf, endung)
+	}
 	teile := strings.Split(rumpf, "-")
 	if len(teile) < 3 {
 		return "", "", 0, false
@@ -342,7 +489,7 @@ func zerlegeName(name string) (uid, channel string, subch int, ok bool) {
 }
 
 // sicher entfernt aus einem Kanalnamen alles, was in einem Dateinamen nichts
-// zu suchen hat.
+// zu suchen hat. asamon-rx tut in sicherFuerDateinamen() dasselbe.
 func sicher(s string) string {
 	var b strings.Builder
 	for _, r := range s {
@@ -357,24 +504,4 @@ func sicher(s string) string {
 		return "x"
 	}
 	return b.String()
-}
-
-func dateiSumme(pfad string) (string, error) {
-	f, err := os.Open(pfad)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-	h := sha256.New()
-	buf := make([]byte, 64*1024)
-	for {
-		n, err := f.Read(buf)
-		if n > 0 {
-			h.Write(buf[:n])
-		}
-		if err != nil {
-			break
-		}
-	}
-	return hex.EncodeToString(h.Sum(nil)), nil
 }

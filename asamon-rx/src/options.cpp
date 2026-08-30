@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "options.h"
+
+#include "platform.h"
 #include "version.h"
 
 #include <cstring>
@@ -21,11 +23,17 @@ const char* kUsage =
     "  --gain auto|<index>    Vorgabe: auto\n"
     "  --queue-size <n>       Tiefe der Ausgabe-Warteschlange (Vorgabe: 4096)\n"
     "  --rec-max-seconds <n>  Notbremse fuer REC (Vorgabe: 600, 0 = aus)\n"
+    "  --audio-out <pfad>     Ablageordner der Mitschnitte (Vorgabe: der Ort,\n"
+    "                         den auch asamon-node ohne paths: annimmt)\n"
+    "  --mp3-bitrate <n>      MP3 in kbit/s (Vorgabe: 64, 0 = keine MP3)\n"
     "  --log-level <stufe>    error|warn|info|debug (Vorgabe: info)\n"
     "  --version\n"
     "  --help\n"
     "\n"
-    "Records gehen nach stdout, Logs nach stderr. Immer, ohne Ausnahme.\n";
+    "Records gehen nach stdout, Logs nach stderr. Immer, ohne Ausnahme.\n"
+    "Mitschnitte gehen weder noch: REC schreibt sie als <name>.dabp und\n"
+    "<name>.mp3 in den Ablageordner; erst der abschliessende aud-Record\n"
+    "nennt sie, mit Groesse und SHA-256.\n";
 
 bool parseLogLevel(const std::string& s, LogLevel& out)
 {
@@ -117,6 +125,20 @@ bool parseOptions(int argc, char** argv, Options& out, bool& exitRequested)
                 return false;
             }
         }
+        else if (arg == "--audio-out") {
+            if (!takeValue(argc, argv, i, "--audio-out", out.audioOut)) return false;
+        }
+        else if (arg == "--mp3-bitrate") {
+            if (!takeValue(argc, argv, i, "--mp3-bitrate", value)) return false;
+            try {
+                const long n = std::stol(value);
+                if (n != 0 && (n < 8 || n > 320)) throw std::out_of_range("Bereich");
+                out.mp3Bitrate = static_cast<int>(n);
+            } catch (const std::exception&) {
+                std::cerr << "asamon-rx: --mp3-bitrate braucht 0 oder 8..320\n";
+                return false;
+            }
+        }
         else if (arg == "--log-level") {
             if (!takeValue(argc, argv, i, "--log-level", value)) return false;
             if (!parseLogLevel(value, out.logLevel)) {
@@ -139,6 +161,11 @@ bool parseOptions(int argc, char** argv, Options& out, bool& exitRequested)
         std::cerr << "asamon-rx: --device rawfile braucht --iq-file\n";
         return false;
     }
+    // Leer heisst "nicht gesetzt", nicht "aus": Ohne --audio-out gilt der Ort,
+    // den auch asamon-node ohne paths:-Abschnitt annimmt. Angelegt wird er
+    // erst beim ersten REC — ein Empfangsprozess, der nie aufnimmt, soll
+    // nichts hinterlassen.
+    if (out.audioOut.empty()) out.audioOut = defaultAudioDir();
     return true;
 }
 

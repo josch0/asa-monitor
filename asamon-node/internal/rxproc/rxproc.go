@@ -80,6 +80,10 @@ type Konfig struct {
 	// asamon-rx an systemd band und unter Windows ohnehin nichts tat. Die
 	// Erkennung wandert damit hierher, wo sie auf jeder Plattform greift.
 	StilleFrist time.Duration
+	// AudioOut ist der Ablageordner der Mitschnitte. Seit dem 30.08.2026
+	// schreibt asamon-rx sie selbst dorthin und meldet sie nur noch; der
+	// Knoten lädt sie von dort hoch und räumt sie auf.
+	AudioOut string
 	// VorabArgumente stehen vor den erzeugten Optionen. Nur für Tests, damit
 	// dort fake-rx mit --serve und --file betrieben werden kann.
 	VorabArgumente []string
@@ -173,6 +177,9 @@ func (p *Prozess) Argumente() []string {
 	}
 	if p.k.IQFile != "" {
 		args = append(args, "--iq-file", p.k.IQFile)
+	}
+	if p.k.AudioOut != "" {
+		args = append(args, "--audio-out", p.k.AudioOut)
 	}
 	if p.k.LogLevel != "" {
 		args = append(args, "--log-level", p.k.LogLevel)

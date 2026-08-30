@@ -122,10 +122,51 @@ struct AsaPayload {
     uint8_t  rawLen = 0;
 };
 
+// Eine geschriebene Datei einer Aufnahme.
+struct AudFile {
+    std::string name;    // Dateiname ohne Verzeichnis
+    std::string codec;   // "dabp" (roher Subchannel-Bitstrom) | "mp3"
+    uint64_t    bytes = 0;
+    std::string sha256;  // hex, klein geschrieben
+};
+
+// Abschluss einer Aufnahme: genau ein Record, nachdem STOP gelaufen und jede
+// Datei geschlossen und umbenannt ist.
+//
+// Bis zum 30.08.2026 trug dieser Typ stattdessen den Subchannel-Bitstrom
+// selbst, base64-kodiert, in Stuecken zu 4 kB. Der Weg ueber die Platte spart
+// ein Drittel Uebertragung, macht den teuersten Pfad im Record-Leser des
+// Knotens gegenstandslos — und vor allem kann Audio nun nicht mehr im
+// Warteschlangenueberlauf verworfen werden, was bisher ein Loch mitten in der
+// Aufnahme bedeutete. Der Preis: Der Strom allein ist kein vollstaendiges
+// Archiv mehr, ein Mitschnitt besteht aus Strom **und** Ordner.
 struct AudPayload {
-    uint8_t  subChId = 0;
-    uint64_t chunk   = 0;
-    std::vector<uint8_t> data;  // roher Subchannel-Bitstrom, nicht dekodiertes Audio
+    uint8_t     subChId = 0;
+    std::string alertUid;    // aus "REC <subChId> <alert_uid>"; leer, wenn keine kam
+    std::string dir;         // Ablageordner, wie er auf der Platte steht
+    std::string startedTs;   // RFC 3339, Beginn der Aufnahme
+    double      seconds = 0.0;
+    // true, wenn --rec-max-seconds die Notbremse gezogen hat. Der Knoten kann
+    // die Aufnahme dann als unvollstaendig kennzeichnen, statt zu raten.
+    bool        truncated = false;
+
+    // Erst mit dem ersten dekodierten Audio bekannt.
+    bool        hasAudio = false;
+    int         sampleRate = 0;
+    int         channels = 0;
+    std::string mode;        // welle.ios Formatzusammenfassung, z. B. "HE-AACv2"
+    int         mp3Bitrate = 0;
+
+    // Was welle.io waehrend der Aufnahme an Fehlern gemeldet hat. Ohne diese
+    // Zahlen laesst sich eine stockende Aufnahme nicht von einer stillen
+    // Meldung unterscheiden.
+    uint64_t    frameErrors = 0;
+    uint64_t    rsErrors = 0;        // Rueckrufe mit unkorrigierbaren Fehlern
+    uint64_t    rsCorrected = 0;     // Summe der korrigierten Fehler
+    uint64_t    aacErrors = 0;
+
+    std::vector<AudFile> files;
+    std::string error;       // leer, wenn alles glattging
 };
 
 using RecordPayload =

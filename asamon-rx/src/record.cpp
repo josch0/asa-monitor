@@ -220,8 +220,49 @@ void serializeAsa(std::string& out, const AsaPayload& p)
 void serializeAud(std::string& out, const AudPayload& p)
 {
     appendKeyUint(out, "subch_id", p.subChId);
-    appendKeyUint(out, "chunk", p.chunk);
-    appendKeyString(out, "data", toBase64(p.data.data(), p.data.size()));
+    if (!p.alertUid.empty()) appendKeyString(out, "alert_uid", p.alertUid);
+    appendKeyString(out, "dir", p.dir);
+    appendKeyString(out, "started", p.startedTs);
+
+    // Zwei Nachkommastellen: Der Knoten vergleicht die Dauer mit seinen
+    // eigenen Fristen, Millisekunden waeren dort Scheingenauigkeit.
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "%.2f", p.seconds);
+    out += ",\"seconds\":";
+    out += buf;
+
+    appendKeyBool(out, "truncated", p.truncated);
+
+    if (p.hasAudio) {
+        appendKeyInt(out, "sample_rate", p.sampleRate);
+        appendKeyInt(out, "channels", p.channels);
+        if (!p.mode.empty()) appendKeyString(out, "mode", p.mode);
+        if (p.mp3Bitrate > 0) appendKeyInt(out, "mp3_bitrate", p.mp3Bitrate);
+    }
+
+    appendKeyUint(out, "frame_errors", p.frameErrors);
+    appendKeyUint(out, "rs_errors", p.rsErrors);
+    appendKeyUint(out, "rs_corrected", p.rsCorrected);
+    appendKeyUint(out, "aac_errors", p.aacErrors);
+
+    if (!p.error.empty()) appendKeyString(out, "error", p.error);
+
+    out += ",\"files\":[";
+    bool erste = true;
+    for (const AudFile& f : p.files) {
+        if (!erste) out += ',';
+        erste = false;
+        out += "{\"name\":\"";
+        out += jsonEscape(f.name);
+        out += "\",\"codec\":\"";
+        out += jsonEscape(f.codec);
+        out += "\",\"bytes\":";
+        appendUint(out, f.bytes);
+        out += ",\"sha256\":\"";
+        out += jsonEscape(f.sha256);
+        out += "\"}";
+    }
+    out += ']';
 }
 
 }  // namespace

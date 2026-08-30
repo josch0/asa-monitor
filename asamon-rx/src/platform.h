@@ -31,6 +31,18 @@ constexpr long kReadTimeout = 0;   // Zeitscheibe abgelaufen, nichts da
 constexpr long kReadClosed = -1;   // Gegenstelle weg — regulaeres Ende
 constexpr long kReadFailed = -2;   // Fehler; `error` ist gesetzt
 
+// Vorgabe fuer --audio-out.
+//
+// Sie folgt dem, was asamon-node ohne paths:-Abschnitt annimmt, damit Knoten
+// und Kind ohne Absprache denselben Ordner meinen:
+//
+//   Unix     /var/lib/asamon/audio
+//   Windows  %ProgramData%\asamon\state\audio
+//
+// Wer den Ordner verlegt, gibt ihn beiden Programmen mit — dem Knoten ueber
+// paths.state_dir, dem Kind ueber --audio-out.
+std::string defaultAudioDir();
+
 // Setzt das Flag, wenn das Betriebssystem den Abbruch verlangt.
 //
 // Unix: SIGINT und SIGTERM; zusaetzlich wird SIGPIPE ignoriert, damit ein

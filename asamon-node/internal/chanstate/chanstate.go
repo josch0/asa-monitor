@@ -15,14 +15,16 @@
 package chanstate
 
 import (
-	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/josch0/asa-monitor/asamon-node/internal/audio"
 	"github.com/josch0/asa-monitor/asamon-node/internal/hashes"
 	"github.com/josch0/asa-monitor/asamon-node/internal/loc"
 	"github.com/josch0/asa-monitor/asamon-node/internal/record"
@@ -47,10 +49,14 @@ type Konfig struct {
 }
 
 // Audiosenke nimmt die Mitschnitte entgegen. In Tests darf sie fehlen.
+//
+// Geschrieben werden die Dateien seit dem 30.08.2026 von asamon-rx; hierher
+// kommt nur noch, was es am Ende meldet. Deshalb Uebernimm() statt Schreibe():
+// keine Bytes, keine Stücknummern, keine Lücken.
 type Audiosenke interface {
 	Beginne(alertUID, channel string, subChID int, start time.Time, bitrate int)
-	Schreibe(alertUID string, chunk int, daten []byte)
 	Beende(alertUID string, abgeschnitten bool)
+	Uebernimm(alertUID string, u audio.Uebernahme)
 	Stand(alertUID string) *report.Audio
 }
 
@@ -416,20 +422,113 @@ func (c *Kanal) verarbeiteAsa(rec record.Record) {
 	c.verarbeiteAlertInstanz(a, ensSek)
 }
 
+// verarbeiteAud übernimmt eine abgeschlossene Aufnahme.
+//
+// Der Record trägt die alert_uid selbst, weil der Knoten sie beim REC
+// mitgegeben hat — sie ist die verlässliche Zuordnung. Fehlt sie (ein
+// asamon-rx, das ohne uid gestartet wurde), bleibt der Subchannel als Notnagel.
 func (c *Kanal) verarbeiteAud(a *record.Aud) {
-	ziel := c.alertMitLaufendemAudio(a.SubChID)
+	// Den verfolgten Alert suchen — über die uid, die der Knoten beim REC
+	// mitgegeben hat, sonst über den Subchannel.
+	var ziel *verfolgterAlert
+	for _, al := range c.alerts {
+		if a.AlertUID != "" && al.uid == a.AlertUID {
+			ziel = al
+			break
+		}
+	}
 	if ziel == nil {
-		c.melde("aud-Record für Subchannel %d ohne laufenden Mitschnitt", a.SubChID)
+		ziel = c.alertMitAufnahme(a.SubChID)
+	}
+	if ziel != nil {
+		ziel.audioGemeldet = true
+		// Der Alert war zu diesem Zeitpunkt längst mit closed: true gemeldet.
+		// Damit die Dateien überhaupt in einen Datensatz kommen, muss er noch
+		// einmal hinaus — danach räumt ihn raeumeAlertsAuf() ab.
+		if ziel.gemeldet {
+			ziel.gemeldet = false
+			if c.s.Wecke != nil {
+				c.s.Wecke("audio")
+			}
+		}
+	}
+
+	uid := a.AlertUID
+	if uid == "" {
+		// Der Record kommt nach dem STOP, ein *laufendes* Audio gibt es zu
+		// diesem Zeitpunkt also nie — gesucht wurde oben der jüngste Alert,
+		// der auf diesem Subchannel aufgenommen hat.
+		if ziel != nil {
+			uid = ziel.uid
+		} else if len(a.Files) > 0 {
+			// Auch das kann fehlschlagen — etwa, wenn der Alert längst
+			// abgeschlossen und aus der Verfolgung genommen wurde. Dann ist
+			// der Dateiname die beste Kennung, die es gibt: Eine fertige
+			// Aufnahme wegzuwerfen wäre der schlechtere Tausch.
+			uid = strings.TrimSuffix(a.Files[0].Name, filepath.Ext(a.Files[0].Name))
+			c.melde("aud-Record für Subchannel %d ohne alert_uid und ohne verfolgte Aufnahme; abgelegt als %q", a.SubChID, uid)
+		} else {
+			c.melde("aud-Record für Subchannel %d ohne alert_uid und ohne Datei", a.SubChID)
+			return
+		}
+	}
+	if a.Error != "" {
+		c.melde("asamon-rx meldet zum Mitschnitt %s: %s", uid, a.Error)
+	}
+	if c.s.Audio == nil {
 		return
 	}
-	daten, err := base64.StdEncoding.DecodeString(a.Data)
+
+	u := audio.Uebernahme{
+		Channel:     c.k.Channel,
+		SubChID:     a.SubChID,
+		Start:       zeitAus(a.Started),
+		Seconds:     a.Seconds,
+		Truncated:   a.Truncated,
+		SampleRate:  a.SampleRate,
+		Channels:    a.Channels,
+		Mode:        a.Mode,
+		FrameErrors: a.FrameErrors,
+		RsErrors:    a.RsErrors,
+		RsCorrected: a.RsCorrected,
+		AacErrors:   a.AacErrors,
+		Fehler:      a.Error,
+	}
+	for _, f := range a.Files {
+		// Ein Dateiname aus fremdem Prozess gehört geprüft, bevor er zu einem
+		// Pfad wird: Der Knoten öffnet die Datei später zum Hochladen.
+		if !nameIstHarmlos(f.Name) {
+			c.melde("aud-Record nennt einen unbrauchbaren Dateinamen %q", f.Name)
+			continue
+		}
+		u.Dateien = append(u.Dateien, audio.Datei{
+			Name: f.Name, Codec: f.Codec, Bytes: f.Bytes, Sha256: f.Sha256,
+		})
+	}
+	c.s.Audio.Uebernimm(uid, u)
+}
+
+// zeitAus liest den Zeitstempel aus dem Record. Eine unlesbare Angabe ist kein
+// Grund, die Aufnahme zu verwerfen — dann gilt eben, was der Knoten selbst
+// weiß.
+func zeitAus(s string) time.Time {
+	if s == "" {
+		return time.Time{}
+	}
+	t, err := time.Parse(time.RFC3339Nano, s)
 	if err != nil {
-		c.melde("aud-Record %d ist kein gültiges Base64: %v", a.Chunk, err)
-		return
+		return time.Time{}
 	}
-	if c.s.Audio != nil {
-		c.s.Audio.Schreibe(ziel.uid, a.Chunk, daten)
+	return t.UTC()
+}
+
+// nameIstHarmlos lässt nur einfache Dateinamen durch — kein Verzeichnisanteil,
+// kein Aufstieg, nichts Leeres.
+func nameIstHarmlos(name string) bool {
+	if name == "" || name == "." || name == ".." || len(name) > 128 {
+		return false
 	}
+	return !strings.ContainsAny(name, `/\`)
 }
 
 func (c *Kanal) alertMitLaufendemAudio(subChID int) *verfolgterAlert {
@@ -439,6 +538,22 @@ func (c *Kanal) alertMitLaufendemAudio(subChID int) *verfolgterAlert {
 		}
 	}
 	return nil
+}
+
+// alertMitAufnahme findet den jüngsten Alert, der auf diesem Subchannel
+// aufgenommen hat — laufend oder abgeschlossen. Nur für den Fall gedacht, dass
+// der aud-Record keine alert_uid trägt.
+func (c *Kanal) alertMitAufnahme(subChID int) *verfolgterAlert {
+	var jung *verfolgterAlert
+	for _, a := range c.alerts {
+		if a.audioBegonnen.IsZero() || !a.subChBekannt || a.subChID != subChID {
+			continue
+		}
+		if jung == nil || a.audioBegonnen.After(jung.audioBegonnen) {
+			jung = a
+		}
+	}
+	return jung
 }
 
 // melde hält eine Auffälligkeit fest. Auffälligkeiten sind keine Fehler: Ein

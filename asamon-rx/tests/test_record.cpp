@@ -255,16 +255,23 @@ void testAudio()
 {
     AudPayload payload;
     payload.subChId = 7;
-    payload.chunk = 12;
-    payload.data = {0x00, 0x01, 0x02, 0x03, 0x04};
+    payload.dir = "/var/lib/asamon/audio";
+    payload.startedTs = "2026-08-30T12:14:55.000000000Z";
+    payload.seconds = 12.5;
+    payload.files.push_back({"20260830T121455Z-5C-7.dabp", "dabp", 76800,
+                             "0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0"});
 
     Record record;
     record.kind = RecordKind::Aud;
     record.payload = payload;
 
     const std::string line = serialize(record);
-    check(contains(line, "\"chunk\":12"), "aud: Stuecknummer");
-    check(contains(line, "\"data\":\"AAECAwQ=\""), "aud: Base64");
+    check(contains(line, "\"subch_id\":7"), "aud: Subchannel");
+    check(contains(line, "\"seconds\":12.50"), "aud: Dauer mit zwei Stellen");
+    check(contains(line, "\"name\":\"20260830T121455Z-5C-7.dabp\""), "aud: Dateiname");
+    check(contains(line, "\"bytes\":76800"), "aud: Groesse");
+    // Ohne alert_uid faellt das Feld ganz weg, statt leer dazustehen.
+    check(!contains(line, "\"alert_uid\""), "aud: keine leere alert_uid");
 }
 
 void testEncoding()

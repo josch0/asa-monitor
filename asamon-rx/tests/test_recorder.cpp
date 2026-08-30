@@ -1,26 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
-// Der Datenpfad des Recorders, ohne Empfaenger und ohne Funk: rohe MSC-Bytes
-// hinein, fertige aud-Records heraus.
+// Der Datenpfad des Mitschnitts, ohne Empfaenger und ohne Funk: rohe MSC-Bytes
+// und dekodiertes PCM hinein, fertige Dateien und ein Abschlussrecord heraus.
 //
-// Bis zum 27.08.2026 lief dieser Weg ueber eine benannte Leitung, und der Test
-// musste eine FIFO anlegen, einen Schreiber starten und die Reihenfolge
-// beider abpassen. Seit Patch 3 des welle.io-Forks ist es ein Rueckruf — der
-// Test ruft ihn jetzt einfach auf.
+// Der Test hat schon zwei Umbauten ueberlebt und pruefte jedes Mal dasselbe:
+// dass ankommt, was hineingegeben wurde. Bis zum 27.08.2026 lag dazwischen
+// eine FIFO — der Test musste sie anlegen, einen Schreiber starten und die
+// Reihenfolge abpassen. Seit Patch 3 ist es ein Rueckruf. Seit dem 30.08.2026
+// liegt am Ende eine Datei statt einer Kette von aud-Records.
 //
 // Gerufen wird ueber eine Referenz auf ProgrammeHandlerInterface, also genau
-// so, wie welle.io es in decoder_adapter.cpp tut (`myInterface.onMscData(...)`).
-// Damit prueft der Test denselben Weg wie der Betrieb — und nebenbei, dass die
-// Signatur wirklich ueberschreibt.
+// so, wie welle.io es in decoder_adapter.cpp tut. Damit prueft der Test
+// denselben Weg wie der Betrieb — und nebenbei, dass die Signaturen wirklich
+// ueberschreiben.
 
+#include "mp3encoder.h"
 #include "record.h"
 #include "recorder.h"
-#include "tempfile.h"
-#include "writer.h"
+#include "sha256.h"
 
 #include "radio-controller.h"
 
 #include <cstdio>
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -39,176 +41,257 @@ void check(bool condition, const std::string& what)
     }
 }
 
-std::vector<std::string> linesWrittenTo(std::FILE* file)
-{
-    std::vector<std::string> lines;
-    std::rewind(file);
-    std::string current;
-    int ch;
-    while ((ch = std::fgetc(file)) != EOF) {
-        if (ch == '\n') {
-            lines.push_back(current);
-            current.clear();
-        }
-        else {
-            current += static_cast<char>(ch);
-        }
-    }
-    if (!current.empty()) lines.push_back(current);
-    return lines;
-}
-
-bool contains(const std::string& haystack, const std::string& needle)
-{
-    return haystack.find(needle) != std::string::npos;
-}
-
-// Der Inhalt des data-Feldes einer Recordzeile, ohne Anfuehrungszeichen.
-std::string dataFieldOf(const std::string& line)
-{
-    const std::string key = "\"data\":\"";
-    const auto begin = line.find(key);
-    if (begin == std::string::npos) return std::string();
-    const auto from = begin + key.size();
-    const auto end = line.find('"', from);
-    if (end == std::string::npos) return std::string();
-    return line.substr(from, end - from);
-}
-
-// Ein DAB-Rahmen bei 32 kbit/s: 24 * 32 / 8 Byte. Genau diese Groesse liefert
-// welle.io je Aufruf fuer den Subchannel, mit dem "ASA DE" auf 5C geplant ist.
-constexpr std::size_t kFrameBytes = 96;
-
-// Eine Aufnahme aufsetzen: Writer auf eine temporaere Datei, Senke daneben.
-struct Fixture {
-    asamon::test::TempFile temp;
-    Writer writer;
-    MscSink sink;
-
-    explicit Fixture(const char* name, std::uint8_t subChId = 7)
-        : temp(name), writer(temp.get(), 256), sink(writer, subChId)
+// Ein eigenes Verzeichnis je Lauf, das am Ende wieder verschwindet.
+class TempDir {
+public:
+    TempDir()
     {
-        writer.start();
+        std::error_code ec;
+        pfad_ = std::filesystem::temp_directory_path(ec) /
+                ("asamon-rx-test-audio-" + std::to_string(std::rand()));
+        std::filesystem::create_directories(pfad_, ec);
     }
-
-    // Der Weg, den welle.io geht: ueber die Basisklasse.
-    void feed(const std::vector<std::uint8_t>& bytes)
+    ~TempDir()
     {
-        ProgrammeHandlerInterface& handler = sink;
-        handler.onMscData(bytes.data(), bytes.size());
+        std::error_code ec;
+        std::filesystem::remove_all(pfad_, ec);
     }
+    std::string str() const { return pfad_.string(); }
 
-    // Was Recorder::teardown() im Betrieb tut: erst den Rest einreihen, dann
-    // den Ausgabethread beenden. Ohne das flush() bliebe ein angefangenes
-    // Stueck im Puffer liegen.
-    std::vector<std::string> finish()
-    {
-        sink.flush();
-        writer.stop();
-        return linesWrittenTo(temp.get());
-    }
+private:
+    std::filesystem::path pfad_;
 };
 
-// Ein Rahmen voller wiedererkennbarer Bytes.
-std::vector<std::uint8_t> frame(std::uint8_t fill)
+std::vector<std::uint8_t> dateiInhalt(const std::string& pfad)
 {
-    return std::vector<std::uint8_t>(kFrameBytes, fill);
-}
-
-// Unter der Stueckgroesse entsteht noch kein Record: der Rueckruf kommt je
-// Rahmen herein, ein Record je Rahmen waere ein Vielfaches an Aufwand im
-// Strom. Gesammelt wird bis kChunkBytes.
-void testShortDataIsBuffered()
-{
-    Fixture f("test_recorder-1");
-    if (f.temp.get() == nullptr) { check(false, "temporaere Datei angelegt"); return; }
-
-    for (int i = 0; i < 10; ++i) f.feed(frame(0xA5));  // 960 Byte
-    check(linesWrittenTo(f.temp.get()).empty(), "unter 4096 Byte noch kein Record");
-
-    const auto lines = f.finish();
-    check(lines.size() == 1, "flush() gibt den Rest heraus");
-}
-
-// Ab kChunkBytes wird eingereiht, und zwar in Stuecken genau dieser Groesse.
-// 43 Rahmen sind 4128 Byte: ein voller Record, 32 Byte bleiben liegen.
-void testChunkBoundary()
-{
-    Fixture f("test_recorder-2");
-    if (f.temp.get() == nullptr) { check(false, "temporaere Datei angelegt"); return; }
-
-    for (int i = 0; i < 43; ++i) f.feed(frame(0x5A));
-
-    // Der Writer laeuft nebenher; erst nach stop() steht die Datei fest.
-    const auto lines = f.finish();
-    check(lines.size() == 2, "ein volles Stueck und der Rest aus flush()");
-    if (lines.size() == 2) {
-        check(contains(lines[0], "\"type\":\"aud\""), "aud-Record erzeugt");
-        check(contains(lines[0], "\"subch_id\":7"), "SubChId uebernommen");
-        check(contains(lines[0], "\"chunk\":0"), "Stuecknummer beginnt bei 0");
-        check(contains(lines[1], "\"chunk\":1"), "Stuecknummer zaehlt hoch");
-
-        // Base64 von 4096 Byte sind 5464 Zeichen, von 32 Byte 44.
-        check(dataFieldOf(lines[0]).size() == 5464, "erstes Stueck ist 4096 Byte");
-        check(dataFieldOf(lines[1]).size() == 44, "zweites Stueck ist der Rest");
+    std::vector<std::uint8_t> out;
+    std::FILE* f = std::fopen(pfad.c_str(), "rb");
+    if (f == nullptr) return out;
+    std::uint8_t puffer[4096];
+    std::size_t n;
+    while ((n = std::fread(puffer, 1, sizeof(puffer), f)) > 0) {
+        out.insert(out.end(), puffer, puffer + n);
     }
+    std::fclose(f);
+    return out;
 }
 
-// Die Nutzdaten muessen unveraendert durchgehen — das ist der Kern des
-// Mitschnitts. "MSC-Bitstrom" ist derselbe Probetext, den schon der Test
-// gegen die FIFO benutzt hat.
-void testPayloadUnchanged()
+bool existiert(const std::string& pfad)
 {
-    Fixture f("test_recorder-3", 12);
-    if (f.temp.get() == nullptr) { check(false, "temporaere Datei angelegt"); return; }
+    std::error_code ec;
+    return std::filesystem::exists(pfad, ec);
+}
 
-    const std::string text = "MSC-Bitstrom";
-    f.feed(std::vector<std::uint8_t>(text.begin(), text.end()));
+Options optionenFuer(const std::string& verzeichnis)
+{
+    Options o;
+    o.channel  = "5C";
+    o.logLevel = LogLevel::Error;   // Warnungen im Test nicht ausgeben
+    o.audioOut = verzeichnis;
+    o.mp3Bitrate = 64;
+    return o;
+}
 
-    const auto lines = f.finish();
-    check(lines.size() == 1, "ein Record");
-    if (!lines.empty()) {
-        check(contains(lines[0], "\"subch_id\":12"), "SubChId uebernommen");
-        check(dataFieldOf(lines[0]) == "TVNDLUJpdHN0cm9t", "Nutzdaten unveraendert");
+// --- die Namensgebung -------------------------------------------------------
+
+void testNamen()
+{
+    check(sicherFuerDateinamen("7c2dabcd-1234") == "7c2dabcd-1234",
+          "eine gewoehnliche uid bleibt unveraendert");
+    check(sicherFuerDateinamen("../../etc/passwd") == ".._.._etc_passwd",
+          "Pfadtrenner koennen nicht durchschlagen");
+    check(sicherFuerDateinamen("..").empty(),
+          "ein Name aus lauter Punkten wird verworfen");
+    check(sicherFuerDateinamen(std::string(200, 'x')).size() == 64,
+          "uebermaessig lange uids werden gekuerzt");
+
+    check(aufnahmeBasisName("uid1", "5C", 13, "2026-08-30T12:14:55.123Z") ==
+              "uid1-5C-13",
+          "mit uid gilt das Schema von asamon-node");
+    check(aufnahmeBasisName("", "5C", 13, "2026-08-30T12:14:55.123Z") ==
+              "20260830T121455Z-5C-13",
+          "ohne uid tritt der Startzeitpunkt an ihre Stelle (bekommen: " +
+              aufnahmeBasisName("", "5C", 13, "2026-08-30T12:14:55.123Z") + ")");
+}
+
+// --- der rohe Strom ---------------------------------------------------------
+
+void testRohStrom()
+{
+    TempDir dir;
+    const Options options = optionenFuer(dir.str());
+
+    AudioSink sink(options, 13, "uid1", "5C", Clock::now());
+    std::string fehler;
+    check(sink.oeffne(fehler), "oeffne() gelingt (" + fehler + ")");
+
+    const std::string teilPfad = dir.str() + "/uid1-5C-13.dabp.part";
+    check(existiert(teilPfad), "waehrend der Aufnahme heisst die Datei .part");
+
+    // Ueber die Basisklasse rufen — so macht es welle.io auch.
+    ProgrammeHandlerInterface& handler = sink;
+    std::vector<std::uint8_t> erwartet;
+    for (int rahmen = 0; rahmen < 50; ++rahmen) {
+        std::vector<std::uint8_t> block(96);
+        for (std::size_t i = 0; i < block.size(); ++i) {
+            block[i] = static_cast<std::uint8_t>((rahmen * 7 + i) & 0xff);
+        }
+        handler.onMscData(block.data(), block.size());
+        erwartet.insert(erwartet.end(), block.begin(), block.end());
     }
+
+    // Fehlerzaehler, wie welle.io sie liefert: Deltas je Superframe.
+    handler.onFrameErrors(2);
+    handler.onFrameErrors(1);
+    handler.onRsErrors(true, 5);
+    handler.onRsErrors(false, 3);
+    handler.onAacErrors(4);
+
+    const AudPayload p = sink.abschluss(false, Clock::now());
+
+    const std::string zielPfad = dir.str() + "/uid1-5C-13.dabp";
+    check(!existiert(teilPfad), "nach dem Abschluss gibt es keine .part mehr");
+    check(existiert(zielPfad), "die fertige Datei traegt den endgueltigen Namen");
+
+    const std::vector<std::uint8_t> inhalt = dateiInhalt(zielPfad);
+    check(inhalt == erwartet, "jedes Byte steht unveraendert in der Datei");
+
+    check(p.subChId == 13, "Record nennt den Subchannel");
+    check(p.alertUid == "uid1", "Record nennt die alert_uid");
+    check(p.dir == dir.str(), "Record nennt den Ablageordner");
+    check(!p.truncated, "ohne Notbremse ist truncated falsch");
+    check(p.frameErrors == 3, "Rahmenfehler werden aufsummiert");
+    check(p.rsErrors == 1, "nur unkorrigierbare RS-Faelle zaehlen als Fehler");
+    check(p.rsCorrected == 8, "korrigierte RS-Fehler werden aufsummiert");
+    check(p.aacErrors == 4, "AAC-Fehler werden aufsummiert");
+
+    bool rohGefunden = false;
+    for (const AudFile& f : p.files) {
+        if (f.codec != "dabp") continue;
+        rohGefunden = true;
+        check(f.name == "uid1-5C-13.dabp", "Dateiname im Record");
+        check(f.bytes == erwartet.size(),
+              "Groesse im Record stimmt mit der Datei ueberein");
+        check(f.sha256 == sha256Hex(erwartet.data(), erwartet.size()),
+              "SHA-256 im Record stimmt mit dem Inhalt ueberein");
+    }
+    check(rohGefunden, "der Record nennt die .dabp-Datei");
 }
 
-// Ohne Daten kein Record: ein flush() auf leerem Puffer muss still bleiben.
-// Sonst stuende nach jedem STOP ein leerer aud-Record im Strom.
-void testFlushWithoutDataIsSilent()
-{
-    Fixture f("test_recorder-4");
-    if (f.temp.get() == nullptr) { check(false, "temporaere Datei angelegt"); return; }
+// --- die MP3 ----------------------------------------------------------------
 
-    const auto lines = f.finish();
-    check(lines.empty(), "ohne Daten auch keine Records");
+void testMp3()
+{
+    TempDir dir;
+    const Options options = optionenFuer(dir.str());
+
+    AudioSink sink(options, 13, "uid2", "5C", Clock::now());
+    std::string fehler;
+    check(sink.oeffne(fehler), "oeffne() gelingt (" + fehler + ")");
+
+    ProgrammeHandlerInterface& handler = sink;
+    // welle.io liefert stets zwei Kanaele, auch bei Mono-Programmen
+    // (decoder_adapter.cpp, "upmix to stereo"). 20 Bloecke zu 1152 Rahmen
+    // sind knapp eine halbe Sekunde bei 48 kHz.
+    for (int block = 0; block < 20; ++block) {
+        std::vector<std::int16_t> pcm(1152 * 2);
+        for (std::size_t i = 0; i < pcm.size() / 2; ++i) {
+            const auto wert = static_cast<std::int16_t>(
+                8000 * ((block * 1152 + i) % 100 < 50 ? 1 : -1));
+            pcm[i * 2]     = wert;
+            pcm[i * 2 + 1] = wert;
+        }
+        handler.onNewAudio(std::move(pcm), 48000, "HE-AACv2");
+    }
+
+    const AudPayload p = sink.abschluss(true, Clock::now());
+    check(p.truncated, "die Notbremse steht im Record");
+    check(p.hasAudio, "Audioparameter sind bekannt, sobald PCM kam");
+    check(p.sampleRate == 48000, "Abtastrate im Record");
+    check(p.channels == 2, "Kanalzahl im Record");
+    check(p.mode == "HE-AACv2", "Formatzusammenfassung im Record");
+
+    if (!Mp3Encoder::verfuegbar()) {
+        check(p.files.size() == 1,
+              "ohne LAME entsteht nur die .dabp — und der Grund steht im Record");
+        check(!p.error.empty(), "der Ausfall bleibt sichtbar");
+        std::cerr << "  (ohne LAME gebaut, MP3-Pruefungen uebersprungen)\n";
+        return;
+    }
+
+    bool mp3Gefunden = false;
+    for (const AudFile& f : p.files) {
+        if (f.codec != "mp3") continue;
+        mp3Gefunden = true;
+        check(f.name == "uid2-5C-13.mp3", "MP3-Dateiname im Record");
+        check(f.bytes > 0, "die MP3 ist nicht leer");
+
+        const std::vector<std::uint8_t> inhalt = dateiInhalt(dir.str() + "/" + f.name);
+        check(inhalt.size() == f.bytes, "Groesse im Record passt zur Datei");
+        check(f.sha256 == sha256Hex(inhalt.data(), inhalt.size()),
+              "SHA-256 im Record passt zum Inhalt");
+        // Ein MPEG-Audio-Rahmen beginnt mit elf gesetzten Bits.
+        check(inhalt.size() > 2 && inhalt[0] == 0xff && (inhalt[1] & 0xe0) == 0xe0,
+              "die Datei beginnt mit einem MPEG-Rahmenkopf");
+    }
+    check(mp3Gefunden, "der Record nennt die MP3-Datei");
+    check(p.mp3Bitrate == 64, "die Bitrate steht im Record");
+    check(p.error.empty(), "kein Fehler gemeldet (" + p.error + ")");
 }
 
-// Ein Rueckruf ohne Nutzlast darf nichts anrichten. welle.io ruft so nicht,
-// aber die Senke ist oeffentlich und der Fall billig abzusichern.
-void testEmptyCallIsHarmless()
+// --- der Record, wie er auf die Leitung geht --------------------------------
+
+void testSerialisierung()
 {
-    Fixture f("test_recorder-5");
-    if (f.temp.get() == nullptr) { check(false, "temporaere Datei angelegt"); return; }
+    AudPayload p;
+    p.subChId  = 13;
+    p.alertUid = "uid3";
+    p.dir      = "/var/lib/asamon/audio";
+    p.startedTs = "2026-08-30T12:14:55.000000000Z";
+    p.seconds  = 43.75;
+    p.truncated = false;
+    p.hasAudio = true;
+    p.sampleRate = 48000;
+    p.channels = 2;
+    p.mode = "HE-AACv2";
+    p.mp3Bitrate = 64;
+    p.files.push_back({"uid3-5C-13.dabp", "dabp", 262144, std::string(64, 'a')});
+    p.files.push_back({"uid3-5C-13.mp3", "mp3", 245760, std::string(64, 'b')});
 
-    ProgrammeHandlerInterface& handler = f.sink;
-    handler.onMscData(nullptr, 0);
-    const std::uint8_t byte = 0x00;
-    handler.onMscData(&byte, 0);
+    Record rec;
+    rec.kind = RecordKind::Aud;
+    rec.seq  = 812;
+    rec.ts   = Clock::now();
+    rec.payload = p;
 
-    const auto lines = f.finish();
-    check(lines.empty(), "leerer Rueckruf erzeugt keinen Record");
+    const std::string line = serialize(rec);
+    auto enthaelt = [&line](const std::string& s) {
+        return line.find(s) != std::string::npos;
+    };
+
+    check(enthaelt("\"type\":\"aud\""), "Typ steht im Record");
+    check(enthaelt("\"subch_id\":13"), "Subchannel steht im Record");
+    check(enthaelt("\"alert_uid\":\"uid3\""), "alert_uid steht im Record");
+    check(enthaelt("\"seconds\":43.75"), "Dauer steht im Record");
+    check(enthaelt("\"truncated\":false"), "truncated steht im Record");
+    check(enthaelt("\"sample_rate\":48000"), "Abtastrate steht im Record");
+    check(enthaelt("\"mp3_bitrate\":64"), "Bitrate steht im Record");
+    check(enthaelt("\"codec\":\"dabp\""), "die .dabp ist genannt");
+    check(enthaelt("\"codec\":\"mp3\""), "die .mp3 ist genannt");
+    check(enthaelt("\"bytes\":262144"), "Groesse steht im Record");
+    check(!enthaelt("\"data\""),
+          "der Strom traegt keine Audiobytes mehr");
+    check(line.back() == '\n', "die Zeile endet mit \\n");
 }
 
 }  // namespace
 
 int main()
 {
-    testShortDataIsBuffered();
-    testChunkBoundary();
-    testPayloadUnchanged();
-    testFlushWithoutDataIsSilent();
-    testEmptyCallIsHarmless();
+    testNamen();
+    testRohStrom();
+    testMp3();
+    testSerialisierung();
 
     if (g_failures == 0) {
         std::cerr << "test_recorder: alle Pruefungen bestanden\n";

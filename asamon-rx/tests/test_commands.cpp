@@ -31,11 +31,15 @@ int main()
     options.logLevel = LogLevel::Error;   // Warnungen im Test nicht ausgeben
 
     std::vector<int> recorded;
+    std::vector<std::string> uids;
     std::vector<int> stopped;
     int quits = 0;
 
     CommandReader::Handlers handlers;
-    handlers.onRec  = [&](uint8_t id) { recorded.push_back(id); };
+    handlers.onRec  = [&](uint8_t id, const std::string& uid) {
+        recorded.push_back(id);
+        uids.push_back(uid);
+    };
     handlers.onStop = [&](uint8_t id) { stopped.push_back(id); };
     handlers.onQuit = [&] { ++quits; };
 
@@ -71,6 +75,24 @@ int main()
     check(reader.handleLine("REC 12\r"), "CRLF-Zeile wird angenommen");
     check(reader.unknownCommands() == before, "nichts davon zaehlt als unbekannt");
     check(recorded.size() == 4 && recorded.back() == 12, "auch die CRLF-Zeile wirkt");
+
+    // Die alert_uid ist freiwillig und wird unveraendert durchgereicht: Was
+    // daraus ein Dateiname werden darf, entscheidet der Recorder.
+    check(reader.handleLine("REC 13 7c2dabcd-1234"), "REC mit alert_uid angenommen");
+    check(recorded.back() == 13 && uids.back() == "7c2dabcd-1234",
+          "alert_uid kommt unveraendert an");
+    check(reader.handleLine("REC 14"), "REC ohne uid weiterhin angenommen");
+    check(uids.back().empty(), "ohne uid bleibt das Feld leer");
+    check(reader.handleLine("REC 15   uid mit Luecke"),
+          "mehrere Leerzeichen trennen nur das erste Wort ab");
+    check(uids.back() == "uid mit Luecke",
+          "der Rest der Zeile bleibt die uid (bekommen: \"" + uids.back() + "\")");
+
+    const uint64_t vorStop = reader.unknownCommands();
+    check(!reader.handleLine("STOP 13 7c2dabcd"),
+          "STOP nimmt kein zweites Argument");
+    check(reader.unknownCommands() == vorStop + 1,
+          "das zweite Argument bei STOP zaehlt als unbekannt");
 
     if (g_failures == 0) {
         std::cerr << "test_commands: alle Pruefungen bestanden\n";

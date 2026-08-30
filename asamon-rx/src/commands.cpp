@@ -81,18 +81,38 @@ bool CommandReader::handleLine(const std::string& rawLine)
     }
 
     if (verb == "REC" || verb == "STOP") {
+        // "13 7c2d-…" zerfaellt in SubChId und alert_uid. Die uid bleibt
+        // unangetastet: Was daraus ein Dateiname werden darf, entscheidet
+        // sicherFuerDateinamen() im Recorder — hier wird nichts gedeutet.
+        const size_t trenner = argument.find(' ');
+        const std::string ersterTeil =
+            trenner == std::string::npos ? argument : argument.substr(0, trenner);
+        const std::string zweiterTeil =
+            trenner == std::string::npos ? std::string()
+                                         : trim(argument.substr(trenner + 1));
+
         uint8_t subChId = 0;
-        if (!parseSubChId(argument, subChId)) {
+        if (!parseSubChId(ersterTeil, subChId)) {
             unknown_.fetch_add(1, std::memory_order_relaxed);
             logMessage(options_.logLevel, LogLevel::Warn,
-                       verb + ": \"" + argument +
+                       verb + ": \"" + ersterTeil +
                            "\" ist keine SubChId (0-63)");
             return false;
         }
         if (verb == "REC") {
-            if (handlers_.onRec) handlers_.onRec(subChId);
+            if (handlers_.onRec) handlers_.onRec(subChId, zweiterTeil);
         }
         else {
+            // STOP nimmt nur die SubChId. Ein zweites Wort waere ein
+            // Missverstaendnis zwischen den Prozessen — das gehoert gemeldet,
+            // nicht ueberlesen.
+            if (!zweiterTeil.empty()) {
+                unknown_.fetch_add(1, std::memory_order_relaxed);
+                logMessage(options_.logLevel, LogLevel::Warn,
+                           "STOP: unerwartetes zweites Argument \"" +
+                               zweiterTeil + "\"");
+                return false;
+            }
             if (handlers_.onStop) handlers_.onStop(subChId);
         }
         return true;

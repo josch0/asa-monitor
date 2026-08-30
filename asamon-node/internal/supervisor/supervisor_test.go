@@ -484,13 +484,16 @@ func TestGesamtketteAusAufzeichnung(t *testing.T) {
 		t.Fatal(err)
 	}
 	sup.kanaele[0].rx = neuRx(t, "5C", cfg.Paths.RxBinary,
-		[]string{"--serve", "--file", stromPfad("alert-audio"), "--speed", "8"})
+		[]string{"--serve", "--file", stromPfad("alert-audio"), "--speed", "16"})
 
 	ctx, ende := context.WithCancel(context.Background())
 	fertig := make(chan error, 1)
 	go func() { fertig <- sup.Run(ctx) }()
-	// Der Strom ist 60 s lang und läuft achtfach: rund 8 s.
-	time.Sleep(14 * time.Second)
+	// Der Strom ist 60 s lang und läuft sechzehnfach: rund 4 s. Der Takt war
+	// früher knapper bemessen; seit asamon-rx die Dateien selbst schreibt,
+	// kommt der aud-Record erst am **Ende** der Aufnahme (Stromsekunde 35),
+	// und der Lauf muss so weit kommen.
+	time.Sleep(16 * time.Second)
 	ende()
 	<-fertig
 

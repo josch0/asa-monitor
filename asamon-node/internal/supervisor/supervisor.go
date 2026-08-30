@@ -180,6 +180,10 @@ func (s *Supervisor) legeKanaeleAn() error {
 			LogLevel:     s.cfg.Log.Level,
 			QueueSize:    s.cfg.Limits.QueueSize,
 			StilleFrist:  time.Duration(s.cfg.Limits.RxSilenceSeconds) * time.Second,
+			// Beide Prozesse müssen denselben Ordner meinen. Die Vorgaben
+			// stimmen überein, aber nur so lange, wie niemand
+			// paths.state_dir verlegt hat — deshalb ausdrücklich mitgeben.
+			AudioOut: s.audio.Dir(),
 		}
 		if s.opt.ReplayPfad != "" {
 			pfad, err := replayDatei(s.opt.ReplayPfad, ch.Channel)
@@ -234,8 +238,10 @@ func (s *Supervisor) Run(ctx context.Context) error {
 	s.log.Info("Knoten fährt herunter")
 	rxBeenden()
 
+	// Kein SchliesseAlle() mehr: Die Dateien gehören asamon-rx, und dessen
+	// QUIT ist oben schon durch. Was es noch geschrieben hat, findet der
+	// nächste Start über den Ablageordner wieder.
 	letzter := s.baueAbschlussDatensatz()
-	s.audio.SchliesseAlle()
 	s.versendeAbschluss(abschluss, letzter)
 
 	kanaeleBeenden()

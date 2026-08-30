@@ -21,6 +21,17 @@ struct Options {
 
     // Notbremse fuer den Recorder: laeuft REC laenger, wird von selbst gestoppt.
     unsigned    recMaxSeconds = 600;
+
+    // Ablageordner der Mitschnitte. Leer heisst nicht "aus", sondern "noch
+    // nicht gesetzt": parseOptions() traegt dann die Vorgabe des Systems ein
+    // (defaultAudioDir() in platform.h), und die entspricht dem, was
+    // asamon-node ohne paths:-Abschnitt annimmt. Ein Knoten, der den Ordner
+    // verlegt, gibt ihn seinem Kind mit --audio-out weiter.
+    std::string audioOut;
+
+    // MP3-Bitrate in kbit/s. 0 schaltet die MP3 ab — der Ausweg fuer einen Bau
+    // ohne LAME; die .dabp entsteht dann trotzdem.
+    int         mp3Bitrate = 64;
 };
 
 // Wertet argv aus. Bei --help/--version wird die Ausgabe geschrieben und

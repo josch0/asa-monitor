@@ -2,9 +2,14 @@
 //
 // Zeilenkommandos auf stdin: ASCII, eine Zeile je Kommando, \n-terminiert.
 //
-//   REC <subChId>   Subchannel zuschalten und mitschneiden
-//   STOP <subChId>  Mitschnitt beenden
-//   QUIT            sauber herunterfahren
+//   REC <subChId> [alert_uid]  Subchannel zuschalten und mitschneiden
+//   STOP <subChId>             Mitschnitt beenden
+//   QUIT                       sauber herunterfahren
+//
+// Die alert_uid ist freiwillig und wird nicht gedeutet — asamon-rx kennt kein
+// ASA. Sie dient allein der Benennung: Gibt der Knoten sie mit, heissen die
+// Dateien von vornherein so, wie er sie kennt, und niemand muss hinterher
+// umbenennen. Bleibt sie aus, tritt der Startzeitpunkt an ihre Stelle.
 //
 // Unbekannte Zeilen werden gezaehlt und geloggt, nicht stillschweigend
 // verworfen.
@@ -24,7 +29,7 @@ namespace asamon {
 class CommandReader {
 public:
     struct Handlers {
-        std::function<void(uint8_t)> onRec;
+        std::function<void(uint8_t, const std::string&)> onRec;
         std::function<void(uint8_t)> onStop;
         std::function<void()>        onQuit;
     };

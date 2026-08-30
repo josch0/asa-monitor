@@ -304,14 +304,44 @@ type Rect struct {
 type Audio struct {
 	State     string `json:"state"` // none|recording|stored|uploaded|failed
 	SubChID   int    `json:"subch_id"`
-	Bytes     int64  `json:"bytes"`
+	Bytes     int64  `json:"bytes"` // Summe über alle Dateien
 	StartedAt string `json:"started_at"`
+	// Sha256 ist die Prüfsumme des rohen Bitstroms — des Belegs. Die der
+	// übrigen Dateien steht in Files.
 	Sha256    string `json:"sha256"`
 	Truncated bool   `json:"truncated"`
-	// DurationSEst ist aus der Bitrate der Komponente geschätzt, nicht gemessen.
+	// DurationSEst ist aus der Bitrate der Komponente geschätzt, nicht
+	// gemessen; sie gilt, solange die Aufnahme läuft. Sobald asamon-rx sie
+	// meldet, steht in DurationS die tatsächliche Dauer.
 	DurationSEst float64 `json:"duration_s_est"`
+	DurationS    float64 `json:"duration_s,omitempty"`
 	Gaps         int     `json:"audio_gaps"`
 	UploadedAt   string  `json:"uploaded_at,omitempty"`
+
+	// Files nennt jede Datei der Aufnahme: den rohen Bitstrom als Beleg und,
+	// wenn LAME zur Hand war, die abspielbare MP3 daneben.
+	Files []AudioDatei `json:"files,omitempty"`
+
+	// Was welle.io während der Aufnahme an Fehlern gemeldet hat. Ohne diese
+	// Zahlen lässt sich eine stockende Aufnahme nicht von einer stillen
+	// Meldung unterscheiden.
+	FrameErrors int64 `json:"frame_errors,omitempty"`
+	RsErrors    int64 `json:"rs_errors,omitempty"`
+	RsCorrected int64 `json:"rs_corrected,omitempty"`
+	AacErrors   int64 `json:"aac_errors,omitempty"`
+
+	// Wie welle.io die Quelle beschreibt.
+	SampleRate int    `json:"sample_rate,omitempty"`
+	Channels   int    `json:"channels,omitempty"`
+	Mode       string `json:"mode,omitempty"`
+}
+
+// AudioDatei ist eine einzelne Datei eines Mitschnitts.
+type AudioDatei struct {
+	Name   string `json:"name"`  // ohne Verzeichnis
+	Codec  string `json:"codec"` // "dabp" | "mp3"
+	Bytes  int64  `json:"bytes"`
+	Sha256 string `json:"sha256"`
 }
 
 // Die Werte des Feldes audio.state.

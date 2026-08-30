@@ -36,8 +36,12 @@ ohne Ausnahme.
 ```bash
 sudo apt update
 sudo apt install -y build-essential cmake git pkg-config \
-    libfftw3-dev libfaad-dev libmpg123-dev librtlsdr-dev
+    libfftw3-dev libfaad-dev libmpg123-dev librtlsdr-dev libmp3lame-dev
 ```
+
+`libmp3lame-dev` ist die einzige davon, die nicht zwingend ist: Ohne sie baut `asamon-rx`
+weiterhin, ein Mitschnitt ergibt dann aber nur die `.dabp`-Datei und keine `.mp3` daneben.
+Abschalten lässt sich das auch ausdrücklich, mit `cmake -DMP3=OFF`.
 
 ### Quellen holen
 
@@ -141,9 +145,15 @@ asamon-rx --channel 5C [Optionen]
   --gain auto|<index>    Vorgabe: auto
   --queue-size <n>       Tiefe der Ausgabe-Warteschlange (Vorgabe: 4096)
   --rec-max-seconds <n>  Notbremse für REC (Vorgabe: 600, 0 = aus)
+  --audio-out <pfad>     Ablageordner der Mitschnitte
+  --mp3-bitrate <n>      MP3 in kbit/s (Vorgabe: 64, 0 = keine MP3)
   --log-level <stufe>    error|warn|info|debug (Vorgabe: info)
   --version
 ```
+
+`--audio-out` hat eine Vorgabe und keinen Aus-Zustand: ohne Angabe gilt
+`/var/lib/asamon/audio` (Windows: `%ProgramData%\asamon\state\audio`) — derselbe Ort, den
+`asamon-node` ohne `paths:`-Abschnitt annimmt. Angelegt wird er erst beim ersten `REC`.
 
 ### Was man damit sieht
 
@@ -182,17 +192,29 @@ stillschweigend verworfen.
 
 | Kommando | Wirkung |
 |---|---|
-| `REC <subChId>` | Subchannel zuschalten, roher MSC-Strom geht als `aud`-Records raus |
-| `STOP <subChId>` | Mitschnitt beenden |
+| `REC <subChId> [alert_uid]` | Subchannel zuschalten und in den Ablageordner schreiben |
+| `STOP <subChId>` | Mitschnitt beenden — erst danach kommt der `aud`-Record |
 | `QUIT` | sauber herunterfahren |
 
-```bash
-# Subchannel 7 zwei Minuten mitschneiden
-{ echo "REC 7"; sleep 120; echo "STOP 7"; echo "QUIT"; } | asamon-rx --channel 5C > lauf.ndjson
+Die `alert_uid` ist freiwillig und wird **nicht gedeutet** — `asamon-rx` kennt kein ASA. Sie
+dient allein der Benennung: Gibt der Knoten sie mit, heißen die Dateien von vornherein
+`<alert_uid>-<kanal>-<subchid>.dabp` und `.mp3`, also so, wie er sie kennt. Bleibt sie aus,
+tritt der Startzeitpunkt an ihre Stelle (`20260830T121455Z-5C-13.dabp`).
 
-# und wieder zu Audio zusammensetzen
-jq -r 'select(.type=="aud") | .data' lauf.ndjson | base64 -d > subch7.dabplus
+```bash
+# Subchannel 13 zwei Minuten mitschneiden
+{ echo "REC 13 testlauf"; sleep 120; echo "STOP 13"; echo "QUIT"; } \
+    | asamon-rx --channel 5C --audio-out ./mitschnitte > lauf.ndjson
+
+# Was dabei entstand, steht im abschließenden aud-Record
+jq -c 'select(.type=="aud")' lauf.ndjson
+ls mitschnitte/
+# testlauf-5C-13.dabp  testlauf-5C-13.mp3
 ```
+
+Die `.mp3` ist sofort abspielbar. Die `.dabp` ist der rohe Subchannel-Bitstrom und damit der
+Beleg; `dablin` kann sie nicht lesen (es erwartet ETI), `welle-cli -c 5C -D` erzeugt zum
+Vergleich `.msc`-Dateien desselben Formats.
 
 ---
 
@@ -209,6 +231,11 @@ Vollständige Beschreibung: **[`docs/record-format.md`](docs/record-format.md)**
 Das `raw`-Feld ist nicht optional: Es gibt keine Referenzimplementierung von FIG 0/15, und die
 einzige vollständige, die existiert, liest Id- und Status-Feld vertauscht. 30 Byte je Ereignis
 sind der Preis dafür, dass man sich irren darf.
+
+**Audiobytes gehen nicht durch den Strom** (seit 30.08.2026): Ein Mitschnitt landet als Datei
+im Ablageordner, und `aud` meldet danach genau einmal, was entstanden ist — mit Größe und
+SHA-256 je Datei. Damit ist der Strom allein kein vollständiges Archiv mehr; ein Mitschnitt
+besteht aus Strom **und** Ordner.
 
 ---
 
@@ -237,7 +264,7 @@ an der Minutengrenze beginnen.
 ctest --test-dir build --output-on-failure
 ```
 
-Sechs Testprogramme, keines braucht einen SDR-Stick:
+Sieben Testprogramme, keines braucht einen SDR-Stick:
 
 | Test | Was er prüft |
 |---|---|
@@ -245,7 +272,8 @@ Sechs Testprogramme, keines braucht einen SDR-Stick:
 | `location_codes` | das Bitlayout der Location Codes gegen die Byte-Längen in TS 104 090, Tabelle A.19 — eine zweite normative Quelle |
 | `record` | Serialisierung: Struktur → JSON-Zeile |
 | `writer` | Reihenfolge, Nummerierung, Vorrangregel beim Verwerfen |
-| `recorder` | der Datenpfad des Mitschnitts: rohe MSC-Bytes hinein, `aud`-Records heraus |
+| `recorder` | der Datenpfad des Mitschnitts: MSC-Bytes und PCM hinein, `.dabp`, `.mp3` und der Abschlussrecord heraus |
+| `sha256` | die Testvektoren aus FIPS 180-4 — die Prüfsumme im `aud`-Record ist die einzige Stelle, an der ein Fehler zwischen Platte und Server auffiele |
 | `commands` | Zeilenkommandos, samt der abgelehnten |
 
 `tests/fixtures/fig0_15.fixtures` hält die erwarteten Records byteweise fest. Ändert sich der
@@ -259,7 +287,8 @@ Parser, wird das dort als Diff sichtbar — nicht nur als rote Zusicherung. Neu 
 
 Die Tests kommen ohne Stick aus — der Empfang nicht. Was bisher **nur unter Replay** geprüft
 ist und am echten Multiplex nachgezogen gehört: Ensemble-Label und Serviceliste, `REC` auf
-einen echten Subchannel (Gegenprobe mit `dablin`), und die Frage, um die es geht — kommen auf
+einen echten Subchannel (Gegenprobe mit `welle-cli -c 5C -D`: dessen `.msc` muss byteweise der
+eigenen `.dabp` entsprechen, die `.wav` daneben zeigt dasselbe Audio), und die Frage, um die es geht — kommen auf
 5C Heartbeats?
 
 Geprüft ist dagegen bereits, unter Debian mit `--device rawfile`:

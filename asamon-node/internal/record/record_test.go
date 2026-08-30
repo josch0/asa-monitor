@@ -4,7 +4,6 @@ package record
 
 import (
 	"bufio"
-	"encoding/base64"
 	"os"
 	"path/filepath"
 	"slices"
@@ -18,7 +17,11 @@ func TestJederTypWirdGelesen(t *testing.T) {
 		`{"type":"tlm","seq":1,"ts":"2026-08-26T14:03:12Z","snr":12.4,"sync":true,"signal":true,"freq_corr":{"fine":-3,"coarse":0},"fib_total":125,"fib_crc_err":2,"dropped":0,"parse_errors":0,"eid":"0x10FF","ens_time":"2026-08-26T14:03:11Z","ens_offset_min":60}`,
 		`{"type":"ens","seq":2,"ts":"2026-08-26T14:03:13Z","eid":"0x10FF","ecc":224,"label":"Bundesmux 1","services":[{"sid":"0x0D3110AB","label":"ASA DE","components":[{"subch_id":7,"start_addr":128,"size":48,"protection":"EEP 2-A","bitrate":32}]}]}`,
 		`{"type":"asa","seq":3,"ts":"2026-08-26T14:03:14Z","heartbeat":true,"cn":true,"oe":false,"pd_second_half":false,"raw":"018f"}`,
-		`{"type":"aud","seq":4,"ts":"2026-08-26T14:03:15Z","subch_id":7,"chunk":12,"data":"AAEC"}`,
+		`{"type":"aud","seq":4,"ts":"2026-08-26T14:03:15Z","subch_id":7,"alert_uid":"uid1",` +
+			`"dir":"/var/lib/asamon/audio","started":"2026-08-26T14:03:00Z","seconds":15.5,` +
+			`"truncated":false,"sample_rate":48000,"channels":2,"mode":"HE-AACv2",` +
+			`"files":[{"name":"uid1-5C-7.dabp","codec":"dabp","bytes":76800,"sha256":"ab"},` +
+			`{"name":"uid1-5C-7.mp3","codec":"mp3","bytes":65536,"sha256":"cd"}]}`,
 	}
 	r := NewReader(strings.NewReader(strings.Join(zeilen, "\n") + "\n"))
 	gelesen := slices.Collect(r.Alle())
@@ -83,8 +86,15 @@ func TestJederTypWirdGelesen(t *testing.T) {
 	if rec.Kind != KindAud {
 		t.Fatalf("aud: %v", rec.Kind)
 	}
-	if rec.Aud.SubChID != 7 || rec.Aud.Chunk != 12 || rec.Aud.Data != "AAEC" {
+	if rec.Aud.SubChID != 7 || rec.Aud.AlertUID != "uid1" || rec.Aud.Seconds != 15.5 {
 		t.Errorf("aud: %+v", rec.Aud)
+	}
+	if len(rec.Aud.Files) != 2 {
+		t.Fatalf("aud: %d Dateien statt 2", len(rec.Aud.Files))
+	}
+	if rec.Aud.Files[0].Codec != "dabp" || rec.Aud.Files[0].Bytes != 76800 ||
+		rec.Aud.Files[1].Codec != "mp3" || rec.Aud.Files[1].Name != "uid1-5C-7.mp3" {
+		t.Errorf("aud-Dateien: %+v", rec.Aud.Files)
 	}
 
 	if z := r.Zaehler(); z.Zeilen != 5 || z.SeqLuecken != 0 || z.KaputteZeilen != 0 {
@@ -250,9 +260,12 @@ kein JSON
 }
 
 func TestLangeZeilenReissenDenStromNicht(t *testing.T) {
-	// Ein aud-Record im Alarmfall: viele Kilobyte Base64.
-	daten := strings.Repeat("QUJD", 100000) // 400 kB
-	zeile := `{"type":"aud","seq":0,"ts":"2026-08-26T14:03:12Z","subch_id":7,"chunk":0,"data":"` + daten + `"}`
+	// Seit die Audiobytes nicht mehr durch den Strom gehen, ist der längste
+	// Record ein ens mit vielen Services — deutlich kürzer als das hier. Der
+	// Fall bleibt trotzdem geprüft: Ein Ensemble, das sich seltsam meldet,
+	// darf den Strom nicht abreißen.
+	daten := strings.Repeat("A", 400000) // 400 kB in einem einzigen Feld
+	zeile := `{"type":"ens","seq":0,"ts":"2026-08-26T14:03:12Z","eid":"0x10BC","label":"` + daten + `"}`
 	r := NewReader(strings.NewReader(zeile + "\n" + `{"type":"tlm","seq":1,"ts":"2026-08-26T14:03:13Z"}` + "\n"))
 
 	lang := slices.Collect(r.Alle())
@@ -262,8 +275,8 @@ func TestLangeZeilenReissenDenStromNicht(t *testing.T) {
 	if len(lang) != 2 {
 		t.Fatalf("%d Records gelesen", len(lang))
 	}
-	if len(lang[0].Aud.Data) != len(daten) {
-		t.Errorf("data ist %d Zeichen lang, erwartet %d", len(lang[0].Aud.Data), len(daten))
+	if lang[0].Kind != KindEns || len(lang[0].Ens.Label) != len(daten) {
+		t.Errorf("die lange Zeile kam verstümmelt an: %d Zeichen im Label", len(lang[0].Ens.Label))
 	}
 	if lang[1].Kind != KindTlm {
 		t.Errorf("nach der langen Zeile: %v", lang[1].Kind)
@@ -290,7 +303,7 @@ func TestNeustartBeginntNeueZaehlung(t *testing.T) {
 func FuzzParseLine(f *testing.F) {
 	f.Add(`{"type":"asa","seq":0,"ts":"1970-01-01T00:00:00Z","heartbeat":true,"cn":true,"oe":false,"pd_second_half":false,"raw":"018f"}`)
 	f.Add(`{"type":"tlm","seq":1,"ts":"x","snr":null}`)
-	f.Add(`{"type":"aud","seq":2,"ts":"","subch_id":7,"chunk":0,"data":""}`)
+	f.Add(`{"type":"aud","seq":2,"ts":"","subch_id":7,"alert_uid":"u","files":[{"name":"a.dabp","codec":"dabp","bytes":1,"sha256":"x"}]}`)
 	f.Add(`{}`)
 	f.Add(``)
 	f.Fuzz(func(t *testing.T, line string) {
@@ -387,10 +400,15 @@ func BenchmarkParseLineAsa(b *testing.B) {
 }
 
 func BenchmarkParseLineAud(b *testing.B) {
-	// 4 kB roher Subchannel-Bitstrom, wie er bei 32 kbit/s je Sekunde anfällt.
-	daten := base64.StdEncoding.EncodeToString(make([]byte, 4000))
+	// Seit dem 30.08.2026 ist das ein kleiner Record am Ende der Aufnahme
+	// statt 4 kB Base64 je Sekunde — der teuerste Pfad dieses Parsers ist
+	// damit entfallen. Der Vergleich bleibt stehen, weil er genau das zeigt.
 	zeile := []byte(`{"type":"aud","seq":812,"ts":"2026-08-26T14:03:11.482913771Z",` +
-		`"subch_id":7,"chunk":12,"data":"` + daten + `"}`)
+		`"subch_id":13,"alert_uid":"7c2dabcd","dir":"/var/lib/asamon/audio",` +
+		`"started":"2026-08-30T12:14:55.000000000Z","seconds":43.75,"truncated":false,` +
+		`"sample_rate":48000,"channels":2,"mode":"HE-AACv2","mp3_bitrate":64,` +
+		`"files":[{"name":"7c2dabcd-5C-13.dabp","codec":"dabp","bytes":262144,"sha256":"aa"},` +
+		`{"name":"7c2dabcd-5C-13.mp3","codec":"mp3","bytes":245760,"sha256":"bb"}]}`)
 	b.SetBytes(int64(len(zeile)))
 	for b.Loop() {
 		if _, err := ParseLine(zeile); err != nil {

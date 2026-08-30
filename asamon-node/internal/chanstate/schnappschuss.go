@@ -214,8 +214,16 @@ func (c *Kanal) raeumeAlertsAuf() {
 		// die Nachklangfrist, und ohne den Alert gäbe es niemanden mehr, der
 		// das STOP auslöst. Die Aufnahme liefe dann bis zur harten Obergrenze
 		// weiter — und schnitte fremdes Programm mit.
+		// Und eine angeforderte, aber noch nicht gemeldete Aufnahme hält ihn
+		// ebenso: Der aud-Record kommt **nach** dem STOP, also nach der
+		// letzten Meldung des Alerts. Ohne diese Ausnahme wäre der Alert weg,
+		// bevor seine Dateien bekannt sind — und der Server erführe nie, dass
+		// es sie gibt. Die Frist begrenzt den Fall, dass asamon-rx stirbt,
+		// bevor es meldet.
+		wartetAufAufnahme := !al.audioBegonnen.IsZero() && !al.audioGemeldet &&
+			c.jetzt.Sub(al.zuletztStrom) <= AudioMeldefrist
 		if al.geschlossen && al.gemeldet && al.audioLaeuft.IsZero() &&
-			c.jetzt.Sub(al.zuletztStrom) > Nachklangfrist {
+			!wartetAufAufnahme && c.jetzt.Sub(al.zuletztStrom) > Nachklangfrist {
 			continue
 		}
 		behalten = append(behalten, al)

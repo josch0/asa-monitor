@@ -190,19 +190,76 @@ deckt, oder mit mehr als 25 Byte Location Codes — wird ebenfalls gemeldet und 
 
 ---
 
-## `aud` — nur im Alarmfall
+## `aud` — genau einer je Aufnahme, nach ihrem Ende
 
 ```json
-{"type":"aud","seq":812,"ts":"…","subch_id":7,"chunk":12,"data":"<base64>"}
+{"type":"aud","seq":812,"ts":"…","subch_id":13,"alert_uid":"7c2dabcd",
+ "dir":"/var/lib/asamon/audio","started":"2026-08-30T12:14:55.000000000Z",
+ "seconds":43.75,"truncated":false,
+ "sample_rate":48000,"channels":2,"mode":"HE-AACv2","mp3_bitrate":64,
+ "frame_errors":0,"rs_errors":0,"rs_corrected":12,"aac_errors":0,
+ "files":[{"name":"7c2dabcd-5C-13.dabp","codec":"dabp","bytes":262144,"sha256":"…"},
+          {"name":"7c2dabcd-5C-13.mp3","codec":"mp3","bytes":245760,"sha256":"…"}]}
 ```
 
-Der **rohe Subchannel-Bitstrom**, nicht dekodiertes Audio. `chunk` zählt je Aufnahme ab 0.
-Bei 32 kbit/s (EEP 2-A, wie für „ASA DE" auf 5C geplant) sind das 4 kB/s, mit Base64 rund
-5,3 kB/s — eine zweiminütige Meldung wächst von 480 kB auf 640 kB. Das ist der Preis dafür,
-ein Format zu haben statt zwei, und er ist hier vertretbar.
+**Die Audiobytes gehen nicht mehr über die Leitung.** `asamon-rx` schreibt sie selbst in den
+Ablageordner (`--audio-out`) und meldet mit diesem Record, was entstanden ist. Bis zum
+30.08.2026 trug `aud` stattdessen den Subchannel-Bitstrom in Stücken zu 4 kB, base64-kodiert.
 
-Zum Abspielen: `data` aller Records eines `subch_id` nach `chunk` sortiert aneinanderhängen,
-Base64 dekodieren, dann mit `dablin` oder `welle-cli` dekodieren.
+Drei Gründe für den Wechsel, der wichtigste zuletzt:
+
+- Base64 kostete ein Drittel Übertragung, und `aud` war der teuerste Pfad im Record-Leser des
+  Knotens.
+- Ein Mitschnitt braucht keine Zwischenstände: Wer ihn auswerten will, will die ganze Datei.
+- **Ein `aud`-Record konnte verworfen werden.** Die Vorrangregel (`asa` vor `aud` vor `tlm`)
+  gilt weiter, und im Überlauf bedeutete ein fehlendes Stück ein Loch mitten in der Aufnahme —
+  sichtbar nur als `seq`-Lücke. Eine Datei hat dieses Problem nicht.
+
+| Feld | Typ | Bedeutung |
+|---|---|---|
+| `subch_id` | Zahl | der aufgenommene Subchannel |
+| `alert_uid` | String | aus `REC <subChId> <alert_uid>`; **fehlt**, wenn keine mitkam |
+| `dir` | String | Ablageordner, wie er auf der Platte steht |
+| `started` | String | Beginn der Aufnahme, RFC 3339 |
+| `seconds` | Zahl | Dauer mit zwei Nachkommastellen |
+| `truncated` | Bool | `true`, wenn `--rec-max-seconds` die Notbremse gezogen hat |
+| `sample_rate`, `channels`, `mode` | Zahl, Zahl, String | erst bekannt, sobald dekodiertes Audio kam; `mode` ist welle.ios Formatzusammenfassung |
+| `mp3_bitrate` | Zahl | nur, wenn eine MP3 entstand |
+| `frame_errors`, `rs_errors`, `rs_corrected`, `aac_errors` | Zahl | Summen über die Aufnahme, aus welle.ios Rückrufen. Ohne sie ließe sich eine stockende Aufnahme nicht von einer stillen Meldung unterscheiden |
+| `files` | Liste | je Datei `name` (ohne Verzeichnis), `codec`, `bytes`, `sha256` |
+| `error` | String | fehlt, wenn alles glattging |
+
+### Zwei Dateien, zwei Zwecke
+
+`codec: "dabp"` ist der **rohe Subchannel-Bitstrom** — der Beleg, unverändert wie vom Kanal
+gekommen. `codec: "mp3"` ist die abspielbare Fassung: welle.io dekodiert den Subchannel ohnehin
+und reicht das PCM über `onNewAudio()` heraus, LAME macht daraus MP3. Der Weg über MP3 statt
+über einen AAC-Container ist bewusst: DAB+ verwendet die 960er Transformation, und ob der
+Decoder eines Browsers die kennt, hängt an der Plattform.
+
+Fehlt LAME beim Bau oder steht `--mp3-bitrate 0`, entsteht nur die `.dabp`; der Grund steht
+dann in `error`.
+
+### `.part` und die Frage, wem die Dateien gehören
+
+Während des Schreibens heißt jede Datei `<name>.part`. Erst wenn sie geschlossen und der Hash
+gebildet ist, wird umbenannt. Daraus folgt beides:
+
+- Jede Datei **ohne** `.part` ist vollständig und in einem `aud`-Record genannt.
+- Jede `.part`-Datei ist erkennbar eine Waise — `asamon-rx` ist gestorben, bevor die Aufnahme
+  endete — und darf aufgeräumt werden.
+
+Aufgeräumt wird vom Knoten, nach den Zeitstempeln der Dateien. `asamon-rx` löscht in diesem
+Ordner nichts, was es nicht selbst angelegt hat.
+
+### Der Preis
+
+Der Record-Strom ist damit **nicht mehr für sich allein auswertbar**: Ein Replay einer
+NDJSON-Datei enthält nur noch Dateinamen. Ein vollständiger Mitschnitt besteht seitdem aus
+Strom **und** Ordner.
+
+Zum Abspielen der `.dabp`: `dablin` kann sie **nicht** direkt lesen (es erwartet ETI oder EDI);
+`welle-cli -c <kanal> -D` erzeugt zum Vergleich `.msc`-Dateien desselben Formats samt `.wav`.
 
 ---
 

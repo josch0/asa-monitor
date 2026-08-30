@@ -126,7 +126,9 @@ int main(int argc, char** argv)
     receiver.restart(false);   // empfangen, nicht scannen
 
     CommandReader::Handlers handlers;
-    handlers.onRec  = [&recorder](uint8_t subChId) { recorder.start(subChId); };
+    handlers.onRec  = [&recorder](uint8_t subChId, const std::string& alertUid) {
+        recorder.start(subChId, alertUid);
+    };
     handlers.onStop = [&recorder](uint8_t subChId) { recorder.stop(subChId); };
     handlers.onQuit = [] {
         g_shutdownRequested.store(true, std::memory_order_relaxed);

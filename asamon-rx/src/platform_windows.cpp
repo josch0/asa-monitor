@@ -77,6 +77,19 @@ enum StdinKind { kUnknown = 0, kPipe, kFile, kConsole };
 
 }  // namespace
 
+std::string defaultAudioDir()
+{
+    // %ProgramData% ist auf jedem Windows gesetzt; fehlt es doch, bleibt der
+    // uebliche Pfad als letzte Annahme. Beides deckt sich mit dem, was
+    // asamon-node ohne paths:-Abschnitt annimmt.
+    char puffer[MAX_PATH];
+    const DWORD len = GetEnvironmentVariableA("ProgramData", puffer, MAX_PATH);
+    const std::string basis =
+        (len > 0 && len < MAX_PATH) ? std::string(puffer, len)
+                                    : std::string("C:\\ProgramData");
+    return basis + "\\asamon\\state\\audio";
+}
+
 void installShutdownHandler(std::atomic<bool>& flag)
 {
     g_shutdownFlag = &flag;

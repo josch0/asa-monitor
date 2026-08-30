@@ -359,8 +359,12 @@ func (c *Kanal) steuereAudio(al *verfolgterAlert, phase Phase, jetzt time.Time) 
 	}
 
 	al.audioLaeuft = c.jetzt
+	al.audioBegonnen = c.jetzt
 	al.audioStopBei = time.Time{}
-	c.sende("REC " + itoa(al.subChID))
+	// Die alert_uid geht mit: Dann benennt asamon-rx die Dateien von
+	// vornherein so, wie der Knoten sie kennt, und niemand muss hinterher
+	// umbenennen. Gedeutet wird sie dort nicht — asamon-rx kennt kein ASA.
+	c.sende("REC " + itoa(al.subChID) + " " + al.uid)
 	if c.s.Audio != nil {
 		c.s.Audio.Beginne(al.uid, c.k.Channel, al.subChID, jetzt, c.bitrateVon(al.subChID))
 	}

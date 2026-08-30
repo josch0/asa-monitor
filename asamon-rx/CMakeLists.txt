@@ -13,6 +13,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_TESTING "Einheitstests bauen" ON)
 option(FUZZING       "libFuzzer-Ziel fuer den FIG-0/15-Parser bauen (clang)" OFF)
+# MP3-Mitschnitt ueber LAME. Nicht REQUIRED: Ohne LAME entsteht weiterhin die
+# .dabp-Datei, nur eben keine MP3 daneben — asamon-rx bleibt damit auf einem
+# System baubar, das libmp3lame nicht hat.
+option(MP3           "MP3-Mitschnitt ueber LAME (libmp3lame)" ON)
 
 # --- Versionsangaben fuer den init-Record -----------------------------------
 # Stehen vor add_subdirectory(), weil welle.io den eigenen Commit-Hash sonst
@@ -98,6 +102,9 @@ set(ASAMON_RX_LIB_SOURCES
     src/controller.cpp
     src/commands.cpp
     src/recorder.cpp
+    src/audiofile.cpp
+    src/mp3encoder.cpp
+    src/sha256.cpp
     ${ASAMON_PLATFORM_SOURCE})
 
 add_library(asamon-rx-core STATIC ${ASAMON_RX_LIB_SOURCES})
@@ -106,6 +113,24 @@ target_include_directories(asamon-rx-core PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}
     ${WELLE_INCLUDE_DIRS})
 target_link_libraries(asamon-rx-core PUBLIC welle Threads::Threads)
+
+# --- LAME, wenn vorhanden ----------------------------------------------------
+# Der Decoder ist ohnehin da: welle.io dekodiert jeden zugeschalteten
+# Subchannel und reicht das PCM ueber onNewAudio() heraus. Zum abspielbaren
+# Mitschnitt fehlt nur der Encoder.
+if(MP3)
+    find_package(Lame)
+    if(LAME_FOUND)
+        target_include_directories(asamon-rx-core PRIVATE ${LAME_INCLUDE_DIRS})
+        target_link_libraries(asamon-rx-core PUBLIC ${LAME_LIBRARIES})
+        target_compile_definitions(asamon-rx-core PRIVATE ASAMON_HAVE_LAME=1)
+        message(STATUS "asamon-rx: MP3-Mitschnitt ueber ${LAME_LIBRARIES}")
+    else()
+        message(WARNING
+            "asamon-rx: libmp3lame nicht gefunden — es entsteht nur die "
+            ".dabp-Datei. Unter Debian: apt install libmp3lame-dev")
+    endif()
+endif()
 
 # welle.io benutzt in Socket.cpp und rtl_tcp.cpp Winsock, deklariert die
 # Bibliothek aber nirgends in seiner CMakeLists: Der Windows-Bau des Projekts
@@ -162,6 +187,13 @@ if(BUILD_TESTING)
         ${CMAKE_CURRENT_SOURCE_DIR}/tests)
     target_compile_options(test_location_codes PRIVATE -Wall -Wextra)
     add_test(NAME location_codes COMMAND test_location_codes)
+
+    # SHA-256 gegen die Testvektoren aus FIPS 180-4. Die Pruefsumme steht im
+    # aud-Record; ist sie falsch, faellt das sonst erst dem Server auf.
+    add_executable(test_sha256 tests/test_sha256.cpp)
+    target_link_libraries(test_sha256 PRIVATE asamon-rx-core)
+    target_compile_options(test_sha256 PRIVATE -Wall -Wextra)
+    add_test(NAME sha256 COMMAND test_sha256)
 
     add_executable(test_commands tests/test_commands.cpp)
     target_link_libraries(test_commands PRIVATE asamon-rx-core)

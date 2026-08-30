@@ -21,6 +21,11 @@ namespace {
 
 std::atomic<bool>* g_shutdownFlag = nullptr;
 
+// Fester Pfad statt XDG-Suche: asamon-rx laeuft als Kindprozess eines
+// Systemdienstes, nicht in einer Benutzersitzung. /var/lib/asamon ist die
+// StateDirectory der systemd-Unit von asamon-node.
+constexpr const char* kDefaultAudioDir = "/var/lib/asamon/audio";
+
 extern "C" void onSignal(int)
 {
     // Im Signalhandler nur ein Flag setzen — alles Weitere macht die
@@ -64,6 +69,8 @@ long readFdWithTimeout(int fd, void* buffer, std::size_t size, int timeoutMs,
 }
 
 }  // namespace
+
+std::string defaultAudioDir() { return kDefaultAudioDir; }
 
 void installShutdownHandler(std::atomic<bool>& flag)
 {
