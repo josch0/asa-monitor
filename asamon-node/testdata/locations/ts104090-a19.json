@@ -1,0 +1,99 @@
+{
+  "quelle": "ETSI TS 104 090 V1.1.2, Annex A, Tabelle A.19 — Location-Code-Saetze der offiziellen Teststroeme EWS1..EWS9, mit ihren normativen Byte-Laengen.",
+  "warum": "Die Byte-Laengen sind eine zweite, unabhaengige Probe auf das Bitlayout aus TS 104 089 Annex E. Sie gehen nur auf, wenn NFF in jedem Location Code steht und die Padding-Regel sich nach Num digits richtet.",
+  "felder": {
+    "zone": "globale Zone 0..41",
+    "digits": "Ziffern als Hex-Text; die erste ist Digit 1. Bei sub-codierten Eintraegen ohne die niedrigstwertige Ziffer.",
+    "nff": "Anzahl der noch folgenden FIG-0/15-Instanzen dieses Alert-Sets",
+    "sub_codes": "Nummern der Teilflaechen 0..15; leer bedeutet SCF = 0"
+  },
+  "saetze": [
+    {
+      "name": "LC1",
+      "beschreibung": "die Empfaengerposition selbst: ein L6-Code",
+      "bytes": 5,
+      "codes": [{ "zone": 1, "digits": "91BB82" }]
+    },
+    {
+      "name": "LC2",
+      "beschreibung": "acht L6-Codes um die Empfaengerposition, sub-codiert zu zwei Location Codes",
+      "bytes": 12,
+      "codes": [
+        { "zone": 1, "digits": "91BB8", "sub_codes": [7, 6, 5, 3, 1] },
+        { "zone": 1, "digits": "91BB4", "sub_codes": [15, 14, 13] }
+      ]
+    },
+    {
+      "name": "LC3 erste Instanz",
+      "beschreibung": "dieselben Ziffern in acht verschiedenen Zonen; fuenf Codes sind 25 Byte, das normative Maximum",
+      "bytes": 25,
+      "codes": [
+        { "zone": 0, "digits": "91BB82", "nff": 1 },
+        { "zone": 10, "digits": "91BB82", "nff": 1 },
+        { "zone": 2, "digits": "91BB82", "nff": 1 },
+        { "zone": 41, "digits": "91BB82", "nff": 1 },
+        { "zone": 19, "digits": "91BB82", "nff": 1 }
+      ]
+    },
+    {
+      "name": "LC3 zweite Instanz",
+      "beschreibung": "die restlichen drei Zonen, NFF = 0",
+      "bytes": 15,
+      "codes": [
+        { "zone": 20, "digits": "91BB82" },
+        { "zone": 11, "digits": "91BB82" },
+        { "zone": 12, "digits": "91BB82" }
+      ]
+    },
+    {
+      "name": "LC4",
+      "beschreibung": "acht L3-Codes, sub-codiert",
+      "bytes": 10,
+      "codes": [
+        { "zone": 1, "digits": "91", "sub_codes": [15, 14, 10, 7, 6] },
+        { "zone": 1, "digits": "92", "sub_codes": [12, 8, 4] }
+      ]
+    },
+    {
+      "name": "LC5",
+      "beschreibung": "neun L4-Codes; der lehrreichste Satz, weil er sub-codierte und einfache Rechtecke mischt und nur mit richtiger Padding-Regel auf 19 Byte kommt",
+      "bytes": 19,
+      "codes": [
+        { "zone": 1, "digits": "928", "sub_codes": [13, 12, 9, 8] },
+        { "zone": 1, "digits": "92C", "sub_codes": [1, 0] },
+        { "zone": 1, "digits": "91F3" },
+        { "zone": 1, "digits": "91B", "sub_codes": [15, 11] }
+      ]
+    },
+    {
+      "name": "Padding: null Other digits",
+      "beschreibung": "2 + 6 + 1 + 3 + 4 = 16 bit Grundgeruest",
+      "bytes": 2,
+      "codes": [{ "zone": 1, "digits": "9" }]
+    },
+    {
+      "name": "Padding: eine Other digit",
+      "beschreibung": "ungerade, also vier Bit Padding",
+      "bytes": 3,
+      "codes": [{ "zone": 1, "digits": "91" }]
+    },
+    {
+      "name": "Padding: zwei Other digits",
+      "beschreibung": "gerade, also kein Padding",
+      "bytes": 3,
+      "codes": [{ "zone": 1, "digits": "91B" }]
+    },
+    {
+      "name": "Padding: fuenf Other digits",
+      "beschreibung": "ungerade, also vier Bit Padding",
+      "bytes": 5,
+      "codes": [{ "zone": 1, "digits": "91BB82" }]
+    },
+    {
+      "name": "Padding: vier Other digits mit Sub-codes",
+      "beschreibung": "gerade, kein Padding, dazu 16 bit Sub-codes",
+      "bytes": 6,
+      "codes": [{ "zone": 1, "digits": "91BB8", "sub_codes": [1] }]
+    }
+  ]
+}

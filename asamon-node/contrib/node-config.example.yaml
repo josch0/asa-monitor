@@ -1,0 +1,71 @@
+# node-config.yaml — vollständige Konfiguration eines ASA-Monitor-Knotens.
+#
+# Eine Datei, ohne Umgebungsvariablen-Magie. Gesucht wird sie unter dem mit
+# --config angegebenen Pfad, sonst ./node-config.yaml, sonst
+# /etc/asamon/node-config.yaml.
+#
+# Jede Option ist in docs/node-config.md ausgeschrieben. Ein unbekannter
+# Schlüssel ist ein Fehler und kein stillschweigend ignoriertes Feld:
+#
+#     asamon-node --check --config node-config.yaml
+
+node:
+  # Frei wählbarer Anzeigename. 1..20 Zeichen (Unicode-Zeichen, nicht Bytes).
+  # Keine Steuerzeichen. Nicht netzweit eindeutig — die Identität ist node_id.
+  name: "Berlin-Mitte-01"
+
+  # Standort des Knotens als ASA Location Code im Präsentationsformat
+  # (TS 104 089 Annex A): drei Blöcke à vier Symbole "1".."8".
+  # Zu ermitteln über https://asa.radio/. Auflösung rund 1 km — bewusst grob,
+  # das schützt die Freiwilligen.
+  location_code: "2366-7443-8484"
+
+  # Rein beschreibend, beides optional.
+  antenna: "Dachantenne Omni, 10 m ü. Grund"
+  contact: "mail@example.org"
+
+server:
+  url: "https://asa.example.org"
+  report_interval: "10s"        # Vorgabe 10s
+  timeout: "15s"                # HTTP-Timeout je Anfrage
+  insecure_skip_verify: false   # nur für lokale Tests
+
+# 1..n Kanäle. Reihenfolge ist die Anzeigereihenfolge.
+channels:
+  - channel: "5C"               # Pflicht, DAB-Kanalname
+    device: "rtl_sdr"           # Vorgabe rtl_sdr; rawfile nur für Tests
+    device_serial: ""           # leer = erstes Gerät. Pflicht ab zwei Sticks (Patch 2)
+    gain: "auto"                # auto oder Index
+    iq_file: ""                 # nur bei device: rawfile
+
+audio:
+  enabled: true
+  post_roll: "10s"              # Nachlauf nach der End-Phase
+  max_seconds: 300              # harte Notbremse je Aufnahme
+  keep_days: 7                  # hochgeladene Dateien so lange behalten, dann löschen
+
+# Ohne diesen Abschnitt gelten die Vorgaben des Betriebssystems:
+#
+#   Linux    rx_binary  /usr/local/bin/asamon-rx
+#            state_dir  /var/lib/asamon
+#   Windows  rx_binary  asamon-rx.exe neben asamon-node.exe, sonst
+#                       %ProgramData%\asamon\asamon-rx.exe
+#            state_dir  %ProgramData%\asamon\state
+#
+# Damit läuft ein ausgepacktes Release-Archiv auf beiden Plattformen ohne
+# Änderung. Wer den Pfad hier setzt, meint ihn: Er wird dann nicht mehr
+# ersetzt, und ein Tippfehler ist ein Fehler.
+#
+# paths:
+#   rx_binary: "/usr/local/bin/asamon-rx"
+#   state_dir: "/var/lib/asamon"   # node_id, node_key, seq, spool/, audio/
+
+limits:
+  max_spool_mb: 512
+  queue_size: 4096              # je Kanal, Records
+  max_reports_per_request: 60   # beim Nachliefern
+  rx_silence_seconds: 15        # Stille im Record-Strom, nach der asamon-rx
+                                # als steckengeblieben gilt (0 = aus)
+
+log:
+  level: "info"                 # error|warn|info|debug

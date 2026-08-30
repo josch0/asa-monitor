@@ -1,0 +1,72 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Eine Unit für den ganzen Knoten — gleich wie viele Sticks stecken.
+#
+# Die asamon-rx-Prozesse startet asamon-node selbst; sie brauchen keine eigene
+# Unit. Ein Kanal, der abstürzt, wird von asamon-node mit Backoff neu gestartet
+# und reißt die übrigen nicht mit.
+#
+# Einrichten:
+#   sudo cp asamon-node.service /etc/systemd/system/
+#   sudo useradd --system --home /var/lib/asamon --shell /usr/sbin/nologin asamon
+#   sudo usermod -aG plugdev asamon        # Zugriff auf den RTL-SDR-Stick
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now asamon-node
+#   journalctl -u asamon-node -f
+
+[Unit]
+Description=ASA-Monitor Knoten (asamon-node)
+Documentation=https://github.com/josch0/asa-monitor
+# Die Uhr ist Voraussetzung, nicht Zubehör: Die Differenz zwischen Knotenzeit
+# und Ensemble-Zeit ist eine Messgröße, und Alerts beginnen an der Minutengrenze.
+After=network-online.target chronyd.service systemd-timesyncd.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/asamon-node --config /etc/asamon/node-config.yaml
+Restart=always
+RestartSec=5
+
+# Der Watchdog wird nur bedient, solange der Reporter läuft. Ein hängender
+# Reporter soll einen Neustart auslösen — genau dafür ist er da.
+WatchdogSec=60
+
+User=asamon
+Group=asamon
+
+# /var/lib/asamon: node_id, node_key, seq, spool/, audio/
+StateDirectory=asamon
+StateDirectoryMode=0700
+
+# Der Knoten liest einen SDR-Stick und schreibt in ein Verzeichnis. Mehr
+# braucht er nicht.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=no
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+# asamon-rx legt seine MSC-FIFOs unter /tmp an; PrivateTmp reicht dafür.
+ReadWritePaths=/var/lib/asamon
+
+# Auf einem Pi Zero 2 W ist der Speicher knapp. Die Grenze ist großzügig
+# bemessen; wird sie erreicht, liegt ein Fehler vor, kein Engpass.
+MemoryMax=512M
+
+# Das Log geht strukturiert nach stdout; journald nimmt es entgegen.
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=asamon-node
+
+[Install]
+WantedBy=multi-user.target

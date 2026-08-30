@@ -1,0 +1,723 @@
+[
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 9,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1125,
+      "fib_crc_err": 18,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 9,
+        "received": 9,
+        "suppressed": 0,
+        "missing_seconds": [],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "f0b34934efab5cee7a4c34edcc7bcf2f",
+          "ens_second": "2026-08-26T14:00:00Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:00.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "7a0ca78abd1db672f94770b9c15c5d5c",
+          "ens_second": "2026-08-26T14:00:01Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:01.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "3d4308c9006daaf4b5e8502eb2a3590f",
+          "ens_second": "2026-08-26T14:00:02Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:02.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "fec76c81362ed6d6a369ea1f421e09b8",
+          "ens_second": "2026-08-26T14:00:03Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:03.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "12b05d720e622919f096632352a1ca29",
+          "ens_second": "2026-08-26T14:00:04Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:04.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "6569967a050a544f48dadfa096255506",
+          "ens_second": "2026-08-26T14:00:05Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:05.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "430ced6086b7de5dcc8d243e56cb22c0",
+          "ens_second": "2026-08-26T14:00:06Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:06.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "2ded4ff559aaca16dc24876e3d49834a",
+          "ens_second": "2026-08-26T14:00:07Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:07.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "98ae091e952913dab0c188e2877c80e8",
+          "ens_second": "2026-08-26T14:00:08Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:08.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        }
+      ],
+      "alerts": []
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 10,
+        "received": 10,
+        "suppressed": 0,
+        "missing_seconds": [],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "f636afc81fc7f16d72fe53917509c512",
+          "ens_second": "2026-08-26T14:00:09Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:09.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "ffb439a5db62179325ad633db330abe5",
+          "ens_second": "2026-08-26T14:00:10Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:10.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "fc87477b285c7b537f0d77732ea3be86",
+          "ens_second": "2026-08-26T14:00:11Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:11.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "637f20027e3378e2e44bb98711082d8b",
+          "ens_second": "2026-08-26T14:00:12Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:12.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "8529e766748a7053aa71903a4169567a",
+          "ens_second": "2026-08-26T14:00:13Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:13.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "b0972480c8b8d000540d9db319458c56",
+          "ens_second": "2026-08-26T14:00:14Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:14.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "dd9346c75acd7528f67714c2c5f91f01",
+          "ens_second": "2026-08-26T14:00:15Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:15.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "91e17348dbae943f5eab65f24c7cf23e",
+          "ens_second": "2026-08-26T14:00:16Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:16.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "e09af8c9cb35b09fb8bb161e6b835406",
+          "ens_second": "2026-08-26T14:00:17Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:17.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "0d07d1fbf602758fad4dbdfbc78f04c4",
+          "ens_second": "2026-08-26T14:00:18Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:18.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        }
+      ],
+      "alerts": []
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 600,
+      "crc_err_rate": 0.48,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 10,
+        "received": 5,
+        "suppressed": 0,
+        "missing_seconds": [
+          "2026-08-26T14:00:20Z",
+          "2026-08-26T14:00:21Z",
+          "2026-08-26T14:00:22Z",
+          "2026-08-26T14:00:23Z",
+          "2026-08-26T14:00:24Z"
+        ],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "4aefe1637c6a888b2be85357fb6013f0",
+          "ens_second": "2026-08-26T14:00:19Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:19.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "6819ce95aebef7401d76a321f48f70b5",
+          "ens_second": "2026-08-26T14:00:25Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:25.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "fe8193c644198fdaff00d549a229c193",
+          "ens_second": "2026-08-26T14:00:26Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:26.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "52f5ccb5d4cbd5119a2d29b65180202a",
+          "ens_second": "2026-08-26T14:00:27Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:27.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "e28c3cc390fdd53f39a9364fb19d63bb",
+          "ens_second": "2026-08-26T14:00:28Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:28.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        }
+      ],
+      "alerts": []
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 10,
+        "received": 10,
+        "suppressed": 0,
+        "missing_seconds": [],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "4a79d87a44871e93bf0a8fa6f79ca7fc",
+          "ens_second": "2026-08-26T14:00:29Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:29.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "bf374eebee899430f8d9e5a6b329d4dc",
+          "ens_second": "2026-08-26T14:00:30Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:30.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "9c26bb862b377d4d8e1327f46e33fd93",
+          "ens_second": "2026-08-26T14:00:31Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:31.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "b21e6d310919000511e2f555c4a9ec95",
+          "ens_second": "2026-08-26T14:00:32Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:32.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "24192a4b10cf2eab8b4762f55d4924f8",
+          "ens_second": "2026-08-26T14:00:33Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:33.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "90d8c300d921b19a77816149a60ae7c0",
+          "ens_second": "2026-08-26T14:00:34Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:34.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "c8b3726f8787bc2b5db2ce34055a3d1e",
+          "ens_second": "2026-08-26T14:00:35Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:35.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "7c36cc81028206fb2400ebac255b46ef",
+          "ens_second": "2026-08-26T14:00:36Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:36.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "be86f47da183f3861672e844feb4859c",
+          "ens_second": "2026-08-26T14:00:37Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:37.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        },
+        {
+          "asa_hash": "34b84d37fc4521807864a81b78bd5a5d",
+          "ens_second": "2026-08-26T14:00:38Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:38.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        }
+      ],
+      "alerts": []
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 1,
+      "snr_avg": 12.4,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 125,
+      "fib_crc_err": 2,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 1,
+        "received": 1,
+        "suppressed": 0,
+        "missing_seconds": [],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "9156662d6a73f4e16289e90a0e105923",
+          "ens_second": "2026-08-26T14:00:39Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:39.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": true,
+          "raw": "01af"
+        }
+      ],
+      "alerts": []
+    }
+  }
+]

@@ -3,9 +3,10 @@
 Crowd-basiertes Monitoring von **ASA/EWS-Warnmeldungen in DAB+** mit verteilten SDR-Empfängern,
 zentraler Erfassung und Darstellung auf einer Web-Karte samt Meldungsliste.
 
-> **Status: Der Empfangsknoten steht — der Feldtest fehlt.** `asamon-rx` ist gebaut und
-> geprüft (siehe [`asamon-rx/`](asamon-rx/)); was noch aussteht, braucht einen RTL-SDR-Stick
-> an einer Antenne. Server, Frontend und `asamon-node` sind noch nicht begonnen.
+> **Status: Der ganze Knoten steht — der Feldtest fehlt.** `asamon-rx` und `asamon-node` sind
+> gebaut und geprüft (siehe [`asamon-rx/`](asamon-rx/) und [`asamon-node/`](asamon-node/)); was
+> noch aussteht, braucht einen RTL-SDR-Stick an einer Antenne. Server und Frontend sind noch
+> nicht begonnen.
 
 ## Aufgabenstellung (Originalauftrag)
 
@@ -48,7 +49,11 @@ asa-monitor/
 │   ├── docs/            # record-format.md, welle-patches.md
 │   ├── src/  tests/  contrib/  patches/
 │   └── external/welle.io/       # Submodul, festgenagelter Commit, mit Patch 1
-├── asamon-node/         # Deutung, Uplink (Go) — noch leer
+├── asamon-node/         # Deutung, Uplink (Go)
+│   ├── README.md        # bauen, konfigurieren, betreiben
+│   ├── TODO.md          # der Umsetzungsplan, samt Abschnitt 21: was dabei herauskam
+│   ├── docs/            # uplink-protokoll.md, node-config.md, hashes.md
+│   └── cmd/  internal/  contrib/  testdata/
 └── specs/
     ├── asa.md           # Fachliche Zusammenfassung aller Specs (Hauptdokument)
     ├── decoder-optionen.md      # Analyse der Open-Source-DAB-Decoder als Client-Basis
@@ -67,7 +72,7 @@ Sitzungen ohne PDF-Reader gezielt in den Specs suchen zu können:
 grep -n "FIG 0/15" specs/text/ts_104089v010101p.txt
 ```
 
-Geplante, noch nicht angelegte Bereiche: `backend/` (Server), `frontend/` (Karte und Liste) — und `asamon-node/`, das Gegenstück zu `asamon-rx` auf dem Knoten.
+Geplante, noch nicht angelegte Bereiche: `backend/` (Server) und `frontend/` (Karte und Liste).
 
 ## Aktueller Stand
 
@@ -125,15 +130,64 @@ Geplante, noch nicht angelegte Bereiche: `backend/` (Server), `frontend/` (Karte
       und 6)
 - [x] **`asamon-rx` umgesetzt (26.08.2026), Meilensteine M0 bis M4.** Empfangsprozess in C++
       gegen die welle.io-Bibliothek, mit dem FIG-0/15-Patch. NDJSON-Records (`init`, `tlm`,
-      `ens`, `asa`, `aud`), Ausgabethread mit Vorrangregel beim Verwerfen, Recorder über FIFO,
+      `ens`, `asa`, `aud`), Ausgabethread mit Vorrangregel beim Verwerfen, Recorder über FIFO
+      (am 27.08.2026 durch einen Rückruf abgelöst, siehe unten),
       Zeilenkommandos auf stdin, systemd-Unit mit Watchdog. Sechs Testprogramme, keines braucht
       einen SDR-Stick. Was dabei anders kam als geplant, steht in `asamon-rx/TODO.md`
       Abschnitt 16 — unter anderem: die sieben Testszenarien aus TS 104 090 sind
       *Empfänger*-Konformitätstests und als Bitmuster nicht verwertbar; brauchbar ist dort
       Tabelle A.19 mit den Byte-Längen echter Location-Code-Sätze
+- [x] **`asamon-node` umgesetzt (27.08.2026), Meilensteine N0 bis N8.** Knotenprozess in Go:
+      Konfiguration und Knotenidentität, vollständiges DAB Location Coding, Record-Strom und
+      Kanalzustand, Subprozessverwaltung mit Backoff, ASA-Zustandsmaschine samt Alert-Sets und
+      OE-Auflösung quer über die Kanäle, kanonische Hashes, Datensatz, Uplink mit
+      Store-and-Forward, Audiomitschnitt, systemd-Unit mit Watchdog. Go ≥ 1.27, eine einzige
+      Fremdabhängigkeit (`gopkg.in/yaml.v3`), `CGO_ENABLED=0`. Läuft unter Linux **und
+      Windows**; für alle vier Zielplattformen baut ein einziger Rechner. Kein Test braucht
+      einen Stick oder Netz. Zwei Befunde, die über den Knoten hinausgehen: Die **Bitreihenfolge des
+      Sub-codes-Feldes** ließ sich nur am Cardiff-Beispiel aus TS 104 089 **Annex C** klären
+      (17 Rechtecke, 22 Byte) — die Byte-Längen aus TS 104 090 A.19 prüfen sie nicht mit; und
+      der Entwurf brauchte **drei** Zeitbasen statt zwei (Ensemble-, Strom- und Knotenzeit),
+      weil Fristen sonst im Replay sofort ablaufen. Beides in `asamon-node/TODO.md`
+      Abschnitt 21
 - [ ] **Feldtest mit RTL-SDR-Stick** — der eigentliche Zweck: Sendet 5C schon Heartbeats? Und
       stimmt die WarnBridge-Behauptung, dort komme alle 5 Minuten ein Test-Alert?
-- [ ] `asamon-node` (Go): Deutung, Alert-Sets, Location-Geometrie, Spool, Uplink
+- [ ] **Repo veröffentlichen und Binaries ausliefern.** Ein Crowd-Netz entsteht nicht, wenn
+      jeder Freiwillige zuerst welle.io auf einem Pi Zero übersetzen muss. `asamon-node` ist
+      dafür fertig (`make dist`, zwei GitHub-Workflows liegen bereit, beide noch nie gelaufen);
+      `asamon-rx` braucht je Plattform eine native Bauumgebung, empfohlen als `.deb`.
+      Voraussetzung ist ein Git-Remote — das Repo ist bis heute nur lokal. Vollständig
+      abgewogen in `asamon-node/docs/ausrollen.md`
+- [x] **Windows-Port von `asamon-rx` (27.08.2026).** Läuft nativ — kein WSL, kein Docker.
+      FIFO → benannte Pipe mit überlappter E/A, `sigaction` → `SetConsoleCtrlHandler`,
+      `poll`+`read` → `PeekNamedPipe`, sd_notify entfällt. Alles Plattformabhängige liegt hinter
+      `src/platform.h` mit zwei Umsetzungen; `recorder.cpp`, `commands.cpp` und `main.cpp`
+      enthalten seitdem kein `#ifdef` mehr. Gebaut mit MSYS2/MinGW-w64 über CMake, `ctest` 6/6,
+      Rauchtest mit `--device rawfile`. Zwei Befunde, die man nicht raten kann: `ws2_32` fehlt
+      in der CMakeLists von welle.io (unter qmake zieht Qt es mit), und
+      `GetOverlappedResult(…, bWait=TRUE)` kehrt **nie** zurück, wenn gar keine Operation
+      schwebt — überlappte E/A braucht eigene Buchführung über den Schwebezustand.
+      Nachlese in `asamon-rx/TODO.md` Abschnitt 17. Offen bleibt der Empfang mit echtem Stick
+      über WinUSB und ein Windows-Workflow in der CI
+- [x] **Der MSC-Strom kommt als Rückruf (27.08.2026).** Der Mitschnitt lief bis dahin über eine
+      benannte Leitung, weil welle.ios `addServiceToDecode()` einen *Dateinamen* verlangt. Ein
+      zweiter Patch im Fork (`onMscData()`, 20 Zeilen in zwei Dateien) reicht den rohen
+      Subchannel-Bitstrom stattdessen direkt an den `ProgrammeHandlerInterface`. Damit sind über
+      340 Zeilen Plattformcode entfallen — `mkfifo`, `CreateNamedPipeA`, die überlappte E/A samt
+      ihrer drei Fallen, der Lesethread je Aufnahme, die Reihenfolgeregel „Leser steht vor dem
+      Zuschalten" und die Option `--fifo-dir`. `src/platform.h` trägt seitdem nur noch stdin.
+      Das Record-Format ist byteweise unverändert; auf beiden Plattformen gebaut, `ctest` je
+      6/6. Nachlese in `asamon-rx/TODO.md` Abschnitt 18, der Patch in
+      `asamon-rx/docs/welle-patches.md`
+- [x] **`asamon-rx` ist init-systemfrei (27.08.2026).** sd_notify, der systemd-Watchdog und die
+      Unit für den Einzelbetrieb sind entfernt — einen Einzelbetrieb gibt es nicht, `asamon-rx`
+      läuft ausschließlich als Kindprozess von `asamon-node`. Die Aufgabe des Watchdogs, einen
+      **hängenden** statt abgestürzten Prozess zu erkennen, übernimmt jetzt der Record-Strom
+      selbst: `asamon-rx` schickt jede Sekunde ein `tlm`, und `asamon-node` startet den Prozess
+      neu, wenn länger als `limits.rx_silence_seconds` gar nichts kommt. Die Erkennungsgüte ist
+      dieselbe — beide Lebenszeichen stammten schon vorher aus derselben Sekundenschleife —, aber
+      sie wirkt jetzt auch **unter Windows**, wo es nie einen Watchdog gab. Nachlese in
+      `asamon-rx/TODO.md` Abschnitt 19 und `asamon-node/TODO.md` Abschnitt 24
 - [ ] Server und Frontend — noch nicht begonnen
 
 ## Offene Entscheidungen (noch nicht zu treffen, nur notiert)
@@ -145,8 +199,14 @@ Geplante, noch nicht angelegte Bereiche: `backend/` (Server), `frontend/` (Karte
   `asamon-rx/docs/record-format.md`
 - ~~**Decoder-Ansatz**~~ — **entschieden und umgesetzt**: welle.io-Bibliothek mit dem
   FIG-0/15-Patch (Variante V2c). eti-cmdline bleibt als Werkzeug für Gegenproben
-- Datenmodell und Ingest-Protokoll zwischen Knoten und Server
-- Umgang mit Vertrauen/Verifikation bei Crowd-Daten (mehrere Knoten melden dasselbe Ereignis)
+- ~~Datenmodell und Ingest-Protokoll zwischen Knoten und Server~~ — **entschieden und
+  umgesetzt**: `asamon-node/docs/uplink-protokoll.md`. Das ist das Vertragsdokument, an das
+  sich der Server halten muss; Datenhaltung und Korrelation bleiben ihm überlassen
+- Umgang mit Vertrauen/Verifikation bei Crowd-Daten (mehrere Knoten melden dasselbe Ereignis).
+  Die **Duplikaterkennung** ist dagegen entschieden: kanonische Hashes über die Ensemble-Zeit,
+  zweistufig aufgelöst (`asamon-node/docs/hashes.md`). Jeder Knoten führt außerdem seit dem
+  ersten Tag ein Ed25519-Schlüsselpaar mit und schickt den öffentlichen Teil mit — signiert wird
+  vorerst nicht, aber Nachrüsten kostet dann keinen Identitätswechsel
 - ~~Lizenz des Knotens~~ — **entschieden und erledigt**: `asamon-rx` ist von Anfang an
   **GPL-3.0-or-later** deklariert, mit `LICENSE` und SPDX-Kopf in jeder Quelldatei. Die Auflage
   aus dem veränderten welle.io ist mit dem öffentlichen Fork

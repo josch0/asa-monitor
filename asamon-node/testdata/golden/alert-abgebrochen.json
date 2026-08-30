@@ -1,0 +1,981 @@
+[
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 9,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1125,
+      "fib_crc_err": 18,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 9,
+        "received": 9,
+        "suppressed": 0,
+        "missing_seconds": [],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "f0b34934efab5cee7a4c34edcc7bcf2f",
+          "ens_second": "2026-08-26T14:00:00Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:00.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "7a0ca78abd1db672f94770b9c15c5d5c",
+          "ens_second": "2026-08-26T14:00:01Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:01.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "3d4308c9006daaf4b5e8502eb2a3590f",
+          "ens_second": "2026-08-26T14:00:02Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:02.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "fec76c81362ed6d6a369ea1f421e09b8",
+          "ens_second": "2026-08-26T14:00:03Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:03.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "12b05d720e622919f096632352a1ca29",
+          "ens_second": "2026-08-26T14:00:04Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:04.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "6569967a050a544f48dadfa096255506",
+          "ens_second": "2026-08-26T14:00:05Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:05.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "430ced6086b7de5dcc8d243e56cb22c0",
+          "ens_second": "2026-08-26T14:00:06Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:06.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "2ded4ff559aaca16dc24876e3d49834a",
+          "ens_second": "2026-08-26T14:00:07Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:07.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "98ae091e952913dab0c188e2877c80e8",
+          "ens_second": "2026-08-26T14:00:08Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:08.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        }
+      ],
+      "alerts": []
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": true,
+      "heartbeat": {
+        "expected": 10,
+        "received": 1,
+        "suppressed": 5,
+        "missing_seconds": [
+          "2026-08-26T14:00:15Z",
+          "2026-08-26T14:00:16Z",
+          "2026-08-26T14:00:17Z",
+          "2026-08-26T14:00:18Z"
+        ],
+        "pd_mismatch": 0
+      },
+      "records": [
+        {
+          "asa_hash": "f636afc81fc7f16d72fe53917509c512",
+          "ens_second": "2026-08-26T14:00:09Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:09.323456789Z",
+          "heartbeat": true,
+          "cn": true,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "018f"
+        },
+        {
+          "asa_hash": "379f0d0ce30ae3e96b12eccd10188df4",
+          "ens_second": "2026-08-26T14:00:10Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:10.323456789Z",
+          "heartbeat": false,
+          "cn": false,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "080f479601591bb910"
+        },
+        {
+          "asa_hash": "8d7cb43f2bd5d48e55d62b7f970c8159",
+          "ens_second": "2026-08-26T14:00:11Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:11.323456789Z",
+          "heartbeat": false,
+          "cn": false,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "080f479601591bb910"
+        },
+        {
+          "asa_hash": "19b5e893e6062f2a52a43728414873d1",
+          "ens_second": "2026-08-26T14:00:12Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:12.323456789Z",
+          "heartbeat": false,
+          "cn": false,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "080f479601591bb910"
+        },
+        {
+          "asa_hash": "f221536516b2d4c463b4e2b57effe03e",
+          "ens_second": "2026-08-26T14:00:13Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:13.323456789Z",
+          "heartbeat": false,
+          "cn": false,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "080f479601591bb910"
+        },
+        {
+          "asa_hash": "3503a96fe1ba31218f3732ed4166771f",
+          "ens_second": "2026-08-26T14:00:14Z",
+          "time_source": "ens",
+          "ts": "2026-08-26T14:00:14.323456789Z",
+          "heartbeat": false,
+          "cn": false,
+          "oe": false,
+          "pd_second_half": false,
+          "raw": "080f479601591bb910"
+        }
+      ],
+      "alerts": [
+        {
+          "alert_uid": "36532191d5cbd50b909f88856132b70c",
+          "alert_uid_confident": true,
+          "oe": false,
+          "channel_eid": "10ff",
+          "warning_eid": "10ff",
+          "subch_id": 7,
+          "iid": 6,
+          "stage": "level1_update",
+          "level": 1,
+          "test": false,
+          "phase": "trigger",
+          "entered_at_phase": "trigger",
+          "first_seen_ens": "2026-08-26T14:00:10Z",
+          "last_seen_ens": "2026-08-26T14:00:14Z",
+          "closed": false,
+          "close_reason": "",
+          "incomplete": false,
+          "gap": false,
+          "instances": 1,
+          "expected_instances": 1,
+          "phases": [
+            {
+              "phase": "trigger",
+              "from": "2026-08-26T14:00:10Z"
+            }
+          ],
+          "area": {
+            "whole_ensemble": false,
+            "codes": [
+              {
+                "zone": 1,
+                "digits": "91BB91",
+                "presentation": "1255-4467-3271",
+                "rect": {
+                  "lat_min": 52.5146484375,
+                  "lat_max": 52.5234375,
+                  "lon_min": 13.4033203125,
+                  "lon_max": 13.412109375
+                }
+              }
+            ],
+            "geojson": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                [
+                  [
+                    [
+                      13.40332,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.514648
+                    ]
+                  ]
+                ]
+              ]
+            },
+            "raw": "01591bb910"
+          },
+          "audio": null
+        }
+      ]
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": false,
+      "heartbeat": {
+        "expected": 10,
+        "received": 0,
+        "suppressed": 0,
+        "missing_seconds": [
+          "2026-08-26T14:00:19Z",
+          "2026-08-26T14:00:20Z",
+          "2026-08-26T14:00:21Z",
+          "2026-08-26T14:00:22Z",
+          "2026-08-26T14:00:23Z",
+          "2026-08-26T14:00:24Z",
+          "2026-08-26T14:00:25Z",
+          "2026-08-26T14:00:26Z",
+          "2026-08-26T14:00:27Z",
+          "2026-08-26T14:00:28Z"
+        ],
+        "pd_mismatch": 0
+      },
+      "records": [],
+      "alerts": [
+        {
+          "alert_uid": "36532191d5cbd50b909f88856132b70c",
+          "alert_uid_confident": true,
+          "oe": false,
+          "channel_eid": "10ff",
+          "warning_eid": "10ff",
+          "subch_id": 7,
+          "iid": 6,
+          "stage": "level1_update",
+          "level": 1,
+          "test": false,
+          "phase": "trigger",
+          "entered_at_phase": "trigger",
+          "first_seen_ens": "2026-08-26T14:00:10Z",
+          "last_seen_ens": "2026-08-26T14:00:14Z",
+          "closed": false,
+          "close_reason": "",
+          "incomplete": false,
+          "gap": false,
+          "instances": 1,
+          "expected_instances": 1,
+          "phases": [
+            {
+              "phase": "trigger",
+              "from": "2026-08-26T14:00:10Z"
+            }
+          ],
+          "area": {
+            "whole_ensemble": false,
+            "codes": [
+              {
+                "zone": 1,
+                "digits": "91BB91",
+                "presentation": "1255-4467-3271",
+                "rect": {
+                  "lat_min": 52.5146484375,
+                  "lat_max": 52.5234375,
+                  "lon_min": 13.4033203125,
+                  "lon_max": 13.412109375
+                }
+              }
+            ],
+            "geojson": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                [
+                  [
+                    [
+                      13.40332,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.514648
+                    ]
+                  ]
+                ]
+              ]
+            },
+            "raw": "01591bb910"
+          },
+          "audio": null
+        }
+      ]
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": false,
+      "heartbeat": {
+        "expected": 10,
+        "received": 0,
+        "suppressed": 0,
+        "missing_seconds": [
+          "2026-08-26T14:00:29Z",
+          "2026-08-26T14:00:30Z",
+          "2026-08-26T14:00:31Z",
+          "2026-08-26T14:00:32Z",
+          "2026-08-26T14:00:33Z",
+          "2026-08-26T14:00:34Z",
+          "2026-08-26T14:00:35Z",
+          "2026-08-26T14:00:36Z",
+          "2026-08-26T14:00:37Z",
+          "2026-08-26T14:00:38Z"
+        ],
+        "pd_mismatch": 0
+      },
+      "records": [],
+      "alerts": [
+        {
+          "alert_uid": "36532191d5cbd50b909f88856132b70c",
+          "alert_uid_confident": true,
+          "oe": false,
+          "channel_eid": "10ff",
+          "warning_eid": "10ff",
+          "subch_id": 7,
+          "iid": 6,
+          "stage": "level1_update",
+          "level": 1,
+          "test": false,
+          "phase": "trigger",
+          "entered_at_phase": "trigger",
+          "first_seen_ens": "2026-08-26T14:00:10Z",
+          "last_seen_ens": "2026-08-26T14:00:14Z",
+          "closed": false,
+          "close_reason": "",
+          "incomplete": false,
+          "gap": false,
+          "instances": 1,
+          "expected_instances": 1,
+          "phases": [
+            {
+              "phase": "trigger",
+              "from": "2026-08-26T14:00:10Z"
+            }
+          ],
+          "area": {
+            "whole_ensemble": false,
+            "codes": [
+              {
+                "zone": 1,
+                "digits": "91BB91",
+                "presentation": "1255-4467-3271",
+                "rect": {
+                  "lat_min": 52.5146484375,
+                  "lat_max": 52.5234375,
+                  "lon_min": 13.4033203125,
+                  "lon_max": 13.412109375
+                }
+              }
+            ],
+            "geojson": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                [
+                  [
+                    [
+                      13.40332,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.514648
+                    ]
+                  ]
+                ]
+              ]
+            },
+            "raw": "01591bb910"
+          },
+          "audio": null
+        }
+      ]
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": false,
+      "heartbeat": {
+        "expected": 10,
+        "received": 0,
+        "suppressed": 0,
+        "missing_seconds": [
+          "2026-08-26T14:00:39Z",
+          "2026-08-26T14:00:40Z",
+          "2026-08-26T14:00:41Z",
+          "2026-08-26T14:00:42Z",
+          "2026-08-26T14:00:43Z",
+          "2026-08-26T14:00:44Z",
+          "2026-08-26T14:00:45Z",
+          "2026-08-26T14:00:46Z",
+          "2026-08-26T14:00:47Z",
+          "2026-08-26T14:00:48Z"
+        ],
+        "pd_mismatch": 0
+      },
+      "records": [],
+      "alerts": [
+        {
+          "alert_uid": "36532191d5cbd50b909f88856132b70c",
+          "alert_uid_confident": true,
+          "oe": false,
+          "channel_eid": "10ff",
+          "warning_eid": "10ff",
+          "subch_id": 7,
+          "iid": 6,
+          "stage": "level1_update",
+          "level": 1,
+          "test": false,
+          "phase": "trigger",
+          "entered_at_phase": "trigger",
+          "first_seen_ens": "2026-08-26T14:00:10Z",
+          "last_seen_ens": "2026-08-26T14:00:14Z",
+          "closed": true,
+          "close_reason": "timeout",
+          "incomplete": false,
+          "gap": false,
+          "instances": 1,
+          "expected_instances": 1,
+          "phases": [
+            {
+              "phase": "trigger",
+              "from": "2026-08-26T14:00:10Z",
+              "to": "2026-08-26T14:00:44Z"
+            }
+          ],
+          "area": {
+            "whole_ensemble": false,
+            "codes": [
+              {
+                "zone": 1,
+                "digits": "91BB91",
+                "presentation": "1255-4467-3271",
+                "rect": {
+                  "lat_min": 52.5146484375,
+                  "lat_max": 52.5234375,
+                  "lon_min": 13.4033203125,
+                  "lon_max": 13.412109375
+                }
+              }
+            ],
+            "geojson": {
+              "type": "MultiPolygon",
+              "coordinates": [
+                [
+                  [
+                    [
+                      13.40332,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.514648
+                    ],
+                    [
+                      13.412109,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.523438
+                    ],
+                    [
+                      13.40332,
+                      52.514648
+                    ]
+                  ]
+                ]
+              ]
+            },
+            "raw": "01591bb910"
+          },
+          "audio": null
+        }
+      ],
+      "anomalies": [
+        "Alert 36532191 nach 30s Stille als abgebrochen abgeschlossen"
+      ]
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 10,
+      "snr_avg": 12.400000000000002,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 1250,
+      "fib_crc_err": 20,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": false,
+      "heartbeat": {
+        "expected": 10,
+        "received": 0,
+        "suppressed": 0,
+        "missing_seconds": [
+          "2026-08-26T14:00:49Z",
+          "2026-08-26T14:00:50Z",
+          "2026-08-26T14:00:51Z",
+          "2026-08-26T14:00:52Z",
+          "2026-08-26T14:00:53Z",
+          "2026-08-26T14:00:54Z",
+          "2026-08-26T14:00:55Z",
+          "2026-08-26T14:00:56Z",
+          "2026-08-26T14:00:57Z",
+          "2026-08-26T14:00:58Z"
+        ],
+        "pd_mismatch": 0
+      },
+      "records": [],
+      "alerts": []
+    }
+  },
+  {
+    "channel": "5C",
+    "freq_hz": 178352000,
+    "device": "rawfile",
+    "device_serial": "",
+    "rx_state": "starting",
+    "rx_version": "0.1.0",
+    "rx_commit": "abc1234",
+    "welle_commit": "fe06fad",
+    "rx_restarts": 0,
+    "last_error": "",
+    "ensemble": {
+      "ens_hash": "c0a8ceb1d0908a3b1b7610b315e097f8",
+      "ens_content_hash": "035c382ff71364293f568a645ae36883",
+      "eid": "0x10FF",
+      "ecc": 224,
+      "label": "Bundesmux 1",
+      "first_seen": "2026-08-26T13:59:59Z",
+      "last_seen": "2026-08-26T13:59:59Z",
+      "services": [
+        {
+          "sid": "0x0D3110AB",
+          "label": "ASA DE",
+          "components": [
+            {
+              "subch_id": 7,
+              "start_addr": 128,
+              "size": 48,
+              "protection": "EEP 2-A",
+              "bitrate": 32
+            }
+          ]
+        }
+      ]
+    },
+    "reception": {
+      "samples": 1,
+      "snr_avg": 12.4,
+      "snr_min": 12.4,
+      "snr_max": 12.4,
+      "sync_ratio": 1,
+      "fib_total": 125,
+      "fib_crc_err": 2,
+      "crc_err_rate": 0.016,
+      "dropped": 0,
+      "node_dropped": 0,
+      "parse_errors": 0,
+      "seq_gaps": 0,
+      "broken_lines": 0,
+      "ens_time_offset_ms": 123
+    },
+    "asa": {
+      "ever_seen": true,
+      "observed": false,
+      "heartbeat": {
+        "expected": 0,
+        "received": 0,
+        "suppressed": 0,
+        "missing_seconds": [],
+        "pd_mismatch": 0
+      },
+      "records": [],
+      "alerts": []
+    }
+  }
+]

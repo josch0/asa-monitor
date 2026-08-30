@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Release: fertige Binaries an einem Tag v*.
+#
+# Warum überhaupt fertige Binaries: Der ASA-Monitor ist ein Crowd-Projekt, und
+# die Hürde, an der Freiwillige abspringen, ist nicht die Konfiguration,
+# sondern der Satz "übersetze dir zuerst welle.io" (docs/ausrollen.md).
+#
+# Dieser Lauf liefert heute **nur asamon-node**. Der Empfangsprozess braucht je
+# Plattform eine native Bauumgebung; der Ausbau dorthin steht in
+# docs/ausrollen.md, Stufe 2.
+#
+# GPL-3.0-or-later: Binärweitergabe verpflichtet zur Quellweitergabe. Sie ist
+# dadurch erfüllt, dass dieses Repo öffentlich ist und der Tag darauf zeigt —
+# QUELLEN.txt im Archiv nennt Tag und Commit ausdrücklich, damit das nicht von
+# der Erinnerung abhängt.
+
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version ohne führendes v, etwa 0.1.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  asamon-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Für die Commit-Angabe in QUELLEN.txt und im --version der Binary.
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: asamon-node/go.mod
+          check-latest: true
+
+      - name: Version bestimmen
+        id: version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "wert=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "wert=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Erst prüfen, dann ausliefern. Ein Release aus ungeprüftem Stand ist
+      # schlimmer als kein Release.
+      - name: Tests
+        working-directory: asamon-node
+        run: go test ./... -timeout 900s
+
+      - name: Archive bauen
+        working-directory: asamon-node
+        run: make dist VERSION=${{ steps.version.outputs.wert }}
+
+      - name: QUELLEN.txt
+        working-directory: asamon-node
+        run: |
+          welle=$(git ls-tree HEAD ../asamon-rx/external/welle.io | awk '{print $3}')
+          cat > dist/QUELLEN.txt <<EOF
+          asamon-node ${{ steps.version.outputs.wert }}
+            Quelle:   ${{ github.server_url }}/${{ github.repository }}
+            Tag:      ${GITHUB_REF_NAME:-(kein Tag)}
+            Commit:   ${GITHUB_SHA}
+            Lizenz:   GPL-3.0-or-later
+
+          Dieses Archiv enthaelt nur asamon-node. Der Empfangsprozess asamon-rx
+          wird noch nicht als Binary ausgeliefert; er ist aus derselben Quelle zu
+          bauen und linkt gegen den welle.io-Fork:
+            welle.io: https://github.com/josch0/welle.io (Zweig asa-fig0-15)
+            Commit:   ${welle:-unbekannt}
+            Lizenz:   GPL-2.0-or-later
+          Gebaut wird er ohne FDK-AAC; die Lizenz gilt als GPL-unvertraeglich.
+          EOF
+          cat dist/QUELLEN.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-archive
+          path: |
+            asamon-node/dist/*.tar.gz
+            asamon-node/dist/SHA256SUMS
+            asamon-node/dist/QUELLEN.txt
+
+      - name: Release anlegen
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            asamon-node/dist/*.tar.gz
+            asamon-node/dist/SHA256SUMS
+            asamon-node/dist/QUELLEN.txt
+          body: |
+            ## asamon-node ${{ steps.version.outputs.wert }}
+
+            Knotenprozess des ASA-Monitors. Statisch gebaut, keine
+            Laufzeitabhaengigkeiten.
+
+            | Plattform | Archiv |
+            |---|---|
+            | Raspberry Pi 3/4/5, 64 bit | `asamon-node-*-linux-arm64.tar.gz` |
+            | Raspberry Pi, 32 bit (armv7) | `asamon-node-*-linux-arm.tar.gz` |
+            | PC mit Linux | `asamon-node-*-linux-amd64.tar.gz` |
+            | PC mit Windows | `asamon-node-*-windows-amd64.tar.gz` |
+
+            Pruefen: `sha256sum -c SHA256SUMS`
+
+            **Der Empfangsprozess `asamon-rx` ist hier nicht dabei.** Er braucht
+            je Plattform eine eigene Bauumgebung und ist bis auf Weiteres selbst
+            zu bauen — siehe `asamon-rx/README.md`. Unter Windows fehlt ihm
+            zudem noch ein Port (`asamon-rx/TODO.md` Abschnitt 17).
+
+            Quellen und Lizenzangaben: `QUELLEN.txt`.

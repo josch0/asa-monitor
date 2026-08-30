@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# asamon-node prüfen — auf Linux und auf Windows.
+#
+# Beide Plattformen laufen, seit der Knoten Windows-fähig ist; ein Test, der
+# nur auf einer davon läuft, würde die plattformabhängigen Stellen (Pfade,
+# Job Object, Uhrenauskunft) genau dort nicht prüfen, wo sie sich
+# unterscheiden.
+
+name: asamon-node
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "asamon-node/**"
+      - ".github/workflows/asamon-node.yml"
+  pull_request:
+    paths:
+      - "asamon-node/**"
+      - ".github/workflows/asamon-node.yml"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: asamon-node
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          # go.mod nennt die Untergrenze; check-latest holt die neueste
+          # passende Fassung, statt eine hier ein zweites Mal festzuschreiben.
+          go-version-file: asamon-node/go.mod
+          check-latest: true
+
+      - name: Formatierung
+        shell: bash
+        run: |
+          ungeformt=$(gofmt -l cmd internal)
+          if [ -n "$ungeformt" ]; then
+            echo "nicht mit gofmt geformt:"; echo "$ungeformt"; exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: Tests
+        run: go test ./... -timeout 900s
+
+      # Der Race-Detector braucht cgo. Auf den Runnern ist ein C-Compiler da —
+      # anders als auf dem Entwicklungsrechner, auf dem dieser Lauf bis jetzt
+      # ausfiel (TODO.md Abschnitt 21).
+      - name: Race-Detector
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          CGO_ENABLED: "1"
+        run: go test -race ./... -timeout 1800s
+
+      # Die beiden Parser, die fremde Bytes sehen. Kurz gehalten, damit jeder
+      # Push davon etwas hat; lange Läufe gehören in einen eigenen Zeitplan.
+      - name: Fuzzing
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          go test ./internal/record -run FuzzParseLine -fuzz FuzzParseLine -fuzztime 60s
+          go test ./internal/loc -run FuzzDecodeLocationCodes -fuzz FuzzDecodeLocationCodes -fuzztime 60s
+
+  cross:
+    name: Cross-Build für alle Zielplattformen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: asamon-node/go.mod
+          check-latest: true
+
+      # Baut, was später ausgeliefert wird. Ein Cross-Build, der erst beim
+      # Release scheitert, scheitert zum denkbar schlechtesten Zeitpunkt.
+      - name: cross
+        run: make cross
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asamon-node-binaries
+          path: asamon-node/build/asamon-node-*
+          retention-days: 7
