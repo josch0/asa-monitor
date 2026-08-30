@@ -9,8 +9,8 @@
 
 #include "commands.h"
 #include "controller.h"
-#include "notify.h"
 #include "options.h"
+#include "platform.h"
 #include "record.h"
 #include "recorder.h"
 #include "version.h"
@@ -23,7 +23,6 @@
 #include "virtual_input.h"
 
 #include <atomic>
-#include <csignal>
 #include <cstdio>
 #include <cstring>
 #include <memory>
@@ -33,27 +32,6 @@
 namespace {
 
 std::atomic<bool> g_shutdownRequested{false};
-
-extern "C" void onSignal(int)
-{
-    // Im Signalhandler nur ein Flag setzen — alles Weitere macht die
-    // Hauptschleife.
-    g_shutdownRequested.store(true, std::memory_order_relaxed);
-}
-
-void installSignalHandlers()
-{
-    struct sigaction action;
-    std::memset(&action, 0, sizeof(action));
-    action.sa_handler = onSignal;
-    sigaction(SIGINT, &action, nullptr);
-    sigaction(SIGTERM, &action, nullptr);
-
-    // Ohne das beendet ein EPIPE den Prozess hart, sobald die Gegenstelle den
-    // Strom nicht mehr liest. Der Writer meldet den Fehler stattdessen, und
-    // wir raeumen geordnet auf.
-    std::signal(SIGPIPE, SIG_IGN);
-}
 
 }  // namespace
 
@@ -66,7 +44,7 @@ int main(int argc, char** argv)
     if (!parseOptions(argc, argv, options, exitRequested)) return 2;
     if (exitRequested) return 0;
 
-    installSignalHandlers();
+    asamon::installShutdownHandler(g_shutdownRequested);
 
     Writer writer(stdout, options.queueSize);
     writer.start();
@@ -156,10 +134,6 @@ int main(int argc, char** argv)
     CommandReader commands(options, handlers);
     commands.start();
 
-    notifyReady();
-    const unsigned watchdogSeconds = watchdogIntervalSeconds();
-    unsigned sinceWatchdog = 0;
-
     logMessage(options.logLevel, LogLevel::Info,
                "asamon-rx " ASAMON_RX_VERSION " laeuft auf Kanal " +
                    options.channel + " (" + std::to_string(frequency) + " Hz)");
@@ -186,6 +160,14 @@ int main(int argc, char** argv)
         // tlm geht auch dann raus, wenn nichts empfangen wurde — sonst kann
         // der Server "Ensemble schweigt" nicht von "Knoten ist tot"
         // unterscheiden.
+        //
+        // **Und es ist das Lebenszeichen des Prozesses.** asamon-node erkennt
+        // an ausbleibenden Records, dass diese Schleife steht, und startet den
+        // Prozess neu. Bis zum 27.08.2026 tat das der systemd-Watchdog, der
+        // zwei Zeilen weiter unten aus derselben Schleife getickt wurde; der
+        // Weg ueber den Record-Strom leistet dasselbe und funktioniert auch
+        // unter Windows, wo es keinen Watchdog gibt (TODO.md Abschnitt 19).
+        // Diese Zeile darf deshalb nie an eine Bedingung geraten.
         const TelemetrySnapshot snapshot = controller.takeTelemetrySnapshot();
         TlmPayload tlm;
         tlm.snr = snapshot.snr;
@@ -217,15 +199,9 @@ int main(int argc, char** argv)
         }
 
         recorder.enforceLimits();
-
-        if (watchdogSeconds > 0 && ++sinceWatchdog >= watchdogSeconds) {
-            sinceWatchdog = 0;
-            notifyWatchdog();
-        }
     }
 
     logMessage(options.logLevel, LogLevel::Info, "beende");
-    notifyStopping();
 
     commands.stop();
     recorder.stopAll();
@@ -234,6 +210,7 @@ int main(int argc, char** argv)
     writer.stop();
 
     // Ein weggebrochenes Eingabegeraet ist ein Fehlschlag, kein Feierabend:
-    // unter systemd soll Restart greifen.
+    // asamon-node soll den Prozess neu starten, statt ihn als erledigt zu
+    // betrachten.
     return inputBroke ? 1 : 0;
 }

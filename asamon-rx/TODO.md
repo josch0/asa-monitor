@@ -235,7 +235,6 @@ asamon-rx/
 │   ├── test_record.cpp         # Serialisierung: Struktur → JSON-Zeile
 │   └── fixtures/               # handgebaute FIBs mit FIG 0/15, siehe Abschnitt 12
 └── contrib/
-    ├── asamon-rx.service       # systemd-Unit (nur für Einzelbetrieb/Test)
     └── 99-asamon-rtlsdr.rules  # udev-Regel für Zugriff ohne root
 ```
 
@@ -623,7 +622,9 @@ kleinste Eingriff.
 
 ### Später, nicht jetzt
 
-- Rückruf statt Datei für den MSC-Dump, falls sich die FIFO im Betrieb als zu heikel erweist.
+- ~~Rückruf statt Datei für den MSC-Dump, falls sich die FIFO im Betrieb als zu heikel
+  erweist.~~ → **Eingetreten und umgesetzt als Patch 3, siehe Abschnitt 18.** Zu heikel erwiesen
+  hat sich die FIFO nicht im Betrieb, sondern beim Windows-Port (Abschnitt 17).
 - `decode_audio` durchreichen (`SuperframeFilter(this, true, false)`, erstes Argument) — spart
   bei 32 kbit/s kaum Rechenzeit, und FAAD2 bliebe wegen `find_package(Faad REQUIRED)` ohnehin
   Bauabhängigkeit.
@@ -692,6 +693,7 @@ dafür nicht nötig.
 - `SIGINT`/`SIGTERM` sauber, `stop()` auf dem `RadioReceiver`, FIFO abbauen.
 - Verwurfszähler, CRC-Quote und `parse_errors` im `tlm`; Vorrangregel beim Verwerfen.
 - `systemd`-Unit in `contrib/` mit Watchdog; `README.md` mit Bau- und Startanleitung.
+  (Unit und Watchdog am 27.08.2026 wieder entfernt — siehe Abschnitt 19.)
 - Dauerlauf über 24 h auf dem Pi, Speicher- und CPU-Verlauf mitschreiben.
 
 **Fertig, wenn:** 24 h ohne Speicherwachstum, ohne Verwürfe im Normalbetrieb, und ein
@@ -836,3 +838,244 @@ Debian; der Empfangspfad lief über `--device rawfile`. Offen bleiben damit:
 Der **öffentliche welle.io-Fork** ist dagegen erledigt: Das Submodul zeigt auf
 [josch0/welle.io](https://github.com/josch0/welle.io), Zweig `asa-fig0-15`, ein Commit über dem
 Upstream-Stand. Damit ist die GPL-Auflage aus dem veränderten welle.io erfüllt.
+
+---
+
+## 17. Windows-Port (umgesetzt am 27.08.2026)
+
+`asamon-rx` läuft seit dem 27.08.2026 als **native Windows-Anwendung** — ohne WSL, ohne Docker,
+ohne Cygwin. Zusammen mit `asamon-node`, das schon vorher portiert war, kann ein Windows-Rechner
+damit alles: entwickeln, `--replay`, `--dry-run` **und empfangen**.
+
+Belegt ist das auf Windows 11 mit MSYS2/MinGW-w64 (GCC 16.2, CMake 4.4, Ninja): der Bau läuft
+durch, `ctest` meldet 6 von 6, und `asamon-rx.exe --device rawfile` liefert gültige Records auf
+stdout.
+
+### Wie die Plattformtrennung aussieht
+
+Nicht als `#ifdef`-Wald in `recorder.cpp` — dort wäre er unlesbar geworden. Stattdessen liegt
+**alles Plattformabhängige in einer einzigen Schnittstelle**, `src/platform.h`, mit zwei
+Umsetzungen:
+
+| Datei | Inhalt |
+|---|---|
+| `src/platform.h` | `installShutdownHandler`, `StdinReader`, `MscPipe` und die drei Rückgabecodes `kReadTimeout`, `kReadClosed`, `kReadFailed` |
+| `src/platform_posix.cpp` | `sigaction`, `poll`+`read`, `mkfifo`, `O_RDONLY\|O_NONBLOCK` samt `keepAliveFd` |
+| `src/platform_windows.cpp` | `SetConsoleCtrlHandler`, `PeekNamedPipe`, `CreateNamedPipeA` mit überlappter E/A |
+
+`recorder.cpp`, `commands.cpp` und `main.cpp` enthalten seitdem **kein einziges `#ifdef`**. Sie
+sehen nur noch `readWithTimeout(...)` und die drei Codes; welcher Systemaufruf dahinter steckt,
+geht sie nichts an. `notify.cpp` war schon vorher mit `#if defined(__unix__)` abgesichert und
+wurde unter Windows zu leeren Funktionen — wie in der Planung vorgesehen. (Die Datei ist am
+27.08.2026 ganz entfallen, siehe Abschnitt 19.)
+
+Die Rückgabecodes sind der Kern der Sache: `kReadClosed` (Gegenstelle weg) ist **kein Fehler**,
+sondern das reguläre Ende. Unter Unix ist das ein `read` mit 0 Bytes, unter Windows ein
+`ERROR_BROKEN_PIPE`. Dass beide Fälle denselben Code liefern, ist der Grund, warum die
+Aufrufer plattformfrei bleiben konnten.
+
+### Was der Port tatsächlich gekostet hat — und woran er beinahe gescheitert wäre
+
+Die Planung hat den Aufwand richtig eingeschätzt, aber die **Fallen falsch geraten**. Der
+Bauweg, der als größtes Risiko galt („läuft CMake unter MinGW durch?"), war unauffällig. Teuer
+waren vier Dinge, die vorher niemand auf dem Zettel hatte:
+
+1. **`ws2_32` fehlt in der CMakeLists von welle.io.** Der Bau bricht beim Linken ab
+   (`undefined reference to __imp_WSAStartup`). Der Grund steht in Abschnitt „Was der Blick in
+   welle.io ergeben hat": welle.io baut unter Windows über **qmake**, und dort zieht Qt Winsock
+   von selbst herein. Über CMake tut das niemand. Unsere `CMakeLists.txt` linkt es jetzt selbst;
+   der Kommentar dort sagt, warum.
+
+2. **`OVERLAPPED` auf dem Stack ist ein Segfault.** Bei überlappter E/A schreibt der Kernel
+   **später** in die Struktur, wenn die Operation fertig wird — der Stack des Aufrufers ist da
+   längst weg. `MscPipe` hält sie deshalb auf dem Heap, für die Lebensdauer der Leitung. Der
+   erste Anlauf ist genau daran gestorben, und der Absturz kam nicht dort, wo die Ursache lag.
+
+3. **`GetOverlappedResult(..., bWait=TRUE)` ohne schwebende Operation kehrt nie zurück.** Das
+   war der Hänger, der `test_recorder` unter `ctest` in den Timeout laufen ließ — und zwar
+   *manchmal*, was ihn erst recht unangenehm machte. Der Ablauf: Der Schreiber geht, `ReadFile`
+   scheitert **synchron** mit `ERROR_BROKEN_PIPE`, der Kernel hat die Operation also nie
+   angenommen und setzt das Ereignis nicht. Wer danach in `close()` darauf wartet, wartet für
+   immer. `MscPipe` führt seitdem ein Feld `pending_` mit, das nur dann gesetzt ist, wenn
+   wirklich etwas beim Kernel liegt, und `abortPending()` ist die einzige Stelle, die abbricht
+   und abwartet. Die Lehre: Bei überlappter E/A ist der Schwebezustand **eigene Buchführung**,
+   nicht aus dem Handle ablesbar.
+
+4. **`std::tmpfile()` ist unter Windows unbrauchbar.** Die C-Laufzeit legt die Datei im
+   **Wurzelverzeichnis des aktuellen Laufwerks** an; ohne erhöhte Rechte scheitert das und der
+   Aufruf liefert stillschweigend `nullptr`. Dafür gibt es jetzt `tests/tempfile.h`. Auch das
+   hat einen zweiten Anlauf gebraucht: In einer MSYS2-Shell steht in `TMPDIR` ein Unix-Pfad
+   (`/tmp`), mit dem die native Laufzeit nichts anfangen kann — `TEMP` und `TMP` werden deshalb
+   zuerst probiert, das aktuelle Verzeichnis ist der letzte Ausweg.
+
+Nicht eingetreten ist dagegen die in der Planung erwogene Notlösung, den Wartezustand mit einer
+**zweiten Verbindung von innen** zu lösen (das Gegenstück zum `keepAliveFd` unter Unix).
+Überlappte E/A war der sauberere Weg und hat den Abbruchpfad ohne Hilfskonstruktion gelöst.
+
+### Was der Rauchtest gezeigt hat
+
+- `--version` und `--help` gehen nach **stderr**, der Record-Strom nach stdout — auch die
+  Startmeldung `RTL_TCP_CLIENT: Initialising Winsock...done`, die welle.io ungefragt ausgibt.
+  Das war zu prüfen: Landete sie auf stdout, würde `asamon-node` am ersten Byte scheitern.
+- `--device rawfile` liefert `init` und `tlm` in gültigem NDJSON, mit denselben Feldern wie
+  unter Linux. Der Strom bleibt byteweise derselbe, wie es Abschnitt „Was dabei nicht
+  verlorengehen darf" verlangt.
+- **Ein geschlossenes stdin beendet `asamon-rx` nicht** — das ist so gewollt und in
+  `commands.cpp` kommentiert. Unter Windows gibt es kein SIGTERM; `asamon-node` beendet den
+  Prozess deshalb über `Process.Kill()`, und das Job Object mit
+  `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` räumt nach, falls der Knoten selbst wegfällt. Das ist
+  die Entsprechung zu `KillMode=control-group` unter systemd.
+
+### Was weiterhin gilt
+
+- **Der RTL-SDR-Stick braucht WinUSB**, üblicherweise über Zadig eingerichtet. Das ist die
+  Entsprechung zum `blacklist dvb_usb_rtl28xxu` unter Linux und steht in der `README.md`.
+- **Ein Windows-Release ist ein Ordner, keine Datei.** `asamon-rx` linkt dynamisch: neben
+  `asamon-rx.exe` müssen `libstdc++-6.dll`, `libwinpthread-1.dll` und `libgcc_s_seh-1.dll`
+  liegen, dazu die DLLs für FFTW3f, mpg123 und librtlsdr samt Lizenztexten.
+- **Der POSIX-Zweig ist mitgeprüft.** `src/platform_posix.cpp`, `recorder.cpp`, `commands.cpp`
+  und `main.cpp` übersetzen weiterhin sauber mit GCC 14 unter Linux (`-fsyntax-only`,
+  `-Wall -Wextra`). Ein voller Linux-Bau samt `ctest` gehört trotzdem in die CI, bevor das
+  hier als erledigt gilt — siehe Abschnitt 14.
+
+### Offen geblieben
+
+- Ein **Empfang mit echtem Stick unter Windows** ist noch nicht belegt. Geprüft ist der Pfad bis
+  einschließlich `rawfile`; ob librtlsdr über WinUSB in diesem Aufbau liefert, muss ein
+  Feldtest zeigen.
+- Die **CI baut Windows noch nicht**. Der Workflow für `asamon-node` deckt Windows ab, der für
+  `asamon-rx` gibt es noch nicht — er bräuchte MSYS2 und die Bibliotheken aus
+  `welle.io-win-libs`.
+
+---
+
+## 18. Der MSC-Strom kommt als Rückruf (umgesetzt am 27.08.2026)
+
+Der Mitschnitt läuft nicht mehr über eine benannte Leitung. **Patch 3** des welle.io-Forks
+(`onMscData()`, siehe `docs/welle-patches.md`) reicht den rohen Subchannel-Bitstrom direkt an den
+`ProgrammeHandlerInterface` weiter — an dieselbe Klasse, die `addServiceToDecode()` ohnehin
+verlangt und die bis dahin ein leerer Platzhalter war.
+
+Damit ist der Punkt aus Abschnitt 10 („Später, nicht jetzt") erledigt. Ausgelöst hat ihn nicht
+der Betrieb, sondern der Windows-Port: Die drei Fallen aus Abschnitt 17 — `OVERLAPPED` auf dem
+Stack, `GetOverlappedResult` ohne schwebende Operation, die eigene Buchführung über den
+Schwebezustand — steckten allesamt in Code, den es jetzt nicht mehr gibt.
+
+### Was verschwunden ist
+
+| | vorher | nachher |
+|---|---|---|
+| `MscPipe` in `src/platform_windows.cpp` | 218 Zeilen, überlappte E/A | entfällt |
+| `MscPipe` in `src/platform_posix.cpp` | 65 Zeilen, `mkfifo` samt `keepAliveFd` | entfällt |
+| `MscPipe` in `src/platform.h` | ~60 Zeilen, davon 40 Kommentar zur Reihenfolgefalle | entfällt |
+| Lesethread je Aufnahme | ein `std::thread`, Zeitscheibe, Abbruchflag | entfällt |
+| `--fifo-dir` | Option, Vorgabe `/tmp` | entfällt |
+| `tests/test_recorder.cpp` | FIFO anlegen, Schreiber starten, Reihenfolge abpassen | Rückruf aufrufen |
+
+`src/platform.h` trägt seitdem nur noch den Weg für **stdin**. Dass es die Datei überhaupt noch
+gibt, liegt allein daran, dass Windows kein `poll()` auf stdin kennt.
+
+### Was an die Stelle getreten ist
+
+`asamon::MscSink` in `src/recorder.h` — eine Klasse, die `onMscData()` entgegennimmt, bis
+4096 Byte sammelt und `aud`-Records einstellt. Der Puffer braucht keine Sperre: Er wird nur vom
+Decoder-Thread des Subchannels berührt, und nach dessen Ende von `flush()`.
+
+Zwei Dinge waren dabei zu klären, und beide stehen im Code:
+
+1. **Die Stückung.** Der Rückruf kommt je DAB-Rahmen — bei 32 kbit/s sind das 96 Byte alle
+   24 ms. Ungepuffert stünden ~42 Records je Sekunde im Strom statt einem. Deshalb sammelt
+   `MscSink` bis `kChunkBytes`, genau wie vorher ein `read()` aus der FIFO bis 4096 Byte las.
+   **Das Record-Format ist dadurch byteweise gleich geblieben.**
+
+2. **Der Rand beim Abschalten.** `removeSubchannel()` löscht in welle.io den `SelectedStream`,
+   damit fällt der letzte `shared_ptr` auf `DabAudio`, und `~DabAudio` joint seinen Thread.
+   Nach der Rückkehr von `removeServiceToDecode()` kann der Rückruf also nicht mehr kommen —
+   erst dann räumt `Recorder::teardown()` den Rest mit `flush()` ab. Vorher ging genau dieser
+   Rest verloren: Beim Stillsetzen des Lesethreads stand im stdio-Puffer von welle.io noch bis
+   zu 4 kB, knapp eine Sekunde Warn-Audio.
+
+### Was die Notbremse jetzt bedeutet
+
+`--rec-max-seconds` bleibt, aber der Grund hat sich verschoben. Sie war auch dagegen da, dass
+eine Aufnahme an einer Leitung hängt, an der nie ein Schreiber erscheint. Diesen Fall gibt es
+nicht mehr — was bleibt, ist der ursprüngliche Zweck: eine Aufnahme, die niemand stoppt, läuft
+nicht unbegrenzt weiter.
+
+### Wie es geprüft ist
+
+Auf **beiden** Plattformen gebaut und getestet, am 27.08.2026:
+
+- Windows 11, MSYS2/MinGW-w64 (GCC 16.2, CMake 4.4, Ninja): Bau ohne Warnung im eigenen Code,
+  `ctest` 6/6, `--help` und `--version` unverändert, `--fifo-dir` wird korrekt als unbekanntes
+  Argument abgewiesen.
+- Debian in WSL (GCC 14.2, CMake 3.31, Unix Makefiles): Bau ohne Warnung im eigenen Code,
+  `ctest` 6/6. Damit ist zugleich der **volle Linux-Bau samt `ctest`** belegt, den Abschnitt 17
+  noch als offen geführt hat — er fehlt weiterhin in der CI, aber nicht mehr als Nachweis.
+
+`tests/test_recorder.cpp` ruft `onMscData()` über eine Referenz auf `ProgrammeHandlerInterface`
+auf, also genau so, wie welle.io es in `decoder_adapter.cpp` tut. Geprüft werden die Stückung an
+der 4096er-Grenze, die Nummerierung, der Rest aus `flush()`, unveränderte Nutzdaten und dass ein
+leerer `flush()` still bleibt.
+
+### Offen geblieben
+
+- **Der Weg am Funk ist weiterhin unbelegt.** `REC` braucht einen Service im empfangenen
+  Ensemble; ohne Stick an der Antenne lässt sich nicht prüfen, dass Bytes tatsächlich ankommen.
+  Das war vor Patch 3 genauso und gehört zum Feldtest.
+- **Die Patches sind noch nicht angeboten.** Patch 1 und Patch 3 sind beide upstream-tauglich
+  geschnitten und voneinander unabhängig; in welle.io gibt es zu beidem bislang keinen PR.
+
+---
+
+## 19. Kein systemd mehr: der Record-Strom ist das Lebenszeichen (umgesetzt am 27.08.2026)
+
+`asamon-rx` kennt kein Init-System mehr. Entfallen sind `src/notify.cpp`, `src/notify.h` und
+`contrib/asamon-rx.service` — zusammen mit der Annahme, es könne je einen Einzelbetrieb geben.
+Den gibt es nicht: **`asamon-rx` läuft ausschließlich als Kindprozess von `asamon-node`.**
+
+### Was der Watchdog geleistet hat — und was an seine Stelle tritt
+
+Der systemd-Watchdog erkannte einen **hängenden** Prozess, nicht nur einen abgestürzten. Das ist
+der Fall, den `Restart=always` nicht abdeckt, und auf einem unbeaufsichtigten Pi der wertvolle.
+
+Getickt wurde er aus der Sekundenschleife in `main.cpp` — **zwei Zeilen unter dem `tlm`-Record**,
+der aus derselben Schleife stammt und ebenfalls jede Sekunde hinausgeht, auch ohne Empfang. Beide
+Lebenszeichen hatten damit dieselbe Quelle: Steht die Schleife, verstummen beide. Der Watchdog
+war also nie mehr als ein zweiter Kanal für eine Information, die ohnehin über stdout ging.
+
+Genau das nutzt `asamon-node` jetzt: Es misst die Stille im Record-Strom
+(`limits.rx_silence_seconds`, Vorgabe 15 s) und startet den Prozess neu. **Die Erkennungsgüte
+ist unverändert** — dieselbe Schleife, dieselbe Sekunde.
+
+### Was der Tausch eingebracht hat
+
+- **Windows bekommt die Erkennung überhaupt zum ersten Mal.** Dort gab es nie einen Watchdog;
+  ein festgefahrener `asamon-rx` lief unbemerkt weiter. Das ist der eigentliche Gewinn, nicht die
+  98 gesparten Zeilen.
+- **Kein Init-Systembezug mehr.** `notify.cpp` war die letzte Datei außerhalb der
+  Plattformschicht mit einem `#if defined(__unix__)`. Übrig bleibt allein `record.cpp:243`
+  (`gmtime_s` gegen `gmtime_r`) — C-Bibliothek, kein Betriebsmodell. Der Prozess läuft unter
+  systemd, OpenRC, runit oder als Windows-Kindprozess gleich.
+- **Zwei Portabilitätsfehler sind mitentfallen.** `notify.cpp` stand hinter `__unix__`, benutzte
+  aber `SOCK_CLOEXEC` und `MSG_NOSIGNAL` — beides nicht POSIX und auf macOS nicht vorhanden.
+  Und `WATCHDOG_PID` wurde nie geprüft, anders als in `sd_watchdog_enabled()`: Im Knotenbetrieb
+  erbte `asamon-rx` `WATCHDOG_USEC` von `asamon-node` und hielt sich für überwacht, obwohl
+  systemd seine Meldungen wegen `NotifyAccess=main` ohnehin verwarf.
+
+### Die eine Invariante, die daraus folgt
+
+**Der `tlm`-Record darf nie an eine Bedingung geraten.** Er ist nicht mehr nur Telemetrie,
+sondern das Lebenszeichen des Prozesses. Der Kommentar an der Einreihstelle in `main.cpp` sagt
+das ausdrücklich, weil man es einer Statistikzeile sonst nicht ansieht.
+
+Die Gegenrichtung steht in `writer.h`: `tlm` bleibt beim Verwerfen **zuunterst** (`asa` vor `aud`
+vor `tlm`). Das ist kein Widerspruch — `asamon-node` misst über *alle* Record-Arten. Eine Frist
+auf `tlm` allein hätte den Prozess ausgerechnet im Alarmfall abgeräumt, wenn der Puffer voll
+läuft und `tlm` als erstes fliegt.
+
+### Wie es geprüft ist
+
+Auf beiden Plattformen gebaut und getestet: Windows 11 mit MSYS2/MinGW-w64 und Debian in WSL,
+`ctest` je 6/6. Die Erkennung selbst liegt in `asamon-node` und ist dort geprüft
+(`internal/rxproc`, drei Tests) — siehe `asamon-node/TODO.md` Abschnitt 24.

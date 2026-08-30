@@ -21,9 +21,6 @@ struct Options {
 
     // Notbremse fuer den Recorder: laeuft REC laenger, wird von selbst gestoppt.
     unsigned    recMaxSeconds = 600;
-
-    // Verzeichnis fuer die FIFOs, ueber die welle.io den MSC-Strom ausgibt.
-    std::string fifoDir     = "/tmp";
 };
 
 // Wertet argv aus. Bei --help/--version wird die Ausgabe geschrieben und

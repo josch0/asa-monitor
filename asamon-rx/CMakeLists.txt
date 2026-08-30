@@ -83,6 +83,14 @@ set(WELLE_INCLUDE_DIRS
 find_package(Threads REQUIRED)
 
 # --- die eigentliche Binary --------------------------------------------------
+# Alles Plattformabhaengige steckt in genau einer Datei je System; der Rest
+# von src/ ist frei davon (siehe src/platform.h).
+if(WIN32)
+    set(ASAMON_PLATFORM_SOURCE src/platform_windows.cpp)
+else()
+    set(ASAMON_PLATFORM_SOURCE src/platform_posix.cpp)
+endif()
+
 set(ASAMON_RX_LIB_SOURCES
     src/options.cpp
     src/record.cpp
@@ -90,7 +98,7 @@ set(ASAMON_RX_LIB_SOURCES
     src/controller.cpp
     src/commands.cpp
     src/recorder.cpp
-    src/notify.cpp)
+    ${ASAMON_PLATFORM_SOURCE})
 
 add_library(asamon-rx-core STATIC ${ASAMON_RX_LIB_SOURCES})
 target_include_directories(asamon-rx-core PUBLIC
@@ -98,6 +106,15 @@ target_include_directories(asamon-rx-core PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}
     ${WELLE_INCLUDE_DIRS})
 target_link_libraries(asamon-rx-core PUBLIC welle Threads::Threads)
+
+# welle.io benutzt in Socket.cpp und rtl_tcp.cpp Winsock, deklariert die
+# Bibliothek aber nirgends in seiner CMakeLists: Der Windows-Bau des Projekts
+# laeuft ueber qmake, und dort zieht Qt ws2_32 von selbst herein. Ueber CMake
+# ist dieser Weg bisher niemand gegangen — also stellen wir es von aussen
+# richtig, so wie schon die beiden ${CMAKE_SOURCE_DIR}-Stellen weiter oben.
+if(WIN32)
+    target_link_libraries(asamon-rx-core PUBLIC ws2_32)
+endif()
 target_compile_options(asamon-rx-core PRIVATE -Wall -Wextra -Wswitch)
 
 add_executable(asamon-rx src/main.cpp)

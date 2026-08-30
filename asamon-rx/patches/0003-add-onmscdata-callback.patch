@@ -1,0 +1,85 @@
+From c29f198effcf2e564ebe52d7552f0190d57ec607 Mon Sep 17 00:00:00 2001
+From: asa-monitor <root@josch0.dev>
+Date: Thu, 27 Aug 2026 22:13:53 +0200
+Subject: [PATCH] Add onMscData() callback for the raw MSC stream
+
+The raw subchannel bit stream is currently only reachable by passing a
+dumpFileName to addServiceToDecode(): DecoderAdapter opens that path with
+fopen(..., "wb") and writes one frame per call. An application that wants
+the stream rather than a file has to hand over a named pipe and read from
+the other end -- a FIFO on Unix, a named pipe with overlapped I/O on
+Windows, plus an ordering constraint between opening the reader and adding
+the service, because the writing fopen() blocks until a reader is there.
+
+Hand the same bytes to the ProgrammeHandlerInterface instead. The callback
+is issued from addtoFrame(), next to the existing fwrite(), so it carries
+exactly what the dump file would have received, whether or not one was
+requested.
+
+onMscData() is deliberately not pure virtual: every other on... callback in
+ProgrammeHandlerInterface is, and adding another pure one would break every
+implementer in the tree (welle-io, welle-cli, the tests). onInputFailure()
+and onRestartService() in RadioControllerInterface are non-pure for the
+same reason.
+
+WELLE_MSC_DATA_VERSION lets consumers check at compile time that they were
+built against a matching definition.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+---
+ src/backend/decoder_adapter.cpp |  5 +++++
+ src/backend/radio-controller.h  | 15 +++++++++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/src/backend/decoder_adapter.cpp b/src/backend/decoder_adapter.cpp
+index a06046dc..211d9763 100644
+--- a/src/backend/decoder_adapter.cpp
++++ b/src/backend/decoder_adapter.cpp
+@@ -68,6 +68,11 @@ void DecoderAdapter::addtoFrame(uint8_t *v)
+ 
+     decoder->Feed(data.data(), length);
+ 
++    /* The same bytes the dump file receives, handed to the application
++     * directly. Applications that want the raw MSC stream need neither a file
++     * nor the detour through one. */
++    myInterface.onMscData(data.data(), length);
++
+     if (dumpFile) {
+         fwrite(data.data(), length, 1, dumpFile.get());
+     }
+diff --git a/src/backend/radio-controller.h b/src/backend/radio-controller.h
+index 484e154e..2ee4dbb0 100644
+--- a/src/backend/radio-controller.h
++++ b/src/backend/radio-controller.h
+@@ -193,6 +193,10 @@ class RadioControllerInterface {
+         virtual void onRestartService(void) { };
+ };
+ 
++/* Version of the onMscData() callback below. Consumers can check this at
++ * compile time to make sure they were built against a matching definition. */
++#define WELLE_MSC_DATA_VERSION 1
++
+ /* A Programme Handler is associated to each tuned programme in the ensemble.
+  */
+ class ProgrammeHandlerInterface {
+@@ -231,6 +235,17 @@ class ProgrammeHandlerInterface {
+          * and effective X-PAD length.
+          */
+         virtual void onPADLengthError(size_t announced_xpad_len, size_t xpad_len) = 0;
++
++        /* The raw MSC bit stream of the subchannel, handed over once per DAB
++         * frame before audio decoding. These are exactly the bytes that are
++         * written to the dump file passed to addServiceToDecode(), and they
++         * are delivered whether or not such a file was requested.
++         *
++         * Called from the decoder thread of that subchannel: implementations
++         * must copy what they need and return. Blocking here stalls decoding.
++         *
++         * Deliberately not pure virtual: existing handlers stay unaffected. */
++        virtual void onMscData(const uint8_t* data, size_t len) { (void)data; (void)len; }
+ };
+ 
+ enum class DeviceParam {
+-- 
+2.46.0.windows.1
+

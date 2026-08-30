@@ -2,12 +2,10 @@
 
 #include "commands.h"
 
-#include <cerrno>
+#include "platform.h"
+
 #include <cstring>
 #include <utility>
-
-#include <poll.h>
-#include <unistd.h>
 
 namespace asamon {
 
@@ -110,33 +108,21 @@ void CommandReader::run()
 {
     std::string pending;
     char buffer[512];
+    StdinReader stdinReader;
 
     while (!stopping_.load(std::memory_order_relaxed)) {
-        pollfd pfd{};
-        pfd.fd = STDIN_FILENO;
-        pfd.events = POLLIN;
-
         // Mit Zeitscheibe statt blockierendem Lesen: sonst haenge dieser
         // Thread beim Herunterfahren an einem stdin, das nie schliesst.
-        const int ready = ::poll(&pfd, 1, 200);
-        if (ready < 0) {
-            if (errno == EINTR) continue;
-            logMessage(options_.logLevel, LogLevel::Error,
-                       "stdin: poll fehlgeschlagen: " +
-                           std::string(std::strerror(errno)));
-            return;
-        }
-        if (ready == 0) continue;
+        std::string error;
+        const long got =
+            stdinReader.readWithTimeout(buffer, sizeof(buffer), 200, error);
 
-        const ssize_t got = ::read(STDIN_FILENO, buffer, sizeof(buffer));
-        if (got < 0) {
-            if (errno == EINTR || errno == EAGAIN) continue;
-            logMessage(options_.logLevel, LogLevel::Error,
-                       "stdin: read fehlgeschlagen: " +
-                           std::string(std::strerror(errno)));
+        if (got == kReadTimeout) continue;
+        if (got == kReadFailed) {
+            logMessage(options_.logLevel, LogLevel::Error, error);
             return;
         }
-        if (got == 0) {
+        if (got == kReadClosed) {
             // stdin geschlossen. Kein Grund zu beenden: im Feldtest laeuft
             // asamon-rx haeufig ohne Gegenstelle auf stdin.
             logMessage(options_.logLevel, LogLevel::Debug,
@@ -144,7 +130,7 @@ void CommandReader::run()
             return;
         }
 
-        for (ssize_t i = 0; i < got; ++i) {
+        for (long i = 0; i < got; ++i) {
             if (buffer[i] == '\n') {
                 handleLine(pending);
                 pending.clear();

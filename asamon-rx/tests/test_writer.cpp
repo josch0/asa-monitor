@@ -4,6 +4,7 @@
 // Verwerfen. Der Ueberlauf ist der Fall, auf den es ankommt — er darf nie
 // blockieren und nie unsichtbar bleiben.
 
+#include "tempfile.h"
 #include "writer.h"
 
 #include <cstdio>
@@ -52,8 +53,9 @@ bool contains(const std::string& haystack, const std::string& needle)
 
 void testOrderAndSequence()
 {
-    std::FILE* file = std::tmpfile();
-    check(file != nullptr, "tmpfile angelegt");
+    asamon::test::TempFile temp("test_writer-1");
+    std::FILE* file = temp.get();
+    check(file != nullptr, "temporaere Datei angelegt");
     if (file == nullptr) return;
 
     {
@@ -78,14 +80,14 @@ void testOrderAndSequence()
                   "seq laeuft fortlaufend weiter");
         }
     }
-    std::fclose(file);
 }
 
 void testOverflowDropsByPriority()
 {
-    std::FILE* file = std::tmpfile();
+    asamon::test::TempFile temp("test_writer-2");
+    std::FILE* file = temp.get();
     if (file == nullptr) {
-        check(false, "tmpfile angelegt");
+        check(false, "temporaere Datei angelegt");
         return;
     }
 
@@ -146,7 +148,6 @@ void testOverflowDropsByPriority()
     // es entstehen nur Luecken. Genau daran erkennt asamon-node den Verlust.
     check(ascending, "seq bleibt aufsteigend, trotz Luecken");
 
-    std::fclose(file);
 }
 
 }  // namespace

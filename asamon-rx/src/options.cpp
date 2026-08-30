@@ -21,7 +21,6 @@ const char* kUsage =
     "  --gain auto|<index>    Vorgabe: auto\n"
     "  --queue-size <n>       Tiefe der Ausgabe-Warteschlange (Vorgabe: 4096)\n"
     "  --rec-max-seconds <n>  Notbremse fuer REC (Vorgabe: 600, 0 = aus)\n"
-    "  --fifo-dir <pfad>      Ablage der MSC-FIFOs (Vorgabe: /tmp)\n"
     "  --log-level <stufe>    error|warn|info|debug (Vorgabe: info)\n"
     "  --version\n"
     "  --help\n"
@@ -97,9 +96,6 @@ bool parseOptions(int argc, char** argv, Options& out, bool& exitRequested)
         }
         else if (arg == "--gain") {
             if (!takeValue(argc, argv, i, "--gain", out.gain)) return false;
-        }
-        else if (arg == "--fifo-dir") {
-            if (!takeValue(argc, argv, i, "--fifo-dir", out.fifoDir)) return false;
         }
         else if (arg == "--queue-size") {
             if (!takeValue(argc, argv, i, "--queue-size", value)) return false;

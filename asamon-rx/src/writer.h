@@ -52,6 +52,11 @@ public:
 
 private:
     // Vorrang beim Verwerfen: asa vor aud vor tlm (TODO.md Abschnitt 8).
+    //
+    // tlm steht zuunterst, obwohl es das Lebenszeichen des Prozesses traegt.
+    // Das ist kein Widerspruch: asamon-node misst die Stille ueber *jeden*
+    // Record, nicht ueber tlm allein. Wo verworfen wird, fliesst per
+    // Definition Hoeherwertiges — der Prozess lebt also nachweislich.
     // init und ens stehen bei asa: init erklaert die ganze Aufzeichnung,
     // und ens ist der Grund, warum asamon-node FIG 0/1 und 0/2 nicht selbst
     // parsen muss — beide sind unwiederbringlich, wenn sie fehlen.

@@ -31,7 +31,7 @@ ohne Ausnahme.
 
 ## Bauen
 
-### Abhängigkeiten (Raspberry Pi OS / Debian, 64 bit)
+### Linux: Abhängigkeiten (Raspberry Pi OS / Debian, 64 bit)
 
 ```bash
 sudo apt update
@@ -57,7 +57,7 @@ Zweig `asa-fig0-15`: ein festgenagelter Commit, ein Patch darüber. Ohne diesen 
 und wie er sich auf einen neueren welle.io-Stand übertragen lässt:
 [`docs/welle-patches.md`](docs/welle-patches.md).
 
-### Übersetzen
+### Linux: Übersetzen
 
 ```bash
 cmake -B build -DCMAKE_BUILD_TYPE=Release
@@ -70,7 +70,7 @@ Auf dem Pi 3 / Zero 2 W kann der Speicher knapp werden: dann `-j2` und gegebenen
 > **Niemals mit `-DFDK_AAC=ON` bauen.** Die Fraunhofer-FDK-AAC-Lizenz gilt weithin als
 > GPL-unverträglich. Die Vorgabe ist FAAD2, und `CMakeLists.txt` erzwingt sie.
 
-### RTL-SDR nutzbar machen
+### Linux: RTL-SDR nutzbar machen
 
 Der Kernel greift sich den Stick sonst als DVB-T-Empfänger:
 
@@ -83,6 +83,49 @@ sudo udevadm control --reload && sudo udevadm trigger
 ```
 
 Probe: `rtl_test -t`.
+
+### Windows: Übersetzen (MSYS2 / MinGW-w64)
+
+`asamon-rx` läuft unter Windows **nativ** — kein WSL, kein Docker, kein Cygwin. Gebaut wird mit
+MinGW-w64, nicht mit MSVC; das ist derselbe Weg, den welle.io für seine eigenen Windows-Pakete
+geht.
+
+[MSYS2](https://www.msys2.org/) installieren, dann in der **MSYS2-MinGW64-Shell**:
+
+```bash
+pacman -S --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake \
+    mingw-w64-x86_64-ninja mingw-w64-x86_64-fftw mingw-w64-x86_64-faad2 \
+    mingw-w64-x86_64-mpg123 mingw-w64-x86_64-rtl-sdr git
+
+cmake -B build/win-mingw -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/win-mingw -j
+ctest --test-dir build/win-mingw --output-on-failure
+```
+
+Zwei Dinge, an denen man sonst hängenbleibt:
+
+- **Es muss die MinGW64-Shell sein**, nicht die MSYS-Shell. Letztere baut gegen die
+  MSYS2-Emulationsschicht — dabei kommt kein natives Binary heraus.
+- **Zum Starten außerhalb der Shell** müssen `libstdc++-6.dll`, `libwinpthread-1.dll` und
+  `libgcc_s_seh-1.dll` neben `asamon-rx.exe` liegen oder `C:\msys64\mingw64\bin` im `PATH`
+  stehen. Ohne sie startet das Programm wortlos nicht. In einem Release liegen sie im selben
+  Ordner — ein Windows-Paket ist deshalb ein Ordner, keine einzelne Datei.
+
+### Windows: RTL-SDR nutzbar machen
+
+Die Entsprechung zum `blacklist` unter Linux: Windows muss dem Stick den **WinUSB**-Treiber
+zuweisen, sonst findet librtlsdr ihn nicht.
+
+1. [Zadig](https://zadig.akeo.ie/) starten
+2. *Options → List All Devices*
+3. In der Liste **Bulk-In, Interface (Interface 0)** wählen — bei einem DVB-T-Stick heißt der
+   Eintrag oft „RTL2838UHIDIR"
+4. Als Zieltreiber **WinUSB** wählen, *Replace Driver*
+
+Probe: `asamon-rx.exe --channel 5C --log-level debug`. Kommt `sync: true`, ist alles beisammen.
+
+> Damit ist der Stick für andere Windows-Programme (DVB-T-Empfang) nicht mehr nutzbar, bis der
+> Treiber im Geräte-Manager zurückgesetzt wird.
 
 ---
 
@@ -98,7 +141,6 @@ asamon-rx --channel 5C [Optionen]
   --gain auto|<index>    Vorgabe: auto
   --queue-size <n>       Tiefe der Ausgabe-Warteschlange (Vorgabe: 4096)
   --rec-max-seconds <n>  Notbremse für REC (Vorgabe: 600, 0 = aus)
-  --fifo-dir <pfad>      Ablage der MSC-FIFOs (Vorgabe: /tmp)
   --log-level <stufe>    error|warn|info|debug (Vorgabe: info)
   --version
 ```
@@ -170,11 +212,18 @@ sind der Preis dafür, dass man sich irren darf.
 
 ---
 
-## Betrieb unter systemd
+## Betrieb
 
-`contrib/asamon-rx.service` ist eine Vorlage für den **Einzelbetrieb**, mit Watchdog. Im
-regulären Knotenbetrieb startet `asamon-node` die `asamon-rx`-Prozesse selbst — dann braucht
-ein Knoten eine Unit statt N.
+**`asamon-rx` läuft nie allein.** `asamon-node` startet je Kanal einen Prozess, liest seinen
+Record-Strom und beaufsichtigt ihn; eine systemd-Unit gibt es nur für den Knoten. Deshalb
+kennt `asamon-rx` weder systemd noch sd_notify noch einen Watchdog — es gibt keinen
+Init-Systembezug im ganzen Programm, und der Prozess läuft unter systemd, OpenRC, runit oder
+als Windows-Kindprozess gleich.
+
+Das Lebenszeichen ist der Record-Strom selbst: Der `tlm`-Record geht **jede Sekunde**
+hinaus, auch wenn nichts empfangen wurde. Bleiben Records aus, ist die Sekundenschleife
+stehengeblieben — `asamon-node` erkennt das an der Frist `limits.rx_silence_seconds`
+(Vorgabe 15 s) und startet den Prozess neu.
 
 Voraussetzung ist eine synchronisierte Uhr (`chrony` oder `systemd-timesyncd`): Die Differenz
 zwischen `ts` und der Ensemble-Zeit aus FIG 0/10 ist eine Messgröße, und alle ASA-Alerts sollen
@@ -196,7 +245,7 @@ Sechs Testprogramme, keines braucht einen SDR-Stick:
 | `location_codes` | das Bitlayout der Location Codes gegen die Byte-Längen in TS 104 090, Tabelle A.19 — eine zweite normative Quelle |
 | `record` | Serialisierung: Struktur → JSON-Zeile |
 | `writer` | Reihenfolge, Nummerierung, Vorrangregel beim Verwerfen |
-| `recorder` | der FIFO-Pfad, ohne Empfänger |
+| `recorder` | der Datenpfad des Mitschnitts: rohe MSC-Bytes hinein, `aud`-Records heraus |
 | `commands` | Zeilenkommandos, samt der abgelehnten |
 
 `tests/fixtures/fig0_15.fixtures` hält die erwarteten Records byteweise fest. Ändert sich der
@@ -217,7 +266,7 @@ Geprüft ist dagegen bereits, unter Debian mit `--device rawfile`:
 
 | | |
 |---|---|
-| `SIGTERM` | beendet in **41 ms**, keine verwaiste FIFO |
+| `SIGTERM` | beendet in **41 ms** |
 | Gegenstelle bricht weg | EPIPE erkannt, geordneter Abbau statt hartem Tod |
 | fehlende IQ-Datei | Rückgabewert 1 und klare Meldung, statt wortlos nach einer Sekunde aufzuhören |
 | **12 min Dauerlauf** | RSS **konstant 25 728 kB**, 6 Threads, 722 Records, **0** Verwürfe, **0** `seq`-Lücken, jede Zeile gültiges JSON |
