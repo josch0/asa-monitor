@@ -190,3 +190,52 @@ tragen ihren Commit über `-ldflags` im `--version`.
 - [ ] Beispielkonfiguration und die passende Startdatei (systemd-Unit bzw. Windows-Hinweis)
 - [ ] im Release-Text: die Laufzeitabhängigkeiten von `asamon-rx` und das `apt install` dafür
 - [ ] Gegenprobe, dass `--version` den erwarteten Commit nennt
+
+---
+
+## Stand 30.08.2026: Stufe 0 bis 2 sind gebaut
+
+Das Repo ist öffentlich (Stufe 0), `release.yml` baut beides (Stufen 1 und 2), und darüber
+liegt ein Installationsskript. Was oben als Empfehlung steht, ist damit umgesetzt — mit drei
+Entscheidungen, die erst beim Bauen fielen:
+
+**Je Debian-Fassung ein eigenes Paket.** Mit Debian 13 sind die Bibliotheken auf 64-bit-Zeit
+umgestellt und heißen anders — `libmpg123-0` wurde zu `libmpg123-0t64`. Ein Paket für bookworm
+und trixie gäbe es nur um den Preis erfundener Abhängigkeiten (`libmpg123-0 | libmpg123-0t64`),
+und die glibc-Untergrenze gilt ohnehin nur aufwärts. Deshalb `asamon_<version>_deb12_<arch>.deb`
+und `…_deb13_….deb`; `install.sh` liest `VERSION_CODENAME` aus `/etc/os-release` und wählt.
+
+**Die Abhängigkeiten werden nicht aufgeschrieben, sondern ausgelesen.** `dpkg-shlibdeps` nimmt
+sie aus dem gebauten Binary. Was `libwelle` nach sich zieht, hängt an den Bauoptionen; eine
+gepflegte Liste im Skript wäre schon beim ersten Umlegen einer Option falsch. Der erste Lauf
+ergab: `libc6 (>= 2.38), libfaad2 (>= 2.7), libfftw3-single3 (>= 3.3.10), libgcc-s1,
+libmp3lame0, libmpg123-0t64, librtlsdr0, libstdc++6 (>= 14)`.
+
+**Das Paket startet den Dienst nicht.** Ohne `node-config.yaml` hätte er weder Standort noch
+Server, und ein Dienst, der im Sekundentakt scheitert, ist schlimmer als einer, der wartet.
+Gestartet wird er von `install.sh`, nachdem `asamon-node --check` die Konfiguration angenommen
+hat — und bei einem Update übernimmt das `postinst` einen laufenden Dienst per `try-restart`,
+startet aber keinen, der vorher stand.
+
+### Was der Testlauf in WSL zutage förderte
+
+Gebaut und installiert wurde das Paket unter Debian 13 (amd64), einschließlich Aktualisierung
+und `purge`. Zwei Dinge fielen dabei auf, die im Entwurf nicht standen:
+
+- **Die systemd-Unit zeigte auf `/usr/local/bin`.** Richtig für alle, die selbst bauen und
+  `make install` benutzen — für ein Paket falsch, das nach `/usr/bin` gehört. Der Dienst
+  scheiterte mit `status=203/EXEC`. `build-deb.sh` schreibt den Pfad jetzt um und prüft
+  nach, dass es gelungen ist.
+- **`asamon-node` fand `asamon-rx` nicht**, weil unter Unix bisher ausschließlich
+  `/usr/local/bin/asamon-rx` galt. Jetzt wird `/usr/bin/asamon-rx` als zweiter Ort geprüft —
+  aber nur, wenn am ersten nichts liegt und die Konfiguration den Pfad nicht selbst nennt.
+  Damit läuft dieselbe Beispielkonfiguration in beiden Fällen.
+
+### Was offen bleibt
+
+- **armhf** (32-bit-Pi-OS): kein nativer Runner, über QEMU dauert ein welle.io-Bau über eine
+  Stunde. Raspberry Pi OS ist seit 2022 64-bittig; wer 32 bit fährt, baut selbst.
+- **Windows** (Stufe 3): unverändert offen, dafür bräuchte der Workflow MSYS2.
+- **Der Workflow ist noch nie gelaufen.** Er ist gegen einen lokalen Nachbau geprüft — der
+  Paketbau, die Installation, das Update und der Rückbau —, aber der erste echte Lauf wird
+  Kleinigkeiten zeigen. Ein Tag `v0.1.0` ist die Probe.

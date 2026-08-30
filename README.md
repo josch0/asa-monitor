@@ -152,12 +152,24 @@ Geplante, noch nicht angelegte Bereiche: `backend/` (Server) und `frontend/` (Ka
       Abschnitt 21
 - [ ] **Feldtest mit RTL-SDR-Stick** — der eigentliche Zweck: Sendet 5C schon Heartbeats? Und
       stimmt die WarnBridge-Behauptung, dort komme alle 5 Minuten ein Test-Alert?
-- [ ] **Repo veröffentlichen und Binaries ausliefern.** Ein Crowd-Netz entsteht nicht, wenn
-      jeder Freiwillige zuerst welle.io auf einem Pi Zero übersetzen muss. `asamon-node` ist
-      dafür fertig (`make dist`, zwei GitHub-Workflows liegen bereit, beide noch nie gelaufen);
-      `asamon-rx` braucht je Plattform eine native Bauumgebung, empfohlen als `.deb`.
-      Voraussetzung ist ein Git-Remote — das Repo ist bis heute nur lokal. Vollständig
-      abgewogen in `asamon-node/docs/ausrollen.md`
+- [x] **Repo veröffentlicht und Auslieferung gebaut (30.08.2026).** Ein Crowd-Netz entsteht
+      nicht, wenn jeder Freiwillige zuerst welle.io auf einem Pi Zero übersetzen muss. Der Weg
+      ist jetzt:
+
+      ```sh
+      curl -fsSL https://raw.githubusercontent.com/josch0/asa-monitor/main/install.sh -o install.sh
+      less install.sh          # es läuft als root, also vorher lesen
+      sudo sh install.sh
+      ```
+
+      Dahinter stehen `.deb`-Pakete mit **beiden** Programmen samt systemd-Unit, udev-Regel und
+      dem Blacklisting des DVB-T-Treibers; `apt` holt FFTW3f, FAAD2, mpg123, librtlsdr und LAME
+      selbst. Gebaut werden sie je Architektur und Debian-Fassung in
+      `.github/workflows/release.yml` (arm64 nativ, amd64; `deb12` und `deb13` getrennt, weil
+      die t64-Umstellung die Bibliotheksnamen geändert hat). `install.sh` prüft gegen
+      `SHA256SUMS`, richtet ein oder **aktualisiert** eine bestehende Installation, ohne die
+      Konfiguration anzutasten. Abgewogen in `asamon-node/docs/ausrollen.md`; 32-bit-Pi-OS
+      (armhf) und andere Distributionen bleiben beim Selbstbauen
 - [x] **Windows-Port von `asamon-rx` (27.08.2026).** Läuft nativ — kein WSL, kein Docker.
       FIFO → benannte Pipe mit überlappter E/A, `sigaction` → `SetConsoleCtrlHandler`,
       `poll`+`read` → `PeekNamedPipe`, sd_notify entfällt. Alles Plattformabhängige liegt hinter
