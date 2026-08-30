@@ -112,9 +112,32 @@ Datenbankschlüssel = **OE-Flag + Id-Feld**. Es gibt **kein CEI**
 | Digit 1 | 4 | höchstwertige Ziffer. Wert 0 kann in Polarzonen die gesamte Zone bezeichnen |
 | Other digits | 0–20 | restliche Ziffern (bei SCF = 1 ohne die niedrigstwertige) |
 | Padding | 0 oder 4 | nur wenn Num digits ungerade, alle Bits 0 |
-| Sub-codes | 0 oder 16 | nur bei SCF = 1: Bitmaske, welche der 16 Teilflächen zum Warngebiet gehören |
+| Sub-codes | 0 oder 16 | nur bei SCF = 1: Bitmaske, welche der 16 Teilflächen zum Warngebiet gehören. **Bit i des Wertes** steht für Teilfläche i — siehe unten |
 
 Grenzen: **max. 25 Byte Location Codes pro FIG-0/15-Instanz**, **max. 4 Instanzen pro Alert-Set**.
+
+#### Bitreihenfolge des Sub-codes-Feldes (geklärt 27.08.2026)
+
+Annex E schreibt nur „bi (i = 0 to 15)". Weil das Feld wie alles im FIC **MSB zuerst** übertragen
+wird, sind zwei Lesarten möglich: Teilfläche 0 als erstes oder als letztes übertragenes Bit.
+Sie unterscheiden sich um eine Punktspiegelung des Warngebiets — und beide sehen plausibel aus.
+
+Entschieden wird es durch **Annex C**, das Cardiff-Beispiel: Zone 10, vier Location Codes,
+22 Byte, **17 sphärische Rechtecke** mit den Sub-codes `CC00`, `F730`, (keine) und `0007`. Das
+Warngebiet liegt dort um den gemeinsamen Eckpunkt der vier 4-stelligen Rechtecke
+B624/B625/B628/B629. Nur mit der Lesart
+
+> **Teilfläche i = Bit i des Wertes** (Teilfläche 0 ist das *zuletzt* übertragene Bit)
+
+liegen die Teilflächen von B624 — dem nordwestlichen der vier — am Südost-Rand, also zur Mitte
+hin. Die andere Lesart schöbe sie an den gegenüberliegenden Rand.
+
+Als Bitfolge geschrieben ist LC1 aus diesem Beispiel `0a bb 62 40 cc 00` — das Sub-codes-Feld
+steht dort unverändert als `cc00` am Ende. Nachgeprüft in `asamon-node/internal/loc/bits_test.go`
+(`TestCardiffAnnexC`, `TestCardiffLC1AusHandgepacktenBytes`).
+
+Die Byte-Längen aus TS 104 090 Tabelle A.19 helfen hier **nicht**: Sie prüfen die Struktur, nicht
+die Bitreihenfolge innerhalb eines Feldes.
 
 ### Heartbeat-Form
 

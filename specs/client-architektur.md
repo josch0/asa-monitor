@@ -159,6 +159,12 @@ Patch aus Abschnitt 2b.
 
 ### Der FIFO-Kniff
 
+> **Überholt seit dem 27.08.2026.** Der Patch-Kandidat, den dieser Abschnitt am Ende benennt,
+> ist gebaut: `onMscData()` reicht den rohen Strom als Rückruf heraus, und `asamon-rx` nimmt
+> ihn so entgegen. Ausgelöst hat es nicht der Betrieb, sondern der Windows-Port. Der Abschnitt
+> bleibt als Entwurfsstand stehen; der Weg von heute steht in
+> `asamon-rx/docs/welle-patches.md` (Patch 3) und `asamon-rx/TODO.md` Abschnitt 18.
+
 `dumpFileName` darf auf eine benannte Pipe zeigen. Damit landet der rohe Subchannel-Strom im
 eigenen Prozess, ohne dass dieser Pfad Backend-Code braucht — der Patch aus Abschnitt 2b
 betrifft nur den FIC, nicht den MSC.
@@ -780,7 +786,7 @@ als vorher, weil der Fork ohnehin existiert:
 
 | # | Anlass | Eingriff | Auslöser |
 |---|---|---|---|
-| 1 | `fopen(dumpFileName, "wb")` blockiert auf einer FIFO, bis ein Leser da ist; ein hängender Leser blockiert den Decoder-Thread | Rückruf statt Datei | zeigt sich im Betrieb, nicht vorher entscheidbar |
+| 1 | ~~`fopen(dumpFileName, "wb")` blockiert auf einer FIFO, bis ein Leser da ist; ein hängender Leser blockiert den Decoder-Thread~~ **gebaut am 27.08.2026 als Patch 3** | Rückruf statt Datei | ~~zeigt sich im Betrieb~~ — gezeigt hat es sich beim Windows-Port |
 | 2 | `decode_audio` fest auf `true` | Parameter durchreichen | reine Sparmaßnahme, Nutzen gering (Abschnitt 2) |
 | 3 | Warn-Subchannel ohne Service-Eintrag in FIG 0/2 | Zugriff auf die Subchannel-Ebene ohne Service-Umweg | nur falls ein Ensemble so sendet |
 | 4 | `CRTL_SDR::open_device()` öffnet das **erste** Gerät, das sich öffnen lässt — keine Auswahl über Index oder Seriennummer | `rtlsdr_get_device_usb_strings()` auswerten, Auswahl über einen neuen `DeviceParam` | **sobald ein Knoten mehr als einen Stick betreibt** — dann keine Kür mehr, sondern Voraussetzung |
